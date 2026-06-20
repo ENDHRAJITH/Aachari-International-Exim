@@ -1,9 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+type Particle = {
+  id: number;
+  left: number;
+  size: number;
+  duration: number;
+  delay: number;
+  dx: number;
+  color: string;
+};
+
 export default function HeroParticles() {
-  const particles = Array.from(
-    { length: 36 },
-    (_, i) => ({
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    const generated = Array.from({ length: 36 }, (_, i) => ({
       id: i,
       left: Math.random() * 100,
       size: 4 + Math.random() * 8,
@@ -17,8 +30,10 @@ export default function HeroParticles() {
         "#b8893a",
         "#1f4f3f",
       ][Math.floor(Math.random() * 5)],
-    })
-  );
+    }));
+
+    setParticles(generated);
+  }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">

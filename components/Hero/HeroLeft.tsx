@@ -1,5 +1,5 @@
 "use client";
-import LiveDashboard from "./LiveDashboard";
+import LiveDashboard from "../LiveDashboard";
 import Link from "next/link";
 
 export default function HeroLeft() {
