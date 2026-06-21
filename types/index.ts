@@ -104,3 +104,16 @@ export interface TokenPayload {
   email: string
   role: string
 }
+
+// Certificate
+export interface Certificate {
+  id: string
+  name: string
+  issued_by: string | null
+  certificate_number: string | null
+  image_url: string | null
+  valid_until: string | null
+  is_active: boolean
+  sort_order: number
+  created_at: string
+}
