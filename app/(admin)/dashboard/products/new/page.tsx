@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, ArrowLeft } from 'lucide-react'
+import { Plus, Trash2, ArrowLeft, Package, FileText, ListPlus } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface Spec {
   spec_key: string
@@ -61,7 +62,7 @@ export default function NewProductPage() {
 
   const handleSubmit = async () => {
     if (!form.name || !form.slug) {
-      alert('Name and slug are required')
+      toast.error('Name and slug are required')
       return
     }
 
@@ -84,10 +85,13 @@ export default function NewProductPage() {
       const data = await res.json()
 
       if (data.success) {
+        toast.success('Product created successfully')
         router.push('/dashboard/products')
       } else {
-        alert(data.error || 'Failed to create product')
+        toast.error(data.error || 'Failed to create product')
       }
+    } catch {
+      toast.error('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -95,57 +99,99 @@ export default function NewProductPage() {
 
   const inputStyle = {
     width: '100%',
-    padding: '10px 14px',
-    borderRadius: '8px',
-    border: '1px solid #E8D5C0',
+    padding: '11px 14px',
+    borderRadius: '9px',
+    border: '1.5px solid #E8E0D8',
     fontSize: '14px',
     outline: 'none',
-    backgroundColor: '#faf8f5',
-    color: '#3D2314'
+    backgroundColor: '#FAFAF8',
+    color: '#1A1A1A',
+    transition: 'border-color 0.15s'
   }
 
   const labelStyle = {
     fontSize: '13px',
-    color: '#3D2314',
-    fontWeight: 500,
+    color: '#1A1A1A',
+    fontWeight: 600,
     display: 'block',
     marginBottom: '6px'
   }
 
+  const focusHandlers = {
+    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      e.target.style.borderColor = '#C1622A'
+      e.target.style.backgroundColor = '#ffffff'
+    },
+    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      e.target.style.borderColor = '#E8E0D8'
+      e.target.style.backgroundColor = '#FAFAF8'
+    }
+  }
+
+  const SectionCard = ({
+    icon: Icon,
+    title,
+    subtitle,
+    children
+  }: { icon: any; title: string; subtitle: string; children: React.ReactNode }) => (
+    <div style={{
+      backgroundColor: '#ffffff',
+      borderRadius: '12px',
+      border: '1px solid #E8E0D8',
+      padding: '22px',
+      marginBottom: '16px'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+        <div style={{
+          backgroundColor: '#C1622A15',
+          borderRadius: '8px',
+          padding: '8px',
+          display: 'flex'
+        }}>
+          <Icon size={16} color="#C1622A" />
+        </div>
+        <div>
+          <p style={{ fontSize: '14px', fontWeight: 600, color: '#1A1A1A', margin: 0 }}>{title}</p>
+          <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{subtitle}</p>
+        </div>
+      </div>
+      {children}
+    </div>
+  )
+
   return (
-    <div>
+    <div style={{ maxWidth: '760px' }}>
+
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <button
           onClick={() => router.push('/dashboard/products')}
           style={{
-            background: 'none',
-            border: 'none',
+            background: '#ffffff',
+            border: '1px solid #E8E0D8',
+            borderRadius: '8px',
             cursor: 'pointer',
-            color: '#3D2314',
+            color: '#1A1A1A',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            padding: '8px'
           }}
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
-        <h1 style={{ color: '#3D2314', fontSize: '22px', fontWeight: 700, margin: 0 }}>
-          Add New Product
-        </h1>
+        <div>
+          <h1 style={{ color: '#1A1A1A', fontSize: '22px', fontWeight: 700, margin: 0 }}>
+            Add New Product
+          </h1>
+          <p style={{ color: '#6B6B6B', fontSize: '13px', margin: 0 }}>
+            Fill in the details to list a new export product
+          </p>
+        </div>
       </div>
 
-      <div style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '12px',
-        border: '1px solid #E8D5C0',
-        padding: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px'
-      }}>
-
-        {/* Name + Slug */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      {/* Basic Info */}
+      <SectionCard icon={Package} title="Basic Information" subtitle="Name, category, and identification">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
             <label style={labelStyle}>Product Name *</label>
             <input
@@ -153,6 +199,7 @@ export default function NewProductPage() {
               placeholder="e.g. Moringa Powder"
               value={form.name}
               onChange={(e) => handleNameChange(e.target.value)}
+              {...focusHandlers}
             />
           </div>
           <div>
@@ -162,18 +209,22 @@ export default function NewProductPage() {
               placeholder="e.g. moringa-powder"
               value={form.slug}
               onChange={(e) => setForm({ ...form, slug: e.target.value })}
+              {...focusHandlers}
             />
+            <p style={{ fontSize: '11px', color: '#6B6B6B', margin: '5px 0 0' }}>
+              URL: /products/{form.slug || '...'}
+            </p>
           </div>
         </div>
 
-        {/* Category + HSN */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
             <label style={labelStyle}>Category</label>
             <select
-              style={inputStyle}
+              style={{ ...inputStyle, cursor: 'pointer' }}
               value={form.category_id}
               onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+              {...focusHandlers}
             >
               <option value="">Select category</option>
               {categories.map((c) => (
@@ -188,22 +239,45 @@ export default function NewProductPage() {
               placeholder="e.g. 12119029"
               value={form.hsn_code}
               onChange={(e) => setForm({ ...form, hsn_code: e.target.value })}
+              {...focusHandlers}
             />
           </div>
         </div>
 
-        {/* Short Description */}
-        <div>
+        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', marginTop: '6px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={form.is_active}
+              onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+              style={{ width: '16px', height: '16px', accentColor: '#C1622A' }}
+            />
+            <span style={{ fontSize: '14px', color: '#1A1A1A' }}>Active</span>
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={form.is_featured}
+              onChange={(e) => setForm({ ...form, is_featured: e.target.checked })}
+              style={{ width: '16px', height: '16px', accentColor: '#C1622A' }}
+            />
+            <span style={{ fontSize: '14px', color: '#1A1A1A' }}>Featured (show on homepage)</span>
+          </label>
+        </div>
+      </SectionCard>
+
+      {/* Description */}
+      <SectionCard icon={FileText} title="Description" subtitle="Product summary and full details">
+        <div style={{ marginBottom: '16px' }}>
           <label style={labelStyle}>Short Description</label>
           <input
             style={inputStyle}
             placeholder="Brief summary for product card"
             value={form.short_description}
             onChange={(e) => setForm({ ...form, short_description: e.target.value })}
+            {...focusHandlers}
           />
         </div>
-
-        {/* Description */}
         <div>
           <label style={labelStyle}>Full Description</label>
           <textarea
@@ -211,122 +285,109 @@ export default function NewProductPage() {
             placeholder="Full product description..."
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
+            {...focusHandlers}
           />
         </div>
+      </SectionCard>
 
-        {/* Toggles */}
-        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={form.is_active}
-              onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-            />
-            <span style={{ fontSize: '14px', color: '#3D2314' }}>Active</span>
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={form.is_featured}
-              onChange={(e) => setForm({ ...form, is_featured: e.target.checked })}
-            />
-            <span style={{ fontSize: '14px', color: '#3D2314' }}>Featured (show on homepage)</span>
-          </label>
+      {/* Specs */}
+      <SectionCard icon={ListPlus} title="Specifications" subtitle="Technical details — moisture, size, packaging etc.">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
+          {specs.map((spec, index) => (
+            <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 40px', gap: '10px', alignItems: 'center' }}>
+              <input
+                style={inputStyle}
+                placeholder="Spec name (e.g. Moisture Content)"
+                value={spec.spec_key}
+                onChange={(e) => handleSpecChange(index, 'spec_key', e.target.value)}
+                {...focusHandlers}
+              />
+              <input
+                style={inputStyle}
+                placeholder="Spec value (e.g. Below 8%)"
+                value={spec.spec_value}
+                onChange={(e) => handleSpecChange(index, 'spec_value', e.target.value)}
+                {...focusHandlers}
+              />
+              <button
+                onClick={() => removeSpec(index)}
+                style={{
+                  padding: '9px',
+                  borderRadius: '8px',
+                  border: '1px solid #FECACA',
+                  backgroundColor: '#FEF2F2',
+                  color: '#DC2626',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))}
         </div>
 
-        {/* Specs */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <label style={{ ...labelStyle, margin: 0 }}>Product Specifications</label>
-            <button
-              onClick={addSpec}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                border: '1px solid #C1622A',
-                backgroundColor: 'transparent',
-                color: '#C1622A',
-                fontSize: '13px',
-                cursor: 'pointer'
-              }}
-            >
-              <Plus size={14} />
-              Add Spec
-            </button>
-          </div>
+        <button
+          onClick={addSpec}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '9px 16px',
+            borderRadius: '8px',
+            border: '1.5px dashed #C1622A',
+            backgroundColor: 'transparent',
+            color: '#C1622A',
+            fontSize: '13px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            width: '100%',
+            justifyContent: 'center'
+          }}
+        >
+          <Plus size={14} />
+          Add Specification
+        </button>
+      </SectionCard>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {specs.map((spec, index) => (
-              <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 40px', gap: '10px', alignItems: 'center' }}>
-                <input
-                  style={inputStyle}
-                  placeholder="Spec name (e.g. Moisture Content)"
-                  value={spec.spec_key}
-                  onChange={(e) => handleSpecChange(index, 'spec_key', e.target.value)}
-                />
-                <input
-                  style={inputStyle}
-                  placeholder="Spec value (e.g. Below 8%)"
-                  value={spec.spec_value}
-                  onChange={(e) => handleSpecChange(index, 'spec_value', e.target.value)}
-                />
-                <button
-                  onClick={() => removeSpec(index)}
-                  style={{
-                    padding: '8px',
-                    borderRadius: '6px',
-                    border: '1px solid #fecaca',
-                    backgroundColor: '#fee2e2',
-                    color: '#991b1b',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Submit */}
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '8px' }}>
-          <button
-            onClick={() => router.push('/dashboard/products')}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              border: '1px solid #E8D5C0',
-              backgroundColor: '#ffffff',
-              color: '#3D2314',
-              fontSize: '14px',
-              cursor: 'pointer'
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{
-              padding: '10px 24px',
-              borderRadius: '8px',
-              border: 'none',
-              backgroundColor: loading ? '#a0522d80' : '#C1622A',
-              color: '#ffffff',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {loading ? 'Creating...' : 'Create Product'}
-          </button>
-        </div>
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
+        <button
+          onClick={() => router.push('/dashboard/products')}
+          style={{
+            padding: '11px 22px',
+            borderRadius: '9px',
+            border: '1px solid #E8E0D8',
+            backgroundColor: '#ffffff',
+            color: '#1A1A1A',
+            fontSize: '14px',
+            fontWeight: 500,
+            cursor: 'pointer'
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          style={{
+            padding: '11px 26px',
+            borderRadius: '9px',
+            border: 'none',
+            backgroundColor: loading ? '#A8521F80' : '#C1622A',
+            color: '#ffffff',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'background 0.15s'
+          }}
+          onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#A8521F' }}
+          onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#C1622A' }}
+        >
+          {loading ? 'Creating...' : 'Create Product'}
+        </button>
       </div>
     </div>
   )
