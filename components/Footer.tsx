@@ -139,7 +139,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/trade-terms"
+                  href="/payment-terms"
                   className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Payment Terms
