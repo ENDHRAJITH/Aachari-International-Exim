@@ -20,14 +20,13 @@ export default function ContactInfo() {
           text-ink-soft
         "
       >
-        Our trade desk operates Monday through Saturday,
-        IST 09:00 – 19:00. International calls can be
-        scheduled via WhatsApp at any hour.
+        Connect with Aachari International Exim Pvt Ltd for export,
+        import, sourcing, and international trade inquiries. Our team
+        is available to assist customers and business partners.
       </p>
 
       <ul className="mt-8">
         {/* Address */}
-
         <li
           className="
             flex
@@ -84,15 +83,18 @@ export default function ContactInfo() {
                 text-ink
               "
             >
-              3rd Floor, Spencer Plaza,
+              No. 15, 5th Street,
               <br />
-              Anna Salai, Chennai 600002, IN
+              A N Kandigai, Palanipet,
+              <br />
+              Arakkonam, Vellore District,
+              <br />
+              Tamil Nadu - 631002
             </div>
           </div>
         </li>
 
         {/* Phone */}
-
         <li
           className="
             flex
@@ -137,7 +139,7 @@ export default function ContactInfo() {
                 text-ink-soft
               "
             >
-              Telephone
+              Phone
             </div>
 
             <div
@@ -148,15 +150,12 @@ export default function ContactInfo() {
                 text-ink
               "
             >
-              +91 44 4500 8800
-              <br />
-              +91 98400 12345
+              +91 7305982029
             </div>
           </div>
         </li>
 
         {/* Email */}
-
         <li
           className="
             flex
@@ -187,7 +186,7 @@ export default function ContactInfo() {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <path d="M4 4h16c1.1 0 0 0 .9 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
               <polyline points="22,6 12,13 2,6" />
             </svg>
           </div>
@@ -211,11 +210,45 @@ export default function ContactInfo() {
                 text-[1.1rem]
                 font-medium
                 text-ink
+                break-all
               "
             >
-              trade@aachari-exim.com
-              <br />
-              quotes@aachari-exim.com
+              aachariinternationaleximpvtltd@gmail.com
+            </div>
+          </div>
+        </li>
+
+        {/* CIN */}
+        <li
+          className="
+            flex
+            items-start
+            gap-[18px]
+            py-[18px]
+          "
+        >
+          <div>
+            <div
+              className="
+                mb-1
+                text-[0.72rem]
+                uppercase
+                tracking-[0.18em]
+                text-ink-soft
+              "
+            >
+              CIN Number
+            </div>
+
+            <div
+              className="
+                font-[var(--font-display)]
+                text-[1.05rem]
+                font-medium
+                text-ink
+              "
+            >
+              U46909TN2026PTC193669
             </div>
           </div>
         </li>

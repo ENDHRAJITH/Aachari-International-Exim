@@ -161,7 +161,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               fontWeight: 600,
               transition: 'background 0.15s'
             }}>
-              Enquire Now →
+              Read More →
             </span>
           </div>
         </div>
