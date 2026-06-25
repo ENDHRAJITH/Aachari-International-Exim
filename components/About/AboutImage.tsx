@@ -75,7 +75,7 @@ export default function AboutImage() {
             text-ink
           "
         >
-          Since 2007
+          Since 2026
         </div>
       </div>
 

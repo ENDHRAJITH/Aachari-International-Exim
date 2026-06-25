@@ -1,6 +1,6 @@
 import "./globals.css";
 import { fraunces, interTight } from "./fonts";
-import CustomCursor from "@/components/CustomCursor";
+
  
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.className} ${interTight.variable}`}
       >
-        <CustomCursor />
+        
         
         {children}
       </body>

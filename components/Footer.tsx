@@ -2,13 +2,6 @@
 
 import Link from "next/link";
 
-const rates = [
-  { pair: "USD / INR", value: "83.54", trend: "up" },
-  { pair: "EUR / INR", value: "89.97", trend: "up" },
-  { pair: "AED / INR", value: "22.63", trend: "down" },
-  { pair: "GBP / INR", value: "105.58", trend: "down" },
-];
-
 export default function Footer() {
   return (
     <footer
@@ -17,77 +10,61 @@ export default function Footer() {
         overflow-hidden
         bg-ink
         text-cream
-        px-12
+        px-6
+        lg:px-12
         pt-20
         pb-10
       "
     >
-      {/* Glow */}
-
+      {/* Background Glow */}
       <div
-        className="
-          absolute
-          inset-0
-          opacity-40
-          pointer-events-none
-        "
+        className="absolute inset-0 opacity-40 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle at 15% 25%, rgba(217,121,38,.15), transparent 35%)",
         }}
       />
 
-      <div className="relative z-10">
-        {/* Top */}
-
+      <div className="relative z-10 max-w-[1320px] mx-auto">
+        {/* Top Section */}
         <div
           className="
             grid
-            gap-[60px]
+            gap-12
             border-b
             border-white/10
-            pb-[50px]
+            pb-12
             lg:grid-cols-[1.4fr_1fr_1fr_1fr]
           "
         >
           {/* Brand */}
-
           <div>
-            <h3
-              className="
-                text-[1.6rem]
-                font-medium
-                leading-tight
-              "
-            >
-              Aachari International Exim
+            <h3 className="text-[1.6rem] font-medium leading-tight">
+              Aachari International Exim Pvt Ltd
             </h3>
 
-            <p
-              className="
-                mt-[14px]
-                max-w-[340px]
-                text-[0.92rem]
-                leading-8
-                text-cream/60
-              "
-            >
-              A house of traders proudly carrying Indian
-              quality and craftsmanship to the world,
-              since 2007.
+            <p className="mt-4 max-w-[340px] text-[0.92rem] leading-8 text-cream/60">
+              A house of traders proudly carrying Indian quality and
+              craftsmanship to the world since 2026.
             </p>
 
-            {/* Social */}
-
+            {/* Social Icons */}
             <div className="mt-6 flex gap-3">
-              {["in", "𝕏", "◎", "◉"].map((item) => (
+              {[
+                { label: "in", href: "#" },
+                { label: "𝕏", href: "#" },
+                { label: "◎", href: "#" },
+                { label: "◉", href: "#" },
+              ].map((item) => (
                 <a
-                  key={item}
-                  href="#"
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="
                     flex
-                    h-[38px]
-                    w-[38px]
+                    h-10
+                    w-10
                     items-center
                     justify-center
                     rounded-full
@@ -96,109 +73,29 @@ export default function Footer() {
                     text-sm
                     transition-all
                     duration-300
-                    hover:-translate-y-[3px]
+                    hover:-translate-y-1
                     hover:border-saffron
                     hover:bg-saffron
+                    hover:text-white
                   "
                 >
-                  {item}
+                  {item.label}
                 </a>
-              ))}
-            </div>
-
-            {/* FX Card */}
-
-            <div
-              className="
-                mt-[18px]
-                flex
-                flex-wrap
-                items-start
-                gap-[18px]
-                rounded-[10px]
-                border
-                border-white/10
-                bg-white/[0.04]
-                px-4
-                py-[14px]
-              "
-            >
-              <span
-                className="
-                  text-[0.66rem]
-                  font-semibold
-                  uppercase
-                  tracking-[0.18em]
-                  text-cream/50
-                "
-              >
-                FX Rates
-              </span>
-
-              {rates.map((rate) => (
-                <div
-                  key={rate.pair}
-                  className="
-                    flex
-                    flex-col
-                    gap-[2px]
-                  "
-                >
-                  <span
-                    className="
-                      text-[0.66rem]
-                      tracking-[0.1em]
-                      text-cream/50
-                    "
-                  >
-                    {rate.pair}
-                  </span>
-
-                  <span
-                    className={`
-                      flex items-center gap-1
-                      text-[0.95rem]
-                      font-medium
-                      ${
-                        rate.trend === "up"
-                          ? "text-[#6ed391]"
-                          : "text-[#ff8c5a]"
-                      }
-                    `}
-                  >
-                    {rate.value}
-                    {rate.trend === "up" ? "▲" : "▼"}
-                  </span>
-                </div>
               ))}
             </div>
           </div>
 
           {/* Company */}
-
           <div>
-            <h5
-              className="
-                mb-[18px]
-                text-[0.74rem]
-                uppercase
-                tracking-[0.22em]
-                text-gold-light
-              "
-            >
+            <h5 className="mb-5 text-[0.74rem] uppercase tracking-[0.22em] text-gold-light">
               Company
             </h5>
 
-            <ul className="space-y-[10px]">
+            <ul className="space-y-3">
               <li>
                 <Link
-                  href="#about"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                  href="/about"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   About Us
                 </Link>
@@ -206,13 +103,8 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="#products"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                  href="/products"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Our Products
                 </Link>
@@ -220,13 +112,8 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="#certificates"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                  href="/certificates"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Certificates
                 </Link>
@@ -234,13 +121,8 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="#contact"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                  href="/contact"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Contact
                 </Link>
@@ -249,146 +131,135 @@ export default function Footer() {
           </div>
 
           {/* Trade */}
-
           <div>
-            <h5
-              className="
-                mb-[18px]
-                text-[0.74rem]
-                uppercase
-                tracking-[0.22em]
-                text-gold-light
-              "
-            >
+            <h5 className="mb-5 text-[0.74rem] uppercase tracking-[0.22em] text-gold-light">
               Trade
             </h5>
 
-            <ul className="space-y-[10px]">
+            <ul className="space-y-3">
               <li>
-                <a
-                  href="#terms"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                <Link
+                  href="/trade-terms"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Payment Terms
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="#"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                <Link
+                  href="/catalogue"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   E-Catalogue
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="#"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                <Link
+                  href="/logistics"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Logistics
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="#"
-                  className="
-                    text-[0.9rem]
-                    text-cream/70
-                    transition-colors
-                    hover:text-saffron
-                  "
+                <Link
+                  href="/quality-policy"
+                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   Quality Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Newsletter */}
-
+          {/* Contact */}
           <div>
-            <h5
-              className="
-                mb-[18px]
-                text-[0.74rem]
-                uppercase
-                tracking-[0.22em]
-                text-gold-light
-              "
-            >
-              Newsletter
+            <h5 className="mb-5 text-[0.74rem] uppercase tracking-[0.22em] text-gold-light">
+              Get In Touch
             </h5>
 
-            <p
-              className="
-                mb-[14px]
-                text-[0.88rem]
-                leading-7
-                text-cream/60
-              "
-            >
-              Quarterly trade updates, harvest reports &
-              new SKU launches.
-            </p>
+            <div className="space-y-5">
+              <div>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-cream/45">
+                  Address
+                </p>
 
-            <input
-              type="email"
-              placeholder="your@email.com"
-              className="
-                w-full
-                rounded-md
-                border
-                border-white/[0.18]
-                bg-white/[0.05]
-                px-3
-                py-3
-                text-cream
-                outline-none
-                placeholder:text-cream/35
-              "
-            />
+                <p className="mt-1 text-[0.88rem] leading-7 text-cream/70">
+                  No. 15, 5th Street, A N Kandigai, Palanipet,
+                  Arakkonam, Vellore District, Tamil Nadu – 631002.
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-cream/45">
+                  Phone
+                </p>
+
+                <a
+                  href="tel:+917305982029"
+                  className="mt-1 block text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
+                >
+                  +91 73059 82029
+                </a>
+              </div>
+
+              <div>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-cream/45">
+                  Email
+                </p>
+
+                <a
+                  href="mailto:aachariinternationaleximpvtltd@gmail.com"
+                  className="mt-1 block break-all text-[0.88rem] text-cream/70 hover:text-saffron transition-colors"
+                >
+                  aachariinternationaleximpvtltd@gmail.com
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Bottom */}
-
         <div
           className="
             flex
-            items-center
-            justify-between
-            pt-[30px]
+            flex-col
+            gap-4
+            pt-8
             text-[0.82rem]
             text-cream/50
+            lg:flex-row
+            lg:items-center
+            lg:justify-between
           "
         >
           <div>
-            © 2026 Aachari International Exim Pvt Ltd ·
-            All Rights Reserved
+            © {new Date().getFullYear()} Aachari International Exim
+            Pvt Ltd · All Rights Reserved
           </div>
 
-          <div>
-            Crafted with care in Chennai · GST
-            33AAACA0000A1Z5
+          <div className="flex items-center gap-4">
+            <Link
+              href="/privacy-policy"
+              className="hover:text-saffron transition-colors"
+            >
+              Privacy Policy
+            </Link>
+
+            <span className="text-cream/20">|</span>
+
+            <Link
+              href="/terms"
+              className="hover:text-saffron transition-colors"
+            >
+              Terms of Service
+            </Link>
           </div>
+
+          <div>CIN: U46909TN2026PTC193669</div>
         </div>
       </div>
     </footer>

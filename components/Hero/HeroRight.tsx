@@ -34,68 +34,7 @@ export default function HeroRight() {
     animate-[spin_20s_linear_infinite]
   "
 >
-  <svg
-    viewBox="0 0 130 130"
-    className="h-full w-full"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <path
-        id="circ"
-        d="M65,65 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"
-        fill="none"
-      />
-    </defs>
-
-    <circle
-      cx="65"
-      cy="65"
-      r="62"
-      fill="none"
-      stroke="#2a1f17"
-      strokeWidth="0.8"
-    />
-
-    <circle
-      cx="65"
-      cy="65"
-      r="40"
-      fill="#d97926"
-    />
-
-    <text
-      fill="#2a1f17"
-      fontSize="9"
-      letterSpacing="3"
-    >
-      <textPath href="#circ" startOffset="0%">
-        PREMIUM EXPORT · CERTIFIED QUALITY ·
-      </textPath>
-    </text>
-
-    <text
-      x="65"
-      y="60"
-      textAnchor="middle"
-      fill="#f7f1e3"
-      fontStyle="italic"
-      fontWeight="700"
-      fontSize="14"
-    >
-      Estd.
-    </text>
-
-    <text
-      x="65"
-      y="78"
-      textAnchor="middle"
-      fill="#f7f1e3"
-      fontWeight="600"
-      fontSize="16"
-    >
-      2007
-    </text>
-  </svg>
+ 
 </div>
 
         {/* Card 1 */}

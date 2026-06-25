@@ -1,7 +1,7 @@
 import HeroLeft from "./HeroLeft";
 import HeroRight from "./HeroRight";
 import HeroBackground from "./HeroBackground";
-import HeroParticles from "./HeroParticles";
+ 
 
 export default function Hero() {
   return (
@@ -17,7 +17,7 @@ export default function Hero() {
   "
 >
   <HeroBackground />
-  <HeroParticles />
+  
 
   <div
     className="
