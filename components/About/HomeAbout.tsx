@@ -4,7 +4,7 @@ import Link from "next/link";
 import AboutImage from "./AboutImage";
 import AboutContent from "./AboutContent";
 
-export default function About() {
+export default function HomeAbout() {
   return (
     <section
       id="about"
@@ -63,7 +63,35 @@ export default function About() {
         </div>
 
         {/* CTA */}
- 
+        <div className="mt-14 flex justify-center lg:justify-start">
+          <Link
+            href="/about"
+            className="
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              bg-[#C1622A]
+              px-8
+              py-4
+              text-sm
+              font-semibold
+              tracking-wide
+              text-white
+              shadow-[0_12px_30px_rgba(193,98,42,0.25)]
+              transition-all
+              duration-300
+              hover:-translate-y-1
+              hover:bg-[#A84F1D]
+              hover:shadow-[0_18px_40px_rgba(193,98,42,0.35)]
+            "
+          >
+            Read More
+            <span className="transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
+        </div>
       </div>
     </section>
   );

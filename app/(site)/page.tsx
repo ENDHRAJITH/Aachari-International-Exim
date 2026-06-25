@@ -7,6 +7,7 @@ import Terms from "@/components/Terms/Terms";
 import Certificates from "@/components/certificates/Certificates";
 import FeaturedProducts from "@/components/products/FeaturedProducts";
 import CertificatesSection from "@/components/certificates/CertificatesSection";
+import HomeAbout from "@/components/About/HomeAbout";
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
 
       <main>
         <Hero />  
-        <About />
+        <HomeAbout />
         <FeaturedProducts />
         <CertificatesSection mode="home" />
         <Terms/>

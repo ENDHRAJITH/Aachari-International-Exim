@@ -80,30 +80,7 @@ export default function AboutImage() {
       </div>
 
       {/* CTA Button */}
-      <Link
-        href="/about"
-        className="
-          inline-flex
-          items-center
-          justify-center
-          gap-2
-          rounded-full
-          bg-[#C1622A]
-          px-8
-          py-3.5
-          text-sm
-          font-semibold
-          text-white
-          shadow-lg
-          transition-all
-          duration-300
-          hover:-translate-y-1
-          hover:bg-[#A84F1D]
-          hover:shadow-xl
-        "
-      >
-        Read More →
-      </Link>
+       
     </div>
   );
 }
