@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { sendEnquiryEmail } from '@/lib/resend'
 import { NextRequest, NextResponse } from 'next/server'
-
+export const revalidate = 60
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
