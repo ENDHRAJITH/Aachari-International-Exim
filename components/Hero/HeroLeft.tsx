@@ -79,7 +79,7 @@ export default function HeroLeft() {
       {/* Buttons */}
       <div className="mt-10 flex flex-wrap gap-4">
         <Link
-          href="#products"
+          href="/products"
           className="group flex items-center gap-2 rounded-full bg-saffron px-8 py-4 text-[13px] font-medium uppercase tracking-[0.1em] text-white shadow-[0_12px_30px_rgba(217,121,38,0.25)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(217,121,38,0.35)]"
         >
           Explore Our Range
