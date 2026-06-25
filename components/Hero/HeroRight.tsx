@@ -120,7 +120,7 @@ export default function HeroRight() {
               backdrop-blur-md
             "
           >
-            Poweder 
+            Powder 
           </div>
         </div>
 
@@ -165,7 +165,7 @@ export default function HeroRight() {
               backdrop-blur-md
             "
           >
-            Masala
+            Masalas
           </div>
         </div>
       </div>
