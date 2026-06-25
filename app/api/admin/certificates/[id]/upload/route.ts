@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase'
+ import { supabaseAdmin } from '@/lib/supabase'
 import cloudinary from '@/lib/cloudinary'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -36,7 +36,7 @@ export async function POST(
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // resource_type 'auto' — Cloudinary detects PDF vs image automatically
+    // Cloudinary upload — resource_type auto detects PDF vs image
     const uploadResult = await new Promise<any>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {

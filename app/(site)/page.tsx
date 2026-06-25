@@ -5,19 +5,22 @@ import Contact from "@/components/Contact/Contact";
 import Footer from "@/components/Footer";
 import Terms from "@/components/Terms/Terms";
 import Certificates from "@/components/certificates/Certificates";
+import FeaturedProducts from "@/components/products/FeaturedProducts";
+import CertificatesSection from "@/components/certificates/CertificatesSection";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
+        
 
       <main>
         <Hero />  
         <About />
-        <Certificates/>
+        <FeaturedProducts />
+        <CertificatesSection mode="home" />
         <Terms/>
         <Contact />
-        <Footer />
+        
       </main>
     </>
   );

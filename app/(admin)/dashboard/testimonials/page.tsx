@@ -2,66 +2,38 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, Award, X, Upload, FileText, Eye } from 'lucide-react'
+import { Plus, Pencil, Trash2, MessageSquareQuote, X, Star } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-interface Certificate {
+interface Testimonial {
   id: string
   name: string
-  issued_by: string | null
-  certificate_number: string | null
-  image_url: string | null
-  valid_until: string | null
+  country: string
+  country_code: string | null
+  role: string | null
+  review: string
+  rating: number
   is_active: boolean
   sort_order: number
 }
 
 const emptyForm = {
   name: '',
-  issued_by: '',
-  certificate_number: '',
-  valid_until: '',
+  country: '',
+  country_code: '',
+  role: '',
+  review: '',
+  rating: 5,
   is_active: true,
   sort_order: 0
 }
 
-function isPdf(url: string | null): boolean {
-  if (!url) return false
-  return url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('/raw/')
-}
-
-function FileCell({ cert }: { cert: Certificate }) {
-  if (!cert.image_url) {
-    return <span style={{ fontSize: '12px', color: '#9c7a6a' }}>No file</span>
-  }
-  return (
-    
-     <a href={cert.image_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '5px',
-        fontSize: '12px',
-        color: '#2563EB',
-        textDecoration: 'none',
-        fontWeight: 600
-      }}
-    >
-      {isPdf(cert.image_url) ? <FileText size={13} /> : <Eye size={13} />}
-      {isPdf(cert.image_url) ? 'View PDF' : 'View Image'}
-    </a>
-  )
-}
-
-export default function CertificatesPage() {
+export default function TestimonialsPage() {
   const router = useRouter()
-  const [certificates, setCertificates] = useState<Certificate[]>([])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [uploadingId, setUploadingId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm)
@@ -69,17 +41,17 @@ export default function CertificatesPage() {
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
     if (!token) { router.push('/admin/login'); return }
-    fetchCertificates(token)
+    fetchTestimonials(token)
   }, [])
 
-  const fetchCertificates = async (token: string) => {
+  const fetchTestimonials = async (token: string) => {
     try {
-      const res = await fetch('/api/admin/certificates', {
+      const res = await fetch('/api/admin/testimonials', {
         headers: { Authorization: `Bearer ${token}` }
       })
       const data = await res.json()
       if (!data.success) { router.push('/admin/login'); return }
-      setCertificates(data.data)
+      setTestimonials(data.data)
     } catch {
       router.push('/admin/login')
     } finally {
@@ -93,16 +65,18 @@ export default function CertificatesPage() {
     setShowForm(true)
   }
 
-  const openEditForm = (cert: Certificate) => {
+  const openEditForm = (t: Testimonial) => {
     setForm({
-      name: cert.name,
-      issued_by: cert.issued_by || '',
-      certificate_number: cert.certificate_number || '',
-      valid_until: cert.valid_until || '',
-      is_active: cert.is_active,
-      sort_order: cert.sort_order
+      name: t.name,
+      country: t.country,
+      country_code: t.country_code || '',
+      role: t.role || '',
+      review: t.review,
+      rating: t.rating,
+      is_active: t.is_active,
+      sort_order: t.sort_order
     })
-    setEditingId(cert.id)
+    setEditingId(t.id)
     setShowForm(true)
   }
 
@@ -113,16 +87,16 @@ export default function CertificatesPage() {
   }
 
   const handleSubmit = async () => {
-    if (!form.name) {
-      toast.error('Certificate name is required')
+    if (!form.name || !form.country || !form.review) {
+      toast.error('Name, country and review are required')
       return
     }
     const token = localStorage.getItem('admin_token')
     setSaving(true)
     try {
       const url = editingId
-        ? `/api/admin/certificates/${editingId}`
-        : '/api/admin/certificates'
+        ? `/api/admin/testimonials/${editingId}`
+        : '/api/admin/testimonials'
       const method = editingId ? 'PUT' : 'POST'
       const res = await fetch(url, {
         method,
@@ -134,9 +108,9 @@ export default function CertificatesPage() {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success(editingId ? 'Certificate updated' : 'Certificate added — now upload the file')
+        toast.success(editingId ? 'Testimonial updated' : 'Testimonial added')
         closeForm()
-        fetchCertificates(token!)
+        fetchTestimonials(token!)
       } else {
         toast.error(data.error || 'Failed to save')
       }
@@ -148,18 +122,18 @@ export default function CertificatesPage() {
   }
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Delete "${name}"?`)) return
+    if (!window.confirm(`Delete testimonial from "${name}"?`)) return
     const token = localStorage.getItem('admin_token')
     setDeletingId(id)
     try {
-      const res = await fetch(`/api/admin/certificates/${id}`, {
+      const res = await fetch(`/api/admin/testimonials/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       })
       const data = await res.json()
       if (data.success) {
-        setCertificates(certificates.filter((c) => c.id !== id))
-        toast.success('Certificate deleted')
+        setTestimonials(testimonials.filter((t) => t.id !== id))
+        toast.success('Testimonial deleted')
       } else {
         toast.error(data.error || 'Failed to delete')
       }
@@ -167,40 +141,6 @@ export default function CertificatesPage() {
       toast.error('Something went wrong')
     } finally {
       setDeletingId(null)
-    }
-  }
-
-  const handleFileUpload = async (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size must be under 10MB')
-      return
-    }
-    const token = localStorage.getItem('admin_token')
-    setUploadingId(id)
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-      const res = await fetch(`/api/admin/certificates/${id}/upload`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      })
-      const data = await res.json()
-      if (data.success) {
-        setCertificates(certificates.map((c) =>
-          c.id === id ? { ...c, image_url: data.data.image_url } : c
-        ))
-        toast.success('File uploaded successfully')
-      } else {
-        toast.error(data.error || 'Upload failed')
-      }
-    } catch {
-      toast.error('Something went wrong')
-    } finally {
-      setUploadingId(null)
-      e.target.value = ''
     }
   }
 
@@ -225,11 +165,11 @@ export default function CertificatesPage() {
   }
 
   const focusHandlers = {
-    onFocus: (e: React.FocusEvent<HTMLInputElement>) => {
+    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       e.target.style.borderColor = '#C1622A'
       e.target.style.backgroundColor = '#ffffff'
     },
-    onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       e.target.style.borderColor = '#E8E0D8'
       e.target.style.backgroundColor = '#FAFAF8'
     }
@@ -248,10 +188,10 @@ export default function CertificatesPage() {
       }}>
         <div>
           <h1 style={{ color: '#1A1A1A', fontSize: '22px', fontWeight: 700, margin: '0 0 4px' }}>
-            Certificates
+            Testimonials
           </h1>
           <p style={{ color: '#6B6B6B', fontSize: '14px', margin: 0 }}>
-            Manage export certifications shown on the website
+            Manage customer reviews shown on the website
           </p>
         </div>
         {!showForm && (
@@ -274,7 +214,7 @@ export default function CertificatesPage() {
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C1622A'}
           >
             <Plus size={16} />
-            Add Certificate
+            Add Testimonial
           </button>
         )}
       </div>
@@ -290,7 +230,7 @@ export default function CertificatesPage() {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
             <p style={{ fontSize: '15px', fontWeight: 600, color: '#1A1A1A', margin: 0 }}>
-              {editingId ? 'Edit Certificate' : 'Add New Certificate'}
+              {editingId ? 'Edit Testimonial' : 'Add New Testimonial'}
             </p>
             <button onClick={closeForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', display: 'flex' }}>
               <X size={18} />
@@ -299,36 +239,61 @@ export default function CertificatesPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <label style={labelStyle}>Certificate Name *</label>
-              <input style={inputStyle} placeholder="e.g. APEDA Registration" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} {...focusHandlers} />
+              <label style={labelStyle}>Customer Name *</label>
+              <input style={inputStyle} placeholder="e.g. Ahmed Al Mansouri" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} {...focusHandlers} />
             </div>
             <div>
-              <label style={labelStyle}>Issued By</label>
-              <input style={inputStyle} placeholder="e.g. APEDA, Govt of India" value={form.issued_by} onChange={(e) => setForm({ ...form, issued_by: e.target.value })} {...focusHandlers} />
+              <label style={labelStyle}>Role / Designation</label>
+              <input style={inputStyle} placeholder="e.g. Wholesale Importer" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} {...focusHandlers} />
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <label style={labelStyle}>Certificate Number</label>
-              <input style={inputStyle} placeholder="e.g. APEDA/2025/1234" value={form.certificate_number} onChange={(e) => setForm({ ...form, certificate_number: e.target.value })} {...focusHandlers} />
+              <label style={labelStyle}>Country *</label>
+              <input style={inputStyle} placeholder="e.g. Dubai, UAE" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} {...focusHandlers} />
             </div>
             <div>
-              <label style={labelStyle}>Valid Until</label>
-              <input type="date" style={inputStyle} value={form.valid_until} onChange={(e) => setForm({ ...form, valid_until: e.target.value })} {...focusHandlers} />
+              <label style={labelStyle}>Country Code</label>
+              <input style={inputStyle} placeholder="e.g. AE" value={form.country_code} onChange={(e) => setForm({ ...form, country_code: e.target.value })} {...focusHandlers} />
             </div>
           </div>
 
-          <div style={{
-            backgroundColor: '#FFF8F3',
-            border: '1px dashed #C1622A',
-            borderRadius: '9px',
-            padding: '12px 16px',
-            fontSize: '12px',
-            color: '#C1622A',
-            marginBottom: '16px'
-          }}>
-            Save the certificate first → then upload PDF or image using the Upload button in the table.
+          <div style={{ marginBottom: '16px' }}>
+            <label style={labelStyle}>Review *</label>
+            <textarea
+              style={{ ...inputStyle, minHeight: '90px', resize: 'vertical' as const }}
+              placeholder="Write the customer review here..."
+              value={form.review}
+              onChange={(e) => setForm({ ...form, review: e.target.value })}
+              {...focusHandlers}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div>
+              <label style={labelStyle}>Rating</label>
+              <select
+                style={inputStyle}
+                value={form.rating}
+                onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })}
+              >
+                {[5, 4, 3, 2, 1].map((r) => (
+                  <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Sort Order</label>
+              <input
+                type="number"
+                style={inputStyle}
+                placeholder="0"
+                value={form.sort_order}
+                onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
+                {...focusHandlers}
+              />
+            </div>
           </div>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '20px' }}>
@@ -341,7 +306,7 @@ export default function CertificatesPage() {
               Cancel
             </button>
             <button onClick={handleSubmit} disabled={saving} style={{ padding: '10px 24px', borderRadius: '9px', border: 'none', backgroundColor: saving ? '#A8521F80' : '#C1622A', color: '#ffffff', fontSize: '14px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer' }}>
-              {saving ? 'Saving...' : editingId ? 'Update Certificate' : 'Add Certificate'}
+              {saving ? 'Saving...' : editingId ? 'Update Testimonial' : 'Add Testimonial'}
             </button>
           </div>
         </div>
@@ -353,7 +318,7 @@ export default function CertificatesPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: '#FAFAF8' }}>
-                {['Certificate', 'Issued By', 'Number', 'File', 'Valid Until', 'Status', 'Actions'].map((h) => (
+                {['Name', 'Country', 'Role', 'Review', 'Rating', 'Status', 'Actions'].map((h) => (
                   <th key={h} style={{
                     padding: '11px 16px',
                     textAlign: 'left',
@@ -377,69 +342,58 @@ export default function CertificatesPage() {
                 </tr>
               )}
 
-              {!loading && certificates.length === 0 && (
+              {!loading && testimonials.length === 0 && (
                 <tr>
                   <td colSpan={7} style={{ padding: '48px', textAlign: 'center' }}>
-                    <Award size={32} color="#E8E0D8" style={{ margin: '0 auto 12px', display: 'block' }} />
-                    <p style={{ color: '#6B6B6B', fontSize: '14px', margin: 0 }}>No certificates added yet</p>
+                    <MessageSquareQuote size={32} color="#E8E0D8" style={{ margin: '0 auto 12px', display: 'block' }} />
+                    <p style={{ color: '#6B6B6B', fontSize: '14px', margin: 0 }}>No testimonials added yet</p>
                   </td>
                 </tr>
               )}
 
-              {!loading && certificates.map((cert, idx) => (
+              {!loading && testimonials.map((t, idx) => (
                 <tr
-                  key={cert.id}
-                  style={{ borderBottom: idx < certificates.length - 1 ? '1px solid #F0EBE3' : 'none', transition: 'background 0.1s' }}
+                  key={t.id}
+                  style={{ borderBottom: idx < testimonials.length - 1 ? '1px solid #F0EBE3' : 'none', transition: 'background 0.1s' }}
                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FAFAF8'}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                  <td style={{ padding: '13px 16px', fontSize: '14px', fontWeight: 600, color: '#1A1A1A' }}>{cert.name}</td>
-                  <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A' }}>{cert.issued_by || '-'}</td>
-                  <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A' }}>{cert.certificate_number || '-'}</td>
-                  <td style={{ padding: '13px 16px' }}><FileCell cert={cert} /></td>
-                  <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A' }}>
-                    {cert.valid_until ? new Date(cert.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
+                  <td style={{ padding: '13px 16px', fontSize: '14px', fontWeight: 600, color: '#1A1A1A', whiteSpace: 'nowrap' }}>{t.name}</td>
+                  <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A', whiteSpace: 'nowrap' }}>{t.country}</td>
+                  <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A', whiteSpace: 'nowrap' }}>{t.role || '-'}</td>
+                  <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A', maxWidth: '220px' }}>
+                    <span style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {t.review}
+                    </span>
+                  </td>
+                  <td style={{ padding: '13px 16px' }}>
+                    <div style={{ display: 'flex', gap: '2px' }}>
+                      {Array.from({ length: t.rating }).map((_, i) => (
+                        <Star key={i} size={13} color="#C1622A" fill="#C1622A" />
+                      ))}
+                    </div>
                   </td>
                   <td style={{ padding: '13px 16px' }}>
                     <span style={{
-                      backgroundColor: cert.is_active ? '#16A34A15' : '#F0EBE3',
-                      color: cert.is_active ? '#16A34A' : '#6B6B6B',
+                      backgroundColor: t.is_active ? '#16A34A15' : '#F0EBE3',
+                      color: t.is_active ? '#16A34A' : '#6B6B6B',
                       padding: '4px 10px',
                       borderRadius: '20px',
                       fontSize: '12px',
                       fontWeight: 600
                     }}>
-                      {cert.is_active ? 'Active' : 'Inactive'}
+                      {t.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td style={{ padding: '13px 16px' }}>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '6px 12px',
-                        borderRadius: '7px',
-                        border: '1px solid #E8E0D8',
-                        backgroundColor: '#ffffff',
-                        color: '#1A1A1A',
-                        fontSize: '12px',
-                        cursor: uploadingId === cert.id ? 'not-allowed' : 'pointer',
-                        opacity: uploadingId === cert.id ? 0.6 : 1
-                      }}>
-                        <Upload size={13} />
-                        {uploadingId === cert.id ? '...' : cert.image_url ? 'Replace' : 'Upload'}
-                        <input
-                          type="file"
-                          accept="application/pdf,image/jpeg,image/png,image/webp"
-                          onChange={(e) => handleFileUpload(cert.id, e)}
-                          disabled={uploadingId === cert.id}
-                          style={{ display: 'none' }}
-                        />
-                      </label>
-
                       <button
-                        onClick={() => openEditForm(cert)}
+                        onClick={() => openEditForm(t)}
                         style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '7px', border: '1px solid #E8E0D8', backgroundColor: '#ffffff', color: '#1A1A1A', fontSize: '12px', cursor: 'pointer' }}
                         onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2563EB'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#2563EB' }}
                         onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.style.color = '#1A1A1A'; e.currentTarget.style.borderColor = '#E8E0D8' }}
@@ -448,11 +402,11 @@ export default function CertificatesPage() {
                       </button>
 
                       <button
-                        onClick={() => handleDelete(cert.id, cert.name)}
-                        disabled={deletingId === cert.id}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '7px', border: '1px solid #FECACA', backgroundColor: '#FEF2F2', color: '#DC2626', fontSize: '12px', cursor: deletingId === cert.id ? 'not-allowed' : 'pointer', opacity: deletingId === cert.id ? 0.6 : 1 }}
+                        onClick={() => handleDelete(t.id, t.name)}
+                        disabled={deletingId === t.id}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '7px', border: '1px solid #FECACA', backgroundColor: '#FEF2F2', color: '#DC2626', fontSize: '12px', cursor: deletingId === t.id ? 'not-allowed' : 'pointer', opacity: deletingId === t.id ? 0.6 : 1 }}
                       >
-                        <Trash2 size={13} /> {deletingId === cert.id ? '...' : 'Delete'}
+                        <Trash2 size={13} /> {deletingId === t.id ? '...' : 'Delete'}
                       </button>
                     </div>
                   </td>
