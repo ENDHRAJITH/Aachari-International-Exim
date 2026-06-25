@@ -53,7 +53,7 @@ export default function HeroRight() {
           "
         >
           <Image
-            src="/spices.png"
+            src="/a1.jpg"
             alt="Premium Spices"
             fill
             className="object-cover"
@@ -97,7 +97,7 @@ export default function HeroRight() {
           "
         >
           <Image
-            src="/electronics.png"
+            src="/a2.jpg"
             alt="Electronics"
             fill
             className="object-cover"
@@ -120,7 +120,7 @@ export default function HeroRight() {
               backdrop-blur-md
             "
           >
-            Electronics
+            Poweder 
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export default function HeroRight() {
           "
         >
           <Image
-            src="/hardware.png"
+            src="/a3.avif"
             alt="Industrial Hardware"
             fill
             className="object-cover"
@@ -165,7 +165,7 @@ export default function HeroRight() {
               backdrop-blur-md
             "
           >
-            Hardware
+            Masala
           </div>
         </div>
       </div>
