@@ -9,15 +9,20 @@ export default function AboutImage() {
         group
         relative
         overflow-hidden
-        rounded-md
+        rounded-xl md:rounded-2xl
         aspect-[4/5]
-        shadow-[0_30px_70px_rgba(42,31,23,0.15)]
+        md:aspect-[4/5]
+        w-full
+        shadow-[0_20px_50px_rgba(42,31,23,0.12)]
+        md:shadow-[0_30px_70px_rgba(42,31,23,0.15)]
       "
     >
       <Image
         src="/about.png"
         alt="Aachari International"
         fill
+        priority
+        sizes="(max-width: 768px) 100vw, 50vw"
         className="
           object-cover
           transition-transform
@@ -27,7 +32,6 @@ export default function AboutImage() {
       />
 
       {/* Light Sweep */}
-
       <div
         className="
           absolute
@@ -44,7 +48,6 @@ export default function AboutImage() {
       />
 
       {/* Overlay */}
-
       <div
         className="
           absolute
@@ -57,20 +60,20 @@ export default function AboutImage() {
       />
 
       {/* Badge */}
-
       <div
         className="
           absolute
-          bottom-6
-          left-6
+          bottom-4 md:bottom-6
+          left-4 md:left-6
           rounded-full
           bg-cream/90
-          px-5
+          px-4 md:px-5
           py-2
           backdrop-blur-md
-          text-[11px]
+          text-[10px] md:text-[11px]
+          font-medium
           uppercase
-          tracking-[0.2em]
+          tracking-[0.15em] md:tracking-[0.2em]
           text-ink
         "
       >
