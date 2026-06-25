@@ -35,10 +35,12 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
 
   const displayed = mode === 'home' ? certificates.slice(0, 3) : certificates
 
+  const dark = mode === 'home'
+
   return (
     <section style={{
-      padding: mode === 'home' ? '64px 24px' : '40px 24px',
-      backgroundColor: mode === 'home' ? '#1A1A1A' : '#F8F7F4'
+      padding: dark ? '64px 24px' : '40px 24px',
+      backgroundColor: dark ? '#1A1A1A' : '#F8F7F4'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
@@ -54,15 +56,15 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
             Certified & Trusted
           </span>
           <h2 style={{
-            fontSize: mode === 'home' ? '28px' : '32px',
+            fontSize: dark ? '28px' : '32px',
             fontWeight: 700,
-            color: mode === 'home' ? '#ffffff' : '#1A1A1A',
-            margin: '8px 0 8px'
+            color: dark ? '#ffffff' : '#1A1A1A',
+            margin: '8px 0'
           }}>
             Our Certifications
           </h2>
           <p style={{
-            color: mode === 'home' ? '#A8A8A8' : '#6B6B6B',
+            color: dark ? '#A8A8A8' : '#6B6B6B',
             fontSize: '14px',
             margin: 0
           }}>
@@ -79,8 +81,8 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
           }}>
             {[1, 2, 3].map((i) => (
               <div key={i} style={{
-                height: '140px',
-                backgroundColor: mode === 'home' ? '#2A2A2A' : '#F0EBE3',
+                height: '160px',
+                backgroundColor: dark ? '#2A2A2A' : '#F0EBE3',
                 borderRadius: '14px',
                 animation: 'pulse 1.5s infinite'
               }} />
@@ -97,9 +99,12 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                 key={cert.id}
                 onClick={() => setSelected(cert)}
                 style={{
-                  backgroundColor: mode === 'home' ? '#242424' : '#ffffff',
+                  // ✅ flex column so footer can be pushed to bottom
+                  display: 'flex',
+                  flexDirection: 'column',
+                  backgroundColor: dark ? '#242424' : '#ffffff',
                   borderRadius: '14px',
-                  border: `1px solid ${mode === 'home' ? '#2A2A2A' : '#E8E0D8'}`,
+                  border: `1px solid ${dark ? '#2A2A2A' : '#E8E0D8'}`,
                   padding: '24px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
@@ -112,7 +117,7 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.borderColor = mode === 'home' ? '#2A2A2A' : '#E8E0D8'
+                  e.currentTarget.style.borderColor = dark ? '#2A2A2A' : '#E8E0D8'
                   e.currentTarget.style.boxShadow = 'none'
                 }}
               >
@@ -125,7 +130,8 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginBottom: '14px'
+                  marginBottom: '14px',
+                  flexShrink: 0
                 }}>
                   <Award size={22} color="#C1622A" />
                 </div>
@@ -134,7 +140,7 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                 <h3 style={{
                   fontSize: '15px',
                   fontWeight: 700,
-                  color: mode === 'home' ? '#ffffff' : '#1A1A1A',
+                  color: dark ? '#ffffff' : '#1A1A1A',
                   margin: '0 0 6px',
                   lineHeight: 1.3
                 }}>
@@ -145,7 +151,7 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                 {cert.issued_by && (
                   <p style={{
                     fontSize: '12px',
-                    color: mode === 'home' ? '#A8A8A8' : '#6B6B6B',
+                    color: dark ? '#A8A8A8' : '#6B6B6B',
                     margin: '0 0 12px',
                     lineHeight: 1.4
                   }}>
@@ -153,22 +159,29 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                   </p>
                 )}
 
+                {/* ✅ spacer pushes footer to bottom regardless of content height */}
+                <div style={{ flex: 1 }} />
+
                 {/* Footer */}
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginTop: 'auto'
+                  paddingTop: '12px',
+                  borderTop: `1px solid ${dark ? '#2A2A2A' : '#F0EBE3'}`
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#16A34A' }} />
-                    <span style={{ fontSize: '11px', color: '#16A34A', fontWeight: 600 }}>Active</span>
+                    <div style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: '#16A34A'
+                    }} />
+                    <span style={{ fontSize: '11px', color: '#16A34A', fontWeight: 600 }}>
+                      Active
+                    </span>
                   </div>
-                  <span style={{
-                    fontSize: '11px',
-                    color: '#C1622A',
-                    fontWeight: 600
-                  }}>
+                  <span style={{ fontSize: '11px', color: '#C1622A', fontWeight: 600 }}>
                     View Details →
                   </span>
                 </div>
@@ -177,7 +190,7 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
           </div>
         )}
 
-        {/* View All button — home mode only */}
+        {/* View All — home mode only */}
         {mode === 'home' && certificates.length > 0 && (
           <div style={{ textAlign: 'center', marginTop: '36px' }}>
             <Link
@@ -192,8 +205,7 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
                 borderRadius: '10px',
                 fontSize: '14px',
                 fontWeight: 600,
-                textDecoration: 'none',
-                transition: 'background 0.15s'
+                textDecoration: 'none'
               }}
             >
               <FileText size={16} />
@@ -203,14 +215,13 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
         )}
       </div>
 
-      {/* Modal */}
       <CertificateModal cert={selected} onClose={() => setSelected(null)} />
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @keyframes fadeInCard {
           from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </section>
