@@ -244,27 +244,29 @@ export default function ProductDetailPage({
             )}
 
             {/* Enquire button — dummy, no action */}
-            <button
-              type="button"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                backgroundColor: '#C1622A',
-                color: '#ffffff',
-                padding: '13px 28px',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: 600,
-                border: 'none',
-                cursor: 'pointer',
-                width: 'fit-content',
-                marginTop: '8px'
-              }}
-            >
-              Enquire Now →
-            </button>
+            <Link href="/contact" style={{ textDecoration: 'none' }}>
+  <button
+    type="button"
+    style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      backgroundColor: '#C1622A',
+      color: '#ffffff',
+      padding: '13px 28px',
+      borderRadius: '10px',
+      fontSize: '15px',
+      fontWeight: 600,
+      border: 'none',
+      cursor: 'pointer',
+      width: 'fit-content',
+      marginTop: '8px'
+    }}
+  >
+    Enquire Now →
+  </button>
+</Link>
           </div>
         </div>
 
