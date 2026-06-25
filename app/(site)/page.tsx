@@ -8,6 +8,7 @@ import Certificates from "@/components/certificates/Certificates";
 import FeaturedProducts from "@/components/products/FeaturedProducts";
 import CertificatesSection from "@/components/certificates/CertificatesSection";
 import HomeAbout from "@/components/About/HomeAbout";
+import InternationalStandards from "@/components/certificates/InternationalStandards";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         <Hero />  
         <HomeAbout />
         <FeaturedProducts />
+        <InternationalStandards/>
         <CertificatesSection mode="home" />
         <Terms/>
         <Contact />

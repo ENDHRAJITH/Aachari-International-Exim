@@ -1,5 +1,6 @@
 import CertificatesHeader from "./CertificatesHeader";
 import CertificateCard from "./CertificateCard";
+import InternationalStandards from "./InternationalStandards";
 
 const certificates = [
   {
@@ -46,6 +47,9 @@ const certificates = [
 
 export default function Certificates() {
   return (
+    <>
+    <InternationalStandards />
+     
     <section
       id="certificates"
       className="
@@ -59,6 +63,8 @@ export default function Certificates() {
       "
     >
       {/* Background Glow Effects */}
+
+       
 
       <div
         className="
@@ -127,5 +133,6 @@ export default function Certificates() {
         </div>
       </div>
     </section>
+    </>
   );
 }
