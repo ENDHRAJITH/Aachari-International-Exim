@@ -23,26 +23,25 @@ export default function AboutContent() {
   ];
 
   return (
-    <div>
+    <div className="w-full">
       {/* Eyebrow */}
-
       <div
         className="
-          mb-5
+          mb-4 sm:mb-5
           flex
           items-center
           gap-3
-          text-[12px]
+          text-[10px] sm:text-[12px]
           font-semibold
           uppercase
-          tracking-[0.32em]
+          tracking-[0.25em] sm:tracking-[0.32em]
           text-saffron-deep
         "
       >
         <span
           className="
             h-px
-            w-8
+            w-6 sm:w-8
             bg-saffron
             animate-pulse
           "
@@ -51,12 +50,14 @@ export default function AboutContent() {
       </div>
 
       {/* Title */}
-
       <h2
         className="
           max-w-[800px]
-          text-[clamp(2.2rem,4vw,3.6rem)]
-          leading-[1.05]
+          text-[2rem]
+          sm:text-[2.6rem]
+          lg:text-[3.6rem]
+          leading-tight
+          lg:leading-[1.05]
           tracking-[-0.02em]
           text-ink
         "
@@ -69,13 +70,12 @@ export default function AboutContent() {
       </h2>
 
       {/* Description */}
-
       <p
         className="
-          mt-8
+          mt-6 sm:mt-8
           max-w-[620px]
-          text-[17px]
-          leading-8
+          text-[15px] sm:text-[17px]
+          leading-7 sm:leading-8
           text-ink-soft
         "
       >
@@ -89,10 +89,10 @@ export default function AboutContent() {
 
       <p
         className="
-          mt-6
+          mt-4 sm:mt-6
           max-w-[620px]
-          text-[17px]
-          leading-8
+          text-[15px] sm:text-[17px]
+          leading-7 sm:leading-8
           text-ink-soft
         "
       >
@@ -103,22 +103,21 @@ export default function AboutContent() {
       </p>
 
       {/* Features */}
-
-      <div className="mt-12 grid gap-5 md:grid-cols-2">
+      <div className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {features.map((feature, index) => (
           <div
             key={feature.title}
             className="
               group
-              rounded-2xl
+              rounded-xl sm:rounded-2xl
               border
               border-black/5
               bg-white/40
-              p-6
+              p-5 sm:p-6
               backdrop-blur-sm
               transition-all
               duration-500
-              hover:-translate-y-2
+              hover:-translate-y-1 sm:hover:-translate-y-2
               hover:border-saffron/20
               hover:shadow-[0_20px_40px_rgba(42,31,23,0.08)]
             "
@@ -129,17 +128,18 @@ export default function AboutContent() {
               animationDelay: `${index * 0.3}s`,
             }}
           >
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-3 sm:gap-4">
               <div
                 className="
                   mt-1
                   flex
-                  h-10
-                  w-10
+                  h-8 w-8
+                  sm:h-10 sm:w-10
                   items-center
                   justify-center
                   rounded-full
                   bg-saffron/10
+                  text-sm sm:text-base
                   text-saffron
                   transition-all
                   duration-300
@@ -153,7 +153,7 @@ export default function AboutContent() {
               <div>
                 <h3
                   className="
-                    text-lg
+                    text-base sm:text-lg
                     font-medium
                     text-ink
                   "
@@ -164,8 +164,8 @@ export default function AboutContent() {
                 <p
                   className="
                     mt-2
-                    text-[15px]
-                    leading-7
+                    text-sm sm:text-[15px]
+                    leading-6 sm:leading-7
                     text-ink-soft
                   "
                 >
