@@ -31,7 +31,7 @@ body {
 
   background-size: 4px 4px;
 
-  cursor: none;
+  
 }
 
 @keyframes slow-spin {
@@ -43,9 +43,7 @@ body {
     transform: rotate(360deg);
   }
 }
-body {
-  cursor: none;
-}
+ 
 
 @keyframes floatA {
   0%,

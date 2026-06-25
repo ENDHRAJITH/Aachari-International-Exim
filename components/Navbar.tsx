@@ -56,14 +56,14 @@ export default function Navbar() {
             <div className="relative h-[48px] w-[48px] lg:h-[56px] lg:w-[56px]">
               <div className="absolute -inset-1 rounded-full border border-dashed border-saffron opacity-40 animate-[slow-spin_14s_linear_infinite]" />
               <div className="relative h-full w-full overflow-hidden rounded-full">
-                <Image
-                  src="/logo.png"
-                  alt="Aachari International"
-                  fill
-                  priority
-                  sizes="56px"
-                  className="object-cover scale-[1.7]"
-                />
+             <Image
+  src="/logo.png"
+  alt="Aachari International"
+  fill
+  priority
+  sizes="56px"
+  className="object-cover scale-[1.7]"
+/>
               </div>
             </div>
             <div>
