@@ -155,23 +155,8 @@ export default function Footer() {
                 </Link>
               </li>
 
-              <li>
-                <Link
-                  href="/logistics"
-                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
-                >
-                  Logistics
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/quality-policy"
-                  className="text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
-                >
-                  Quality Policy
-                </Link>
-              </li>
+              
+ 
             </ul>
           </div>
 
