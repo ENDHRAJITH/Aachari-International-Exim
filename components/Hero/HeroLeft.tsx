@@ -89,7 +89,7 @@ export default function HeroLeft() {
         </Link>
 
         <Link
-          href="#catalogue"
+          href="/catalogue"
           className="flex items-center gap-2 rounded-full border border-ink px-8 py-4 text-[13px] font-medium uppercase tracking-[0.1em] text-ink transition-all duration-300 hover:bg-ink hover:text-white"
         >
           View E-Catalogue
