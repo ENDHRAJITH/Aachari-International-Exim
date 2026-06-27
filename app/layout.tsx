@@ -14,7 +14,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.className} ${interTight.variable}`}
       >
-        <WhatsAppButton />
+         
         
         {children}
       </body>
