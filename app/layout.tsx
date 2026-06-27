@@ -1,5 +1,6 @@
 import "./globals.css";
 import { fraunces, interTight } from "./fonts";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
  
 
@@ -13,7 +14,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.className} ${interTight.variable}`}
       >
-        
+        <WhatsAppButton />
         
         {children}
       </body>
