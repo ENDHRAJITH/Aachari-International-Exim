@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function SiteLayout({
   children
@@ -10,7 +11,9 @@ export default function SiteLayout({
     <>
       <Navbar />
       <main>{children}</main>
+
       <Footer />
+      <WhatsAppButton />
     </>
   )
 }
