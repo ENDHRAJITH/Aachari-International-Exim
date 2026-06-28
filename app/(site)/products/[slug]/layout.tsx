@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 async function getProduct(slug: string) {
   try {
-    const res = await fetch(`https://aachari-international-exim.vercel.app/api/products/${slug}`, { cache: 'no-store' })
+    const res = await fetch(`https://aachariexim.com/api/products/${slug}`, { cache: 'no-store' })
     const data = await res.json()
     return data.success ? data.data : null
   } catch {

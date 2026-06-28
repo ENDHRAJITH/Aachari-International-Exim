@@ -1,9 +1,24 @@
 import { supabase } from '@/lib/supabase'
 import { sendEnquiryEmail } from '@/lib/resend'
+import { enquiryLimiter } from '@/lib/ratelimit'
+import { getIP } from '@/lib/getIP'
 import { NextRequest, NextResponse } from 'next/server'
+
 export const revalidate = 60
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit — 5 enquiries per hour per IP
+    const ip = getIP(request)
+    const { success: allowed } = await enquiryLimiter.limit(ip)
+
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many enquiries. Please try again after 1 hour.' },
+        { status: 429 }
+      )
+    }
+
     const body = await request.json()
 
     const {
@@ -20,6 +35,15 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !message) {
       return NextResponse.json(
         { success: false, error: 'Name, email and message are required' },
+        { status: 400 }
+      )
+    }
+
+    // Basic email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid email address' },
         { status: 400 }
       )
     }
