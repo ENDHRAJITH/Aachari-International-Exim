@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-const BASE_URL = 'https://aachari-international-exim.vercel.app'
+const BASE_URL = 'https://aachariexim.com'
 
 async function getProducts() {
   try {

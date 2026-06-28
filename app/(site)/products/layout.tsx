@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Our Products | Aachari International Exim',
     description: 'Premium quality agricultural products exported from Tamil Nadu, India.',
-    url: 'https://aachari-international-exim.vercel.app/products',
+    url: 'https://aachariexim.com/products',
     siteName: 'Aachari International Exim',
     type: 'website'
   },
   alternates: {
-    canonical: 'https://aachari-international-exim.vercel.app/products'
+    canonical: 'https://aachariexim.com/products'
   }
 }
 

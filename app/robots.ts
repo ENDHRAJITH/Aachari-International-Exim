@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/dashboard', '/api']
       }
     ],
-    sitemap: 'https://aachari-international-exim.vercel.app/sitemap.xml'
+    sitemap: 'https://aachariexim.com/sitemap.xml'
   }
 }
