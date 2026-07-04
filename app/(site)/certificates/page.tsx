@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function CertificatesPage() {
   return (
-    <div style={{ paddingTop: '80px' }}>
+    <div style={{ paddingTop: '80px',marginTop:'20px' }}>
       <CertificatesSection mode="full" />
     </div>
   )

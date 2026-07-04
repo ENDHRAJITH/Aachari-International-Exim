@@ -32,7 +32,7 @@ export default function Hero() {
     "
   >
     <HeroLeft />
-    <HeroRight />
+    {/* <HeroRight /> */}
   </div>
 </section>
   );

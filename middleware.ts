@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── 1. API direct access block ──
-  if (pathname.startsWith('/api/')) {
+  if (pathname.startsWith('//')) {
     const origin = request.headers.get('origin')
     const referer = request.headers.get('referer')
 

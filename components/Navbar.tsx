@@ -12,7 +12,10 @@ const navLinks = [
   { label: "Products", href: "/products" },
   { label: "Certificates", href: "/certificates" },
   { label: "Payment Terms", href: "/payment-terms" },
-  { label: "Contact", href: "/contact" },
+  
+  { label: "FAQ", href: "/faq" }
+   
+
 ];
 
 export default function Navbar() {
@@ -99,7 +102,7 @@ export default function Navbar() {
             href="/contact"
             className="cursor-hover hidden lg:flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-[12px] uppercase tracking-[0.08em] text-cream"
           >
-            📖 REQUEST QUOTE
+             Contact
           </Link>
 
           {/* Mobile Hamburger */}

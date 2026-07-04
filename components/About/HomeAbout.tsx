@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import AboutImage from "./AboutImage";
 import AboutContent from "./AboutContent";
 
 interface Stat {
@@ -52,7 +51,7 @@ export default function HomeAbout() {
       <div className="relative z-10 mx-auto max-w-[1320px]">
         {/* Main Content */}
         <div className="grid items-center gap-20 lg:grid-cols-[0.9fr_1.1fr]">
-          <AboutImage />
+          {/* <AboutImage /> */}
           <AboutContent />
         </div>
 
@@ -76,7 +75,7 @@ export default function HomeAbout() {
             </span>
           </Link>
 
-          {ctaStats.map((stat, idx) => (
+          {/* {ctaStats.map((stat, idx) => (
             <div key={stat.id} className="flex items-center gap-4">
               <div className="h-9 w-px bg-ink/10" />
               <div className="flex flex-col gap-0.5">
@@ -88,7 +87,7 @@ export default function HomeAbout() {
                 </span>
               </div>
             </div>
-          ))}
+          ))} */}
 
         </div>
       </div>

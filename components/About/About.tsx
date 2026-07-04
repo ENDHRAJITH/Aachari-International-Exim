@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import AboutImage from "./AboutImage";
 import AboutContent from "./AboutContent";
 
 export default function About() {
@@ -58,7 +57,7 @@ export default function About() {
             lg:grid-cols-[0.9fr_1.1fr]
           "
         >
-          <AboutImage />
+          {/* <AboutImage /> */}
           <AboutContent />
         </div>
 

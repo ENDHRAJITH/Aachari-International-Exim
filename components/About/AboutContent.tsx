@@ -103,7 +103,7 @@ export default function AboutContent() {
       </p>
 
       {/* Features */}
-      <div className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      {/* <div className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {features.map((feature, index) => (
           <div
             key={feature.title}
@@ -175,7 +175,7 @@ export default function AboutContent() {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
