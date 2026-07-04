@@ -179,7 +179,7 @@ useEffect(() => {
           ))}
         </div>
 
-        <div style={{
+        {/* <div style={{
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
   gap: '20px',
@@ -198,7 +198,7 @@ useEffect(() => {
       </p>
     </div>
   ))}
-</div>
+</div> */}
 
  
       </div>

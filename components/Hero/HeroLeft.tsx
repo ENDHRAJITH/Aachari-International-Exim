@@ -46,12 +46,12 @@ export default function HeroLeft() {
   return (
     <div className="relative z-10 max-w-4xl">
       {/* Premium Eyebrow */}
-      <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-saffron/20 bg-white px-5 py-3 shadow-sm backdrop-blur-sm">
+      {/* <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-saffron/20 bg-white px-5 py-3 shadow-sm backdrop-blur-sm">
         <span className="h-2 w-2 rounded-full bg-saffron animate-pulse" />
         <span className="text-[11px] uppercase tracking-[0.25em] text-ink-soft">
           Crafted in India · Delivered Worldwide
         </span>
-      </div>
+      </div> */}
 
       {/* Main Heading */}
       <h1 className="max-w-[950px] text-[clamp(3.5rem,6vw,5.5rem)] leading-[0.95] tracking-[-0.04em] text-ink">
@@ -97,7 +97,7 @@ export default function HeroLeft() {
       </div>
 
       {/* Stats Cards */}
-      <div className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-3">
+      {/* <div className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-3">
         {displayStats.map((stat) => (
           <div
             key={stat.id}
@@ -114,7 +114,7 @@ export default function HeroLeft() {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

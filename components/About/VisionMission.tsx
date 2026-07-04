@@ -1,11 +1,11 @@
 'use client'
 
-import { Target, Rocket, ShieldCheck, Handshake, Leaf, Zap } from 'lucide-react'
+import { Target, Rocket, ShieldCheck, Handshake, Leaf, Zap,EyeIcon, Phone } from 'lucide-react'
 
 export default function VisionMission() {
   const cards = [
     {
-      icon: Target,
+      icon: EyeIcon,
       title: 'Our Vision',
       content: 'To establish a legacy where trust is earned, quality is expected, and relationships are valued.'
     },
@@ -16,12 +16,12 @@ export default function VisionMission() {
     }
   ]
 
-  const values = [
-    { icon: ShieldCheck, title: 'Quality First', desc: 'Every product undergoes strict quality checks before export.' },
-    { icon: Handshake, title: 'Trust & Transparency', desc: 'Honest pricing and clear communication with every buyer.' },
-    { icon: Leaf, title: 'Sustainability', desc: 'Supporting sustainable farming practices across Tamil Nadu.' },
-    { icon: Zap, title: 'Reliability', desc: 'On-time delivery and consistent supply for long-term partnerships.' }
-  ]
+ const values = [
+  { icon: ShieldCheck, title: 'Quality First', desc: 'Every product undergoes strict quality checks before export.' },
+  { icon: Handshake, title: 'Trust & Transparency', desc: 'Honest pricing and clear communication with every buyer.' },
+  { icon: Phone, title: '24/7 Support', desc: 'Round-the-clock support for all your export queries and requirements.' },
+  { icon: Zap, title: 'Reliability', desc: 'On-time delivery and consistent supply for long-term partnerships.' }
+]
 
   return (
     <section style={{ padding: '64px 24px', backgroundColor: '#ffffff' }}>
@@ -121,7 +121,7 @@ export default function VisionMission() {
             color: '#1A1A1A',
             margin: 0
           }}>
-            Our Core Values
+            Why Aachari?
           </h2>
         </div>
 

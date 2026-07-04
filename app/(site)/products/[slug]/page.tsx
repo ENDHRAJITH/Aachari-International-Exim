@@ -389,7 +389,7 @@ export default function ProductDetailPage({
               </button>
 
               
-            <a    href={`https://wa.me/919080619919?text=${encodeURIComponent(`Hi, I'm interested in ${product.name}. Please share more details.`)}`}
+            <a    href={`https://wa.me/917305982029?text=${encodeURIComponent(`Hi, I'm interested in ${product.name}. Please share more details.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

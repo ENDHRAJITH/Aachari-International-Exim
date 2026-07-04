@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import AboutFull from '@/components/About/AboutFull'
+import TradeNetwork from '@/components/TradeNetwork'
 
 export const metadata: Metadata = {
   title: 'About Us | Aachari International Exim',
@@ -16,8 +17,9 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div style={{ paddingTop: '80px' }}>
+    <div style={{ paddingTop: '80px' ,marginTop:'20px'}}>
       <AboutFull />
+      <TradeNetwork/>
     </div>
   )
 }

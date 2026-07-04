@@ -9,21 +9,22 @@ import FeaturedProducts from "@/components/products/FeaturedProducts";
 import CertificatesSection from "@/components/certificates/CertificatesSection";
 import HomeAbout from "@/components/About/HomeAbout";
 import InternationalStandards from "@/components/certificates/InternationalStandards";
+import TradeNetworkLoader from "@/components/TradeNetworkLoader";
+import LocationSection from "@/components/LocationSection";
+import FAQ from "@/components/FAQ/FAQ";
 
 export default function Home() {
   return (
     <>
-        
-
       <main>
-        <Hero />  
+        <Hero />
         <HomeAbout />
         <FeaturedProducts />
-        <InternationalStandards/>
-        <CertificatesSection mode="home" />
-        <Terms/>
+        <TradeNetworkLoader />
+        <FAQ />
+        <InternationalStandards />
         <Contact />
-        
+        <LocationSection />
       </main>
     </>
   );

@@ -1,6 +1,6 @@
 "use client";
 export default function WhatsAppButton() {
-  const phone = '919080619919' // Country code + number (no +)
+  const phone = '917305982029' // Country code + number (no +)
   const message = 'Hi, I am interested in your export products. Please share more details.'
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
