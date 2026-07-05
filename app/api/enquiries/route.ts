@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { supabase, supabaseAdmin } from '@/lib/supabase'
 import { sendEnquiryEmail } from '@/lib/resend'
 import { enquiryLimiter } from '@/lib/ratelimit'
 import { getIP } from '@/lib/getIP'
@@ -8,7 +8,6 @@ export const revalidate = 60
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limit — 5 enquiries per hour per IP
     const ip = getIP(request)
     const { success: allowed } = await enquiryLimiter.limit(ip)
 
@@ -31,7 +30,6 @@ export async function POST(request: NextRequest) {
       message
     } = body
 
-    // Validation
     if (!name || !email || !message) {
       return NextResponse.json(
         { success: false, error: 'Name, email and message are required' },
@@ -39,7 +37,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Basic email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -48,15 +45,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get product name for email
     const { data: product } = await supabase
       .from('products')
       .select('name')
       .eq('id', product_id)
       .single()
 
-    // Save to database
-    const { data, error } = await supabase
+    // Save to database — using supabaseAdmin to bypass RLS on insert+select
+    const { data, error } = await supabaseAdmin
       .from('enquiries')
       .insert({
         product_id: product_id || null,
@@ -78,7 +74,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Send email notification
     await sendEnquiryEmail({
       name,
       email,

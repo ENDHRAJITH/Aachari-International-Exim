@@ -1,8 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
+  const [typedText, setTypedText] = useState("");
+  const fullText = "Where Quality Leads";
+
+  useEffect(() => {
+    let index = 0;
+    let typingInterval: NodeJS.Timeout;
+    let pauseTimeout: NodeJS.Timeout;
+
+    const startTyping = () => {
+      index = 0;
+      setTypedText("");
+      typingInterval = setInterval(() => {
+        if (index < fullText.length) {
+          setTypedText(fullText.slice(0, index + 1));
+          index++;
+        } else {
+          clearInterval(typingInterval);
+          pauseTimeout = setTimeout(() => {
+            startTyping();
+          }, 2000);
+        }
+      }, 90);
+    };
+
+    startTyping();
+
+    return () => {
+      clearInterval(typingInterval);
+      clearTimeout(pauseTimeout);
+    };
+  }, []);
+
   return (
     <footer
       className="
@@ -24,6 +57,22 @@ export default function Footer() {
             "radial-gradient(circle at 15% 25%, rgba(217,121,38,.15), transparent 35%)",
         }}
       />
+
+      {/* Auto-typing Tagline */}
+      <div className="relative z-10 flex justify-center mb-14">
+        <h4
+          className="
+            text-[1.4rem]
+            lg:text-[1.8rem]
+            font-medium
+            tracking-[0.02em]
+            text-cream
+          "
+        >
+          {typedText}
+          <span className="inline-block w-[2px] h-[1em] bg-saffron ml-1 align-middle animate-[blink_0.8s_step-end_infinite]" />
+        </h4>
+      </div>
 
       <div className="relative z-10 max-w-[1320px] mx-auto">
         {/* Top Section */}
@@ -213,7 +262,7 @@ export default function Footer() {
                 </p>
 
                 
-                 <a href="tel:+917305982029"
+                <a  href="tel:+917305982029"
                   className="mt-1 block text-[0.9rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   +91 73059 82029
@@ -226,7 +275,7 @@ export default function Footer() {
                 </p>
 
                 
-              <a    href="mailto:aachariinternationaleximpvtltd@gmail.com"
+                  <a href="mailto:aachariinternationaleximpvtltd@gmail.com"
                   className="mt-1 block break-all text-[0.88rem] text-cream/70 hover:text-saffron transition-colors"
                 >
                   aachariinternationaleximpvtltd@gmail.com

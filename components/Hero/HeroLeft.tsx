@@ -45,31 +45,22 @@ export default function HeroLeft() {
 
   return (
     <div className="relative z-10 max-w-4xl">
-      {/* Premium Eyebrow */}
-      {/* <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-saffron/20 bg-white px-5 py-3 shadow-sm backdrop-blur-sm">
-        <span className="h-2 w-2 rounded-full bg-saffron animate-pulse" />
-        <span className="text-[11px] uppercase tracking-[0.25em] text-ink-soft">
-          Crafted in India · Delivered Worldwide
-        </span>
-      </div> */}
-
       {/* Main Heading */}
-      <h1 className="max-w-[950px] text-[clamp(3.5rem,6vw,5.5rem)] leading-[0.95] tracking-[-0.04em] text-ink">
+      <h1 className="max-w-[950px] text-[clamp(3.5rem,6vw,5.5rem)] font-bold leading-[0.95] tracking-[-0.04em] text-black">
         Where{" "}
-        <span className="italic font-light text-saffron">
-          heritage
+        <span className="italic font-bold text-saffron">
+          Quality
         </span>{" "}
-        meets{" "}
         <span className="relative inline-block">
-          <span className="relative z-10 font-medium">
-            global trade.
+          <span className="relative z-10 font-bold">
+            Leads
           </span>
-          <span className="absolute bottom-[0.12em] left-0 right-0 h-[0.22em] bg-saffron/15 -z-0 rounded-full" />
+          <span className="absolute bottom-[0.12em] left-0 right-0 h-[0.22em] bg-saffron/25 -z-0 rounded-full" />
         </span>
       </h1>
 
       {/* Description */}
-      <p className="mt-8 max-w-[620px] font-[var(--font-body)] text-[17px] leading-8 text-ink-soft">
+      <p className="mt-8 max-w-[620px] font-[var(--font-body)] text-[17px] font-medium leading-8 text-black/80">
         Aachari International Exim is a trusted partner for premium
         exports and imports, connecting Indian craftsmanship with
         world-class hardware, electronics, and spices to buyers
@@ -79,7 +70,7 @@ export default function HeroLeft() {
       {/* Buttons */}
       <div className="mt-10 flex flex-wrap gap-4">
         <Link
-          href="/products"
+          href="#map"
           className="group flex items-center gap-2 rounded-full bg-saffron px-8 py-4 text-[13px] font-medium uppercase tracking-[0.1em] text-white shadow-[0_12px_30px_rgba(217,121,38,0.25)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(217,121,38,0.35)]"
         >
           Explore Our Range
@@ -90,7 +81,7 @@ export default function HeroLeft() {
 
         <Link
           href="/catalogue"
-          className="flex items-center gap-2 rounded-full border border-ink px-8 py-4 text-[13px] font-medium uppercase tracking-[0.1em] text-ink transition-all duration-300 hover:bg-ink hover:text-white"
+          className="flex items-center gap-2 rounded-full border border-white px-8 py-4 text-[13px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-300 hover:bg-white hover:text-ink"
         >
           View E-Catalogue
         </Link>

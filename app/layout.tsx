@@ -1,6 +1,7 @@
 import "./globals.css";
 import { fraunces, interTight } from "./fonts";
 import type { Metadata } from 'next'
+import ScrollPlane from "@/components/ScrollPlane";
 
 export const metadata: Metadata = {
   title: {
@@ -54,6 +55,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${fraunces.className} ${interTight.variable}`}>
         {children}
+         
       </body>
     </html>
   );

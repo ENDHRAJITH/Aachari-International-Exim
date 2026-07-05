@@ -217,7 +217,67 @@ export default function ContactInfo() {
             </div>
           </div>
         </li>
+{/* Working Hours */}
+<li
+  className="
+    flex
+    items-start
+    gap-[18px]
+    border-b
+    border-black/[0.08]
+    py-[18px]
+  "
+>
+  <div
+    className="
+      grid
+      h-[44px]
+      w-[44px]
+      shrink-0
+      place-items-center
+      rounded-[12px]
+      bg-ink
+      text-cream
+    "
+  >
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  </div>
 
+  <div>
+    <div
+      className="
+        mb-1
+        text-[0.72rem]
+        uppercase
+        tracking-[0.18em]
+        text-ink-soft
+      "
+    >
+      Working Hours
+    </div>
+
+    <div
+      className="
+        font-[var(--font-display)]
+        text-[1.1rem]
+        font-medium
+        text-ink
+      "
+    >
+      Mon - Sat : 09.00 am - 06.00 pm
+    </div>
+  </div>
+</li>
         {/* CIN */}
         <li
           className="

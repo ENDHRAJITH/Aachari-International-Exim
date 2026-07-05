@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div style={{ paddingTop: '80px' ,marginTop:'20px'}}>
+    <div style={{  marginTop:'20px'}}>
       <AboutFull />
       <TradeNetwork/>
     </div>
