@@ -23,15 +23,20 @@ body {
   background-color: var(--color-cream);
   color: var(--color-ink);
 
-  background-image:
-    radial-gradient(
-      rgba(42, 31, 23, 0.03) 1px,
-      transparent 1px
-    );
-
-  background-size: 4px 4px;
-
+}
+*{
+  scrolling-behavior: smooth;
+}
+/* Hide native scrollbar completely */
+html {
+  scrollbar-width: none; /* Firefox */
+   
+  -ms-overflow-style: none; /* IE/Edge */
   
+}
+
+::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge (Webkit) */
 }
 
 @keyframes slow-spin {

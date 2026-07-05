@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { X, Menu } from "lucide-react";
+import CurrencyMarquee from "./CurrencyMarquee";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -12,10 +13,7 @@ const navLinks = [
   { label: "Products", href: "/products" },
   { label: "Certificates", href: "/certificates" },
   { label: "Payment Terms", href: "/payment-terms" },
-  
-  { label: "FAQ", href: "/faq" }
-   
-
+  { label: "FAQ", href: "/faq" },
 ];
 
 export default function Navbar() {
@@ -29,15 +27,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close menu on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when menu open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   const isActive = (href: string) => {
@@ -47,26 +45,35 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled ? "bg-cream/90 backdrop-blur-xl py-4" : "bg-transparent py-6"
-        }`}
-      >
-        <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-6 lg:px-10">
-          
+ <header
+  className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+    scrolled
+      ? "bg-cream/40 backdrop-blur-xl border-b border-white/20"
+      : "bg-transparent"
+  }`}
+>
+        {/* Marquee - always pinned to the very top */}
+        <CurrencyMarquee />
+
+        {/* Nav - own padding, independent of marquee */}
+        <nav
+          className={`mx-auto flex max-w-[1400px] items-center justify-between px-6 lg:px-10 transition-all duration-500 ${
+            scrolled ? "py-4" : "py-6"
+          }`}
+        >
           {/* Logo */}
           <Link href="/" className="cursor-hover flex items-center gap-3">
             <div className="relative h-[48px] w-[48px] lg:h-[56px] lg:w-[56px]">
               <div className="absolute -inset-1 rounded-full border border-dashed border-saffron opacity-40 animate-[slow-spin_14s_linear_infinite]" />
               <div className="relative h-full w-full overflow-hidden rounded-full">
-             <Image
-  src="/logo.png"
-  alt="Aachari International"
-  fill
-  priority
-  sizes="56px"
-  className="object-cover scale-[1.7]"
-/>
+                <Image
+                  src="/logo.png"
+                  alt="Aachari International"
+                  fill
+                  priority
+                  sizes="56px"
+                  className="object-cover scale-[1.7]"
+                />
               </div>
             </div>
             <div>
@@ -102,7 +109,7 @@ export default function Navbar() {
             href="/contact"
             className="cursor-hover hidden lg:flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-[12px] uppercase tracking-[0.08em] text-cream"
           >
-             Contact
+            Contact
           </Link>
 
           {/* Mobile Hamburger */}
@@ -131,7 +138,6 @@ export default function Navbar() {
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Drawer Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.06]">
           <div>
             <p className="text-[13px] font-semibold text-ink">Menu</p>
@@ -148,7 +154,6 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Drawer Links */}
         <div className="flex flex-col px-4 py-6 gap-1 flex-1">
           {navLinks.map((item, idx) => (
             <Link
@@ -172,14 +177,13 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Drawer CTA */}
         <div className="px-4 pb-8">
           <Link
             href="/contact"
             onClick={() => setMobileOpen(false)}
             className="flex items-center justify-center gap-2 w-full rounded-xl bg-ink text-cream py-4 text-[13px] uppercase tracking-[0.08em] font-medium"
           >
-            📖 Request Quote
+            Contact
           </Link>
           <p className="text-center text-[11px] text-ink-soft mt-4">
             Aachari International Exim Pvt Ltd
