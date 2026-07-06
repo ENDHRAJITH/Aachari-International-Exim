@@ -63,24 +63,23 @@ export default function Navbar() {
         >
           {/* Logo */}
           <Link href="/" className="cursor-hover flex items-center gap-3">
-            <div className="relative h-[48px] w-[48px] lg:h-[56px] lg:w-[56px]">
-              <div className="absolute -inset-1 rounded-full border border-dashed border-saffron opacity-40 animate-[slow-spin_14s_linear_infinite]" />
+            <div className="relative h-[56px] w-[56px] lg:h-[64px] lg:w-[64px]">
+              <div className="absolute -inset-1 rounded-full border border-dashed border-saffron opacity-80 animate-[slow-spin_14s_linear_infinite]" />
               <div className="relative h-full w-full overflow-hidden rounded-full">
-                <Image
-                  src="/logo.png"
-                  alt="Aachari International"
-                  fill
-                  priority
-                  sizes="56px"
-                  className="object-cover scale-[1.7]"
-                />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Aachari International"
+                fill
+                priority
+                className="object-cover scale-[1.7]"
+              />
+            </div>
             </div>
             <div>
-              <h2 className="text-[15px] lg:text-[18px] font-semibold leading-none text-ink">
+              <h2 className="text-[18px] lg:text-[22px] font-semibold leading-none text-ink">
                 Aachari International
               </h2>
-              <p className="mt-1 text-[9px] lg:text-[10px] uppercase tracking-[0.3em] text-ink-soft">
+              <p className="mt-1 text-[12px] lg:text-[14px] uppercase tracking-[0.3em] text-ink-soft">
                 EXIM PVT LTD
               </p>
             </div>
