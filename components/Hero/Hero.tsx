@@ -38,7 +38,7 @@ export default function Hero() {
   }, [currentIndex])
 
   return (
-    <section className="relative min-h-screen overflow-hidden px-6 lg:px-12 pt-[140px] pb-20">
+    <section className="relative min-h-screen overflow-hidden px-6 lg:px-12 pt-[180px] pb-20">
 
      <div style={{ position: "absolute", inset: 0, zIndex: -1, backgroundColor: "#f7f1e3" }}>
         <video
