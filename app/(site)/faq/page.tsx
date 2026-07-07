@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function FAQPage() {
   return (
-    <div style={{ paddingTop: '80px',marginTop:'20px' }}>
+    <div style={{  }}>
       <FAQ />
     </div>
   )

@@ -46,7 +46,7 @@ export default function FAQ() {
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px',marginTop: '150px'}}>
           <span style={{
             fontSize: '13px', color: '#C1622A',
             fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px'

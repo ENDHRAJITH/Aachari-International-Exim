@@ -160,11 +160,18 @@ export default function HomeAbout() {
         </h2>
 
         {/* Lead paragraph */}
-        <p className="mt-8 max-w-[720px] text-[19px] leading-8 text-ink-soft">
-          Welcome to <span className="font-medium text-ink">Aachari International Exim Pvt. Ltd.</span>,
-          an Indian export company with over a decade of domestic market experience,
-          connecting global buyers with quality products through reliable international trade.
-        </p>
+           <p className="mt-8 max-w-[720px] text-[19px] leading-8"
+  style={{
+    color: '#000000',
+    fontWeight: 700,
+  }}
+>
+  Welcome to
+    Aachari International Exim Pvt. Ltd.
+     
+  an Indian export company with over a decade of domestic market experience,
+  connecting global buyers with quality products through reliable international trade.
+</p>
 
         {/* Carousel - box with 3 sliding cards + left-side dots */}
         <div className="mt-14 flex items-stretch gap-5 max-w-[600px]">

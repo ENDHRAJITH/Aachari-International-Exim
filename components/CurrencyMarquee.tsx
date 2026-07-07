@@ -1,22 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import "flag-icons/css/flag-icons.min.css";
 
 interface RateItem {
   code: string;
-  flag: string;
+  flagClass: string;
   rate: number;
 }
 
 const CURRENCIES = [
-  { code: "USD", flag: "🇺🇸", name: "US Dollar" },
-  { code: "EUR", flag: "🇪🇺", name: "Euro" },
-  { code: "GBP", flag: "🇬🇧", name: "British Pound" },
-  { code: "AED", flag: "🇦🇪", name: "UAE Dirham" },
-  { code: "SGD", flag: "🇸🇬", name: "Singapore Dollar" },
-  { code: "AUD", flag: "🇦🇺", name: "Australian Dollar" },
-  { code: "SAR", flag: "🇸🇦", name: "Saudi Riyal" },
-  { code: "JPY", flag: "🇯🇵", name: "Japanese Yen" },
+  { code: "USD", flagClass: "fi-us", name: "US Dollar" },
+  { code: "EUR", flagClass: "fi-eu", name: "Euro" },
+  { code: "GBP", flagClass: "fi-gb", name: "British Pound" },
+  { code: "AED", flagClass: "fi-ae", name: "UAE Dirham" },
+  { code: "SGD", flagClass: "fi-sg", name: "Singapore Dollar" },
+  { code: "AUD", flagClass: "fi-au", name: "Australian Dollar" },
+  { code: "SAR", flagClass: "fi-sa", name: "Saudi Riyal" },
+  { code: "JPY", flagClass: "fi-jp", name: "Japanese Yen" },
 ];
 
 export default function CurrencyMarquee() {
@@ -25,15 +26,16 @@ export default function CurrencyMarquee() {
   useEffect(() => {
     const fetchRates = async () => {
       try {
-        const codes = CURRENCIES.map((c) => c.code).join(",");
-        const res = await fetch(
-          `https://api.frankfurter.dev/v1/latest?base=INR&symbols=${codes}`
-        );
+        const res = await fetch(`https://open.er-api.com/v6/latest/INR`);
         const data = await res.json();
+
+        if (data.result !== "success") {
+          throw new Error("Rate API returned an error");
+        }
 
         const list: RateItem[] = CURRENCIES.map((c) => ({
           code: c.code,
-          flag: c.flag,
+          flagClass: c.flagClass,
           rate: data.rates?.[c.code] ? 1 / data.rates[c.code] : 0,
         })).filter((r) => r.rate > 0);
 
@@ -94,7 +96,7 @@ export default function CurrencyMarquee() {
             color: "#eafff0",
           }}
         >
-          LIVE
+          UPDATED DAILY
         </span>
       </div>
 
@@ -122,7 +124,15 @@ export default function CurrencyMarquee() {
                 letterSpacing: "0.02em",
               }}
             >
-              <span>{item.flag}</span>
+              <span
+                className={`fi ${item.flagClass}`}
+                style={{
+                  borderRadius: "2px",
+                  width: "18px",
+                  height: "13px",
+                  boxShadow: "0 0 0 1px rgba(255,255,255,0.15)",
+                }}
+              />
               <span style={{ opacity: 0.85 }}>1 {item.code}</span>
               <span style={{ opacity: 0.6 }}>=</span>
               <span style={{ fontWeight: 700, color: "#ffe4c7" }}>

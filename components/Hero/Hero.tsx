@@ -59,7 +59,7 @@ export default function Hero() {
         </video>
 
         {/* Gradient overlay - light, edges only */}
-        <div
+        {/* <div
           style={{
             position: "absolute",
             inset: 0,
@@ -73,19 +73,19 @@ export default function Hero() {
               )
             `,
           }}
-        />
+        /> */}
 
         {/* Orange glow */}
-        <div
+        {/* <div
           style={{
             position: "absolute",
             inset: 0,
             background: `radial-gradient(ellipse at 80% 50%, rgba(193,98,42,0.1) 0%, transparent 60%)`,
           }}
-        />
+        /> */}
 
         {/* Bottom fade */}
-        <div
+        {/* <div
           style={{
             position: "absolute",
             bottom: 0,
@@ -94,18 +94,26 @@ export default function Hero() {
             height: "20px",
             background: "linear-gradient(to top, rgba(245,237,224,1) 0%, rgba(245,237,224,0.6) 40%, transparent 100%)",
           }}
-        />
+        /> */}
 
         {/* Left fade - text readability */}
-        <div
+        {/* <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(90deg, rgba(245,237,224,0.55) 0%, rgba(245,237,224,0.15) 35%, transparent 60%)",
+          }}
+        /> */}
+      </div>
+      
+ <div
           style={{
             position: "absolute",
             inset: 0,
             background: "linear-gradient(90deg, rgba(245,237,224,0.55) 0%, rgba(245,237,224,0.15) 35%, transparent 60%)",
           }}
         />
-      </div>
-
+       
       {/* Dots */}
       <div style={{
         position: 'absolute',
