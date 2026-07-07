@@ -19,6 +19,69 @@ interface ProductImage {
   sort_order: number
 }
 
+const inputStyle = {
+  width: '100%',
+  padding: '11px 14px',
+  borderRadius: '9px',
+  border: '1.5px solid #E8E0D8',
+  fontSize: '14px',
+  outline: 'none',
+  backgroundColor: '#FAFAF8',
+  color: '#1A1A1A',
+  transition: 'border-color 0.15s'
+}
+
+const labelStyle = {
+  fontSize: '13px',
+  color: '#1A1A1A',
+  fontWeight: 600,
+  display: 'block',
+  marginBottom: '6px'
+}
+
+const focusHandlers = {
+  onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    e.target.style.borderColor = '#C1622A'
+    e.target.style.backgroundColor = '#ffffff'
+  },
+  onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    e.target.style.borderColor = '#E8E0D8'
+    e.target.style.backgroundColor = '#FAFAF8'
+  }
+}
+
+// ✅ Moved outside the component — stable reference across re-renders
+const SectionCard = ({
+  icon: Icon,
+  title,
+  subtitle,
+  children
+}: { icon: any; title: string; subtitle: string; children: React.ReactNode }) => (
+  <div style={{
+    backgroundColor: '#ffffff',
+    borderRadius: '12px',
+    border: '1px solid #E8E0D8',
+    padding: '22px',
+    marginBottom: '16px'
+  }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+      <div style={{
+        backgroundColor: '#C1622A15',
+        borderRadius: '8px',
+        padding: '8px',
+        display: 'flex'
+      }}>
+        <Icon size={16} color="#C1622A" />
+      </div>
+      <div>
+        <p style={{ fontSize: '14px', fontWeight: 600, color: '#1A1A1A', margin: 0 }}>{title}</p>
+        <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{subtitle}</p>
+      </div>
+    </div>
+    {children}
+  </div>
+)
+
 export default function EditProductPage({
   params
 }: {
@@ -254,68 +317,6 @@ export default function EditProductPage({
     }
   }
 
-  const inputStyle = {
-    width: '100%',
-    padding: '11px 14px',
-    borderRadius: '9px',
-    border: '1.5px solid #E8E0D8',
-    fontSize: '14px',
-    outline: 'none',
-    backgroundColor: '#FAFAF8',
-    color: '#1A1A1A',
-    transition: 'border-color 0.15s'
-  }
-
-  const labelStyle = {
-    fontSize: '13px',
-    color: '#1A1A1A',
-    fontWeight: 600,
-    display: 'block',
-    marginBottom: '6px'
-  }
-
-  const focusHandlers = {
-    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      e.target.style.borderColor = '#C1622A'
-      e.target.style.backgroundColor = '#ffffff'
-    },
-    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      e.target.style.borderColor = '#E8E0D8'
-      e.target.style.backgroundColor = '#FAFAF8'
-    }
-  }
-
-  const SectionCard = ({
-    icon: Icon,
-    title,
-    subtitle,
-    children
-  }: { icon: any; title: string; subtitle: string; children: React.ReactNode }) => (
-    <div style={{
-      backgroundColor: '#ffffff',
-      borderRadius: '12px',
-      border: '1px solid #E8E0D8',
-      padding: '22px',
-      marginBottom: '16px'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-        <div style={{
-          backgroundColor: '#C1622A15',
-          borderRadius: '8px',
-          padding: '8px',
-          display: 'flex'
-        }}>
-          <Icon size={16} color="#C1622A" />
-        </div>
-        <div>
-          <p style={{ fontSize: '14px', fontWeight: 600, color: '#1A1A1A', margin: 0 }}>{title}</p>
-          <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{subtitle}</p>
-        </div>
-      </div>
-      {children}
-    </div>
-  )
-
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
@@ -338,6 +339,7 @@ export default function EditProductPage({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
+            type="button"
             onClick={() => router.push('/dashboard/products')}
             style={{
               background: '#ffffff',
@@ -485,6 +487,7 @@ export default function EditProductPage({
                 {...focusHandlers}
               />
               <button
+                type="button"
                 onClick={() => removeSpec(index)}
                 style={{
                   padding: '9px',
@@ -505,6 +508,7 @@ export default function EditProductPage({
         </div>
 
         <button
+          type="button"
           onClick={addSpec}
           style={{
             display: 'flex',
@@ -527,7 +531,7 @@ export default function EditProductPage({
         </button>
       </SectionCard>
 
-      {/* Images — NEW SECTION */}
+      {/* Images */}
       <SectionCard icon={ImageIcon} title="Product Images" subtitle="Upload up to 5 images — first image is shown on cards">
 
         {/* Upload button */}
@@ -593,7 +597,6 @@ export default function EditProductPage({
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
 
-                {/* Primary badge */}
                 {img.is_primary && (
                   <span style={{
                     position: 'absolute',
@@ -614,7 +617,6 @@ export default function EditProductPage({
                   </span>
                 )}
 
-                {/* Action buttons */}
                 <div style={{
                   position: 'absolute',
                   bottom: '6px',
@@ -624,6 +626,7 @@ export default function EditProductPage({
                 }}>
                   {!img.is_primary && (
                     <button
+                      type="button"
                       onClick={() => handleSetPrimary(img.id)}
                       title="Set as primary"
                       style={{
@@ -643,6 +646,7 @@ export default function EditProductPage({
                     </button>
                   )}
                   <button
+                    type="button"
                     onClick={() => handleDeleteImage(img.id)}
                     disabled={deletingImageId === img.id}
                     title="Delete image"
@@ -672,6 +676,7 @@ export default function EditProductPage({
       {/* Actions */}
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
         <button
+          type="button"
           onClick={() => router.push('/dashboard/products')}
           style={{
             padding: '11px 22px',
@@ -687,6 +692,7 @@ export default function EditProductPage({
           Cancel
         </button>
         <button
+          type="button"
           onClick={handleSubmit}
           disabled={saving}
           style={{

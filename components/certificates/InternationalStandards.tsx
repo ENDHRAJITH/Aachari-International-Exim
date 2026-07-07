@@ -1,6 +1,8 @@
 'use client'
 
 import { Globe } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { motion, type Variants } from 'framer-motion'
 
 const standards = [
   { label: 'European Standards' },
@@ -9,7 +11,27 @@ const standards = [
   { label: 'Middle-East Standards' },
 ]
 
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12
+    }
+  }
+}
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  }
+}
+
 export default function InternationalStandards() {
+  const router = useRouter()
+
   return (
     <section style={{
       padding: '64px 24px',
@@ -18,7 +40,13 @@ export default function InternationalStandards() {
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ textAlign: 'center', marginBottom: '40px' }}
+        >
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -44,17 +72,38 @@ export default function InternationalStandards() {
           }}>
             We Provide International Standards
           </h2>
-        </div>
+        </motion.div>
 
         {/* Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '20px'
-        }}>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '20px'
+          }}
+        >
           {standards.map((std) => (
-            <div
+            <motion.div
               key={std.label}
+              variants={cardVariants}
+              role="button"
+              tabIndex={0}
+              onClick={() => router.push('/contact')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  router.push('/contact')
+                }
+              }}
+              whileHover={{
+                y: -6,
+                borderColor: '#C1622A',
+                boxShadow: '0 12px 32px rgba(193,98,42,0.15)'
+              }}
+              whileTap={{ scale: 0.97 }}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -63,32 +112,26 @@ export default function InternationalStandards() {
                 borderRadius: '14px',
                 border: '1px solid #2A2A2A',
                 padding: '32px 20px',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.borderColor = '#C1622A'
-                e.currentTarget.style.boxShadow = '0 12px 32px rgba(193,98,42,0.15)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.borderColor = '#2A2A2A'
-                e.currentTarget.style.boxShadow = 'none'
+                cursor: 'pointer'
               }}
             >
-              <div style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '50%',
-                backgroundColor: '#C1622A15',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '16px',
-                flexShrink: 0
-              }}>
+              <motion.div
+                whileHover={{ rotate: 15, scale: 1.1 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+                style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '50%',
+                  backgroundColor: '#C1622A15',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '16px',
+                  flexShrink: 0
+                }}
+              >
                 <Globe size={24} color="#C1622A" />
-              </div>
+              </motion.div>
               <p style={{
                 fontSize: '15px',
                 fontWeight: 700,
@@ -98,9 +141,9 @@ export default function InternationalStandards() {
               }}>
                 {std.label}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

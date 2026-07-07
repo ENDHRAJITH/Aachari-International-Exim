@@ -63,15 +63,15 @@ export default function Navbar() {
         >
           {/* Logo */}
           <Link href="/" className="cursor-hover flex items-center gap-3">
-            <div className="relative h-[56px] w-[56px] lg:h-[64px] lg:w-[64px]">
+            <div className="relative h-[56px] w-[56px] lg:h-[90px] lg:w-[90px]">
               <div className="absolute -inset-1 rounded-full border border-dashed border-saffron opacity-80 animate-[slow-spin_14s_linear_infinite]" />
               <div className="relative h-full w-full overflow-hidden rounded-full">
               <Image
-                src="/logo.png"
+                src="/123.jpeg"
                 alt="Aachari International"
                 fill
                 priority
-                className="object-cover scale-[1.7]"
+                className="object-cover scale-[1]"
               />
             </div>
             </div>

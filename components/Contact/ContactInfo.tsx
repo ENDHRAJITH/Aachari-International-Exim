@@ -1,17 +1,7 @@
 export default function ContactInfo() {
   return (
     <div>
-      <h3
-        className="
-          mb-5
-          font-[var(--font-display)]
-          text-[1.8rem]
-          font-medium
-          text-ink
-        "
-      >
-        Visit, write, or call — we reply within 24 hours.
-      </h3>
+     
 
       <p
         className="

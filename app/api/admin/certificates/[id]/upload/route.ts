@@ -1,4 +1,4 @@
- import { supabaseAdmin } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 import cloudinary from '@/lib/cloudinary'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -36,12 +36,16 @@ export async function POST(
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Cloudinary upload — resource_type auto detects PDF vs image
+    // IMPORTANT: PDF-ku 'raw' explicit-a set pannanum
+    // 'auto' use panna Cloudinary sometimes PDF-a image nu treat pannudhu,
+    // adhu than image/upload path-la poidudhu (restricted by default)
+    const isPdf = file.type === 'application/pdf'
+
     const uploadResult = await new Promise<any>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           folder: `aachari/certificates/${id}`,
-          resource_type: 'auto'
+          resource_type: isPdf ? 'raw' : 'image'
         },
         (error, result) => {
           if (error) reject(error)
