@@ -3,6 +3,7 @@
 import { X, Wrench, AlertTriangle } from 'lucide-react'
 
 interface PdfViewerProps {
+  fileUrl?: string // 💡 மாற்றம்: TypeScript எர்ரரைத் தவிர்க்க இதை விருப்பத்தேர்வாக (Optional) அனுமதித்துள்ளோம்
   name: string
   onClose: () => void
 }
@@ -40,7 +41,7 @@ export default function PdfViewer({ name, onClose }: PdfViewerProps) {
           width: '90%',
           maxWidth: '460px',
           backgroundColor: '#161616',
-          border: '1px solid rgba(244, 93, 6, 0.2)', // Saffron tint border
+          border: '1px solid rgba(244, 93, 6, 0.2)',
           borderRadius: '24px',
           zIndex: 1002,
           overflow: 'hidden',
@@ -116,7 +117,7 @@ export default function PdfViewer({ name, onClose }: PdfViewerProps) {
             color: 'rgba(255,255,255,0.5)',
             fontSize: '12px',
             textTransform: 'uppercase',
-             
+            letterSpacing: '0.15em',
             fontWeight: 600,
             marginBottom: '6px',
           }}
@@ -157,7 +158,7 @@ export default function PdfViewer({ name, onClose }: PdfViewerProps) {
             padding: '14px',
             borderRadius: '14px',
             border: 'none',
-            background: '#F45D06', // Saffron color
+            background: '#F45D06',
             color: '#fff',
             fontSize: '14px',
             fontWeight: 600,
