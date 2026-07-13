@@ -47,7 +47,7 @@ export default function ProductsPage() {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '120px 24px 40px' }}>
-      <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#1A1A1A', marginBottom: '8px' }}>
+      <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#1A1A1A', marginBottom: '8px', marginTop:'70px'}}>
         Our Products
       </h1>
       <p style={{ color: '#6B6B6B', marginBottom: '28px' }}>

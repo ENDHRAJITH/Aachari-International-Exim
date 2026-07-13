@@ -45,7 +45,7 @@ export default function CertificatesSection({ mode = 'full' }: CertificatesSecti
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' ,marginTop:'100px'}}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' ,marginTop:'120px'}}>
           <span style={{
             fontSize: '13px',
             color: '#C1622A',

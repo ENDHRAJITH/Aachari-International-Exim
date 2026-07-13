@@ -252,7 +252,7 @@ export default function Footer() {
 
                 <p className="mt-1 text-[0.88rem] leading-7 text-cream/70">
                   No. 15, 5th Street, A N Kandigai, Palanipet,
-                  Arakkonam, Vellore District, Tamil Nadu – 631002.
+                  Arakkonam, Ranipet District, Tamil Nadu – 631002.
                 </p>
               </div>
 

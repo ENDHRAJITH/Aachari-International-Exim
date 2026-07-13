@@ -1,8 +1,6 @@
 export default function ContactInfo() {
   return (
     <div>
-     
-
       <p
         className="
           max-w-[520px]
@@ -53,16 +51,47 @@ export default function ContactInfo() {
           </div>
 
           <div>
-            <div
-              className="
-                mb-1
-                text-[0.72rem]
-                uppercase
-                tracking-[0.18em]
-                text-ink-soft
-              "
-            >
-              Head Office
+            {/* ஹெட் ஆபீஸ் லேபல் மற்றும் பிரம்மாண்டமான சைஸ் இந்தியக் கொடி */}
+            <div className="mb-5 flex flex-col gap-2.5">
+              <div
+                className="
+                  text-[0.72rem]
+                  uppercase
+                  tracking-[0.18em]
+                  text-ink-soft
+                "
+              >
+                Head Office
+              </div>
+              
+              {/* நீங்கள் கேட்ட துல்லியமான சைஸ்: Width: 300px, Height: 150px */}
+              <div className="w-[300px] h-[150px] rounded-lg overflow-hidden border border-black/[0.1] shadow-lg select-none bg-white">
+                <svg viewBox="0 0 90 45" width="100%" height="100%">
+                  {/* 2:3 ரேஷியோ மூவண்ணக் கோடுகள் (ஒவ்வொன்றும் 15px உயரம்) */}
+                  <rect width="90" height="15" fill="#FF9933" />
+                  <rect y="15" width="90" height="15" fill="#FFFFFF" />
+                  <rect y="30" width="90" height="15" fill="#128807" />
+                  
+                  {/* அசோகச் சக்கரம் (சரியான 24 ஆரங்கள் மற்றும் 22.5px சென்டர் பாயிண்ட்) */}
+                  <g transform="translate(45, 22.5)">
+                    <circle r="6.5" fill="none" stroke="#000080" strokeWidth="0.7" />
+                    <circle r="1.2" fill="#000080" />
+                    {/* 24 ஆரங்கள் துல்லியமாக 15 டிகிரி கோணத்தில் பிரிக்கப்பட்டுள்ளது */}
+                    {[...Array(24)].map((_, i) => (
+                      <line
+                        key={i}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="-6.5"
+                        stroke="#000080"
+                        strokeWidth="0.3"
+                        transform={`rotate(${i * 15})`}
+                      />
+                    ))}
+                  </g>
+                </svg>
+              </div>
             </div>
 
             <div
@@ -77,7 +106,7 @@ export default function ContactInfo() {
               <br />
               A N Kandigai, Palanipet,
               <br />
-              Arakkonam, Vellore District,
+              Arakkonam, Ranipet District,
               <br />
               Tamil Nadu - 631002
             </div>
@@ -207,67 +236,69 @@ export default function ContactInfo() {
             </div>
           </div>
         </li>
-{/* Working Hours */}
-<li
-  className="
-    flex
-    items-start
-    gap-[18px]
-    border-b
-    border-black/[0.08]
-    py-[18px]
-  "
->
-  <div
-    className="
-      grid
-      h-[44px]
-      w-[44px]
-      shrink-0
-      place-items-center
-      rounded-[12px]
-      bg-ink
-      text-cream
-    "
-  >
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  </div>
 
-  <div>
-    <div
-      className="
-        mb-1
-        text-[0.72rem]
-        uppercase
-        tracking-[0.18em]
-        text-ink-soft
-      "
-    >
-      Working Hours
-    </div>
+        {/* Working Hours */}
+        <li
+          className="
+            flex
+            items-start
+            gap-[18px]
+            border-b
+            border-black/[0.08]
+            py-[18px]
+          "
+        >
+          <div
+            className="
+              grid
+              h-[44px]
+              w-[44px]
+              shrink-0
+              place-items-center
+              rounded-[12px]
+              bg-ink
+              text-cream
+            "
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
 
-    <div
-      className="
-        font-[var(--font-display)]
-        text-[1.1rem]
-        font-medium
-        text-ink
-      "
-    >
-      Mon - Sat : 09.00 am - 06.00 pm
-    </div>
-  </div>
-</li>
+          <div>
+            <div
+              className="
+                mb-1
+                text-[0.72rem]
+                uppercase
+                tracking-[0.18em]
+                text-ink-soft
+              "
+            >
+              Working Hours
+            </div>
+
+            <div
+              className="
+                font-[var(--font-display)]
+                text-[1.1rem]
+                font-medium
+                text-ink
+              "
+            >
+              Mon - Sat : 09.00 am - 06.00 pm
+            </div>
+          </div>
+        </li>
+
         {/* CIN */}
         <li
           className="
