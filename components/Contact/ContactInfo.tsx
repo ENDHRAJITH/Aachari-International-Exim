@@ -50,7 +50,7 @@ export default function ContactInfo() {
             </svg>
           </div>
 
-          <div>
+          <div className="min-w-0 flex-1">
             {/* ஹெட் ஆபீஸ் லேபல் மற்றும் பிரம்மாண்டமான சைஸ் இந்தியக் கொடி */}
             <div className="mb-5 flex flex-col gap-2.5">
               <div
@@ -64,19 +64,18 @@ export default function ContactInfo() {
                 Head Office
               </div>
               
-              {/* நீங்கள் கேட்ட துல்லியமான சைஸ்: Width: 300px, Height: 150px */}
-              <div className="w-[300px] h-[150px] rounded-lg overflow-hidden border border-black/[0.1] shadow-lg select-none bg-white">
+              {/* 💡 மொபைலில் ரெஸ்பான்சிவாக மாற max-w-full மற்றும் aspect ratio சேர்க்கப்பட்டுள்ளது */}
+              <div className="w-[300px] max-w-full aspect-[2/1] rounded-lg overflow-hidden border border-black/[0.1] shadow-lg select-none bg-white">
                 <svg viewBox="0 0 90 45" width="100%" height="100%">
-                  {/* 2:3 ரேஷியோ மூவண்ணக் கோடுகள் (ஒவ்வொன்றும் 15px உயரம்) */}
+                  {/* 2:3 ரேஷியோ மூவண்ணக் கோடுகள் */}
                   <rect width="90" height="15" fill="#FF9933" />
                   <rect y="15" width="90" height="15" fill="#FFFFFF" />
                   <rect y="30" width="90" height="15" fill="#128807" />
                   
-                  {/* அசோகச் சக்கரம் (சரியான 24 ஆரங்கள் மற்றும் 22.5px சென்டர் பாயிண்ட்) */}
+                  {/* அசோகச் சக்கரம் */}
                   <g transform="translate(45, 22.5)">
                     <circle r="6.5" fill="none" stroke="#000080" strokeWidth="0.7" />
                     <circle r="1.2" fill="#000080" />
-                    {/* 24 ஆரங்கள் துல்லியமாக 15 டிகிரி கோணத்தில் பிரிக்கப்பட்டுள்ளது */}
                     {[...Array(24)].map((_, i) => (
                       <line
                         key={i}
