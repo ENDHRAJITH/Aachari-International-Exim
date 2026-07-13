@@ -3,18 +3,19 @@
 import { X, Wrench, AlertTriangle } from 'lucide-react'
 
 interface PdfViewerProps {
-  fileUrl?: string // 💡 மாற்றம்: TypeScript எர்ரரைத் தவிர்க்க இதை விருப்பத்தேர்வாக (Optional) அனுமதித்துள்ளோம்
+  fileUrl?: string // 💡 பேரண்ட் ஃபைலில் இருந்து வரும் எர்ரரைத் தவிர்க்க இது மிக முக்கியம்
   name: string
   onClose: () => void
 }
 
-export default function PdfViewer({ name, onClose }: PdfViewerProps) {
+// 💡 இங்கேயும் fileUrl-ஐ உள்ளே வாங்கிக் கொள்கிறோம் (ஆனால் கீழே எதற்கும் பயன்படுத்தப் போவதில்லை)
+export default function PdfViewer({ fileUrl, name, onClose }: PdfViewerProps) {
   return (
     <>
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
-          to   { opacity: 1; transform: translate(-50%, -55%) scale(1); }
+          to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
       `}</style>
 
@@ -51,7 +52,7 @@ export default function PdfViewer({ name, onClose }: PdfViewerProps) {
           textAlign: 'center',
           padding: '32px 24px',
           boxShadow: '0 24px 60px rgba(0,0,0,0.8), 0 0 80px rgba(244, 93, 6, 0.05)',
-          animation: 'fadeIn 0.3s cubic-bezier(0.34, 1.4, 0.64, 1) forwards',
+          animation: 'fadeIn 0.3s cubic-bezier(0.34, 1.5, 0.64, 1) forwards',
         }}
       >
         {/* Close Button */}
