@@ -65,32 +65,51 @@ export default function ContactInfo() {
               </div>
               
               {/* 💡 மொபைலில் ரெஸ்பான்சிவாக மாற max-w-full மற்றும் aspect ratio சேர்க்கப்பட்டுள்ளது */}
-              <div className="w-[300px] max-w-full aspect-[2/1] rounded-lg overflow-hidden border border-black/[0.1] shadow-lg select-none bg-white">
-                <svg viewBox="0 0 90 45" width="100%" height="100%">
-                  {/* 2:3 ரேஷியோ மூவண்ணக் கோடுகள் */}
-                  <rect width="90" height="15" fill="#FF9933" />
-                  <rect y="15" width="90" height="15" fill="#FFFFFF" />
-                  <rect y="30" width="90" height="15" fill="#128807" />
-                  
-                  {/* அசோகச் சக்கரம் */}
-                  <g transform="translate(45, 22.5)">
-                    <circle r="6.5" fill="none" stroke="#000080" strokeWidth="0.7" />
-                    <circle r="1.2" fill="#000080" />
-                    {[...Array(24)].map((_, i) => (
-                      <line
-                        key={i}
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="-6.5"
-                        stroke="#000080"
-                        strokeWidth="0.3"
-                        transform={`rotate(${i * 15})`}
-                      />
-                    ))}
-                  </g>
-                </svg>
-              </div>
+              <div
+  className="
+    w-[180px]
+    sm:w-[220px]
+    md:w-[260px]
+    lg:w-[300px]
+    max-w-full
+    aspect-[2/1]
+    rounded-lg
+    overflow-hidden
+    border border-black/10
+    shadow-lg
+    select-none
+    bg-white
+  "
+>
+  <svg
+    viewBox="0 0 90 45"
+    className="w-full h-full"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    {/* Tricolor */}
+    <rect width="90" height="15" fill="#FF9933" />
+    <rect y="15" width="90" height="15" fill="#FFFFFF" />
+    <rect y="30" width="90" height="15" fill="#128807" />
+
+    {/* Ashoka Chakra */}
+    <g transform="translate(45, 22.5)">
+      <circle r="6.5" fill="none" stroke="#000080" strokeWidth="0.7" />
+      <circle r="1.2" fill="#000080" />
+      {[...Array(24)].map((_, i) => (
+        <line
+          key={i}
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="-6.5"
+          stroke="#000080"
+          strokeWidth="0.3"
+          transform={`rotate(${i * 15})`}
+        />
+      ))}
+    </g>
+  </svg>
+</div>
             </div>
 
             <div
