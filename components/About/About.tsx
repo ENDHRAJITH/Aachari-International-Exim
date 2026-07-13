@@ -36,7 +36,7 @@ const PRODUCTS = [
 
 const STORY_TEXT = "Our Story";
 
-export default function About() {
+export default function HomeAbout() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -104,54 +104,57 @@ export default function About() {
   const loopProducts = [...PRODUCTS, ...PRODUCTS];
 
   return (
-   <section id="about" className="relative overflow-hidden mt-25 px-6 pt-30 pb-28 lg:px-12 lg:pt-20 lg:pb-32">
+    <section id="about" className="relative overflow-hidden px-6 py-24 mt-25 lg:px-12">
+
       {/* Video banner */}
-      <div className="relative mx-auto max-w-[1320px] mb-16 h-[420px] lg:h-[560px] overflow-hidden rounded-3xl">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            opacity: fading ? 0 : 0.9,
-            transition: "opacity 0.8s ease",
-          }}
-        >
-          <source src={videos[currentIndex]} type="video/mp4" />
-        </video>
+    {/* Video banner */}
+<div className="relative mx-auto max-w-[1320px] mb-16 h-[420px] lg:h-[560px] overflow-hidden rounded-3xl">
+  <video
+    ref={videoRef}
+    autoPlay
+    muted
+    playsInline
+    preload="auto"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      opacity: fading ? 0 : 0.9,
+      transition: "opacity 0.8s ease",
+    }}
+  >
+    <source src={videos[currentIndex]} type="video/mp4" />
+  </video>
 
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(180deg, rgba(20,12,6,0.05) 0%, rgba(20,12,6,0.15) 45%, rgba(20,12,6,0.75) 100%)",
-          }}
-        />
+  <div
+    style={{
+      position: "absolute",
+      inset: 0,
+      background: "linear-gradient(180deg, rgba(20,12,6,0.05) 0%, rgba(20,12,6,0.15) 45%, rgba(20,12,6,0.75) 100%)",
+    }}
+  />
 
-        <div className="absolute bottom-0 left-0 right-0 px-8 pb-10 lg:px-12 lg:pb-14">
-          <h2
-            className="text-[clamp(2rem,5vw,3.6rem)] font-black tracking-[-0.02em]"
-            style={{ color: "#F45D06" }}
-          >
-            {typed}
-            <span
-              style={{
-                display: "inline-block",
-                width: "3px",
-                height: "0.9em",
-                marginLeft: "4px",
-                backgroundColor: "#F45D06",
-                verticalAlign: "-0.1em",
-                animation: "blinkCaret 0.8s step-end infinite",
-              }}
-            />
-          </h2>
-        </div>
-      </div>
+  {/* மாற்றப்பட்ட பகுதி: இப்போ இது Center-Bottom-ல் இருக்கும் */}
+  <div className="absolute bottom-0 left-0 right-0 px-8 pb-10 lg:px-12 lg:pb-14 flex justify-center text-center">
+    <h2
+      className="text-[clamp(2rem,5vw,3.6rem)] font-black tracking-[-0.02em]"
+      style={{ color: "#F45D06" }}
+    >
+      {typed}
+      <span
+        style={{
+          display: "inline-block",
+          width: "3px",
+          height: "0.9em",
+          marginLeft: "4px",
+          backgroundColor: "#F45D06",
+          verticalAlign: "-0.1em",
+          animation: "blinkCaret 0.8s step-end infinite",
+        }}
+      />
+    </h2>
+  </div>
+</div>
 
       <div className="relative z-10 mx-auto max-w-[1100px]">
         {/* Eyebrow */}
@@ -180,109 +183,112 @@ export default function About() {
           international trade.
         </p>
 
-        {/* Hover-expand accordion */}
-<div className="mt-14 flex items-stretch gap-4" style={{ height: "420px" }}>
-  {CARDS.map((card, idx) => {
-    const active = idx === activeIndex;
-    return (
-      <div
-        key={idx}
-        onMouseEnter={() => setActiveIndex(idx)}
-        onMouseLeave={() => setActiveIndex(0)}
-        className="relative overflow-hidden cursor-pointer rounded-[24px]"
-        style={{
-          flex: active ? 2.6 : 1,
-          transition: "flex 0.6s cubic-bezier(0.65,0,0.35,1)",
-          backgroundColor: "#ff7322",
-        }}
-      >
-        {active && (
-          <div
-            className="pointer-events-none absolute inset-0 rounded-[24px]"
-            style={{ animation: "cardPulse 2.4s ease-in-out infinite" }}
-          />
-        )}
-
-        <div
-          className="relative h-full flex flex-col p-7"
-          style={{
-            alignItems: active ? "flex-start" : "center",
-            justifyContent: active ? "flex-start" : "center",
-            textAlign: active ? "left" : "center",
-          }}
+        {/* Responsive Accordion - Mobile: Vertical (Col) | Desktop: Horizontal (Row) */}
+        <div 
+          className="mt-14 flex flex-col lg:flex-row items-stretch gap-4" 
+          style={{ minHeight: "420px" }}
         >
-          {/* Heading pill — white bg, green live dot, font size grows on active */}
-          <div
-            className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white"
-            style={{
-              marginBottom: active ? "16px" : "0",
-              maxWidth: "100%",
-              transition: "padding 0.4s ease",
-            }}
-          >
-            {active && (
-              <span className="relative flex items-center justify-center shrink-0" style={{ width: "10px", height: "10px" }}>
-                <span
-                  className="absolute inline-flex h-full w-full rounded-full"
-                  style={{
-                    backgroundColor: "#22C55E",
-                    animation: "liveWave 1.6s ease-out infinite",
-                  }}
-                />
-                <span
-                  className="relative inline-flex rounded-full shrink-0"
-                  style={{
-                    width: "8px",
-                    height: "8px",
-                    backgroundColor: "#22C55E",
-                  }}
-                />
-              </span>
-            )}
-            <h3
-              className="font-black leading-tight whitespace-nowrap"
-              style={{
-                color: "#1A1A1A",
-                fontSize: active ? "18px" : "13px",
-                transition: "font-size 0.4s ease",
-              }}
-            >
-              {card.title}
-            </h3>
-          </div>
+          {CARDS.map((card, idx) => {
+            const active = idx === activeIndex;
+            return (
+              <div
+                key={idx}
+                onMouseEnter={() => setActiveIndex(idx)}
+                onClick={() => setActiveIndex(idx)}
+                className="relative overflow-hidden cursor-pointer rounded-[24px]"
+                style={{
+                  flex: active ? 2.6 : 1,
+                  transition: "flex 0.6s cubic-bezier(0.65,0,0.35,1)",
+                  backgroundColor: "#ff7322",
+                }}
+              >
+                {active && (
+                  <div
+                    className="pointer-events-none absolute inset-0 rounded-[24px]"
+                    style={{ animation: "cardPulse 2.4s ease-in-out infinite" }}
+                  />
+                )}
 
-          {/* Inactive state — simple animated accent line under the pill, orange theme */}
-          {!active && (
-            <div
-              style={{
-                marginTop: "14px",
-                width: "36px",
-                height: "3px",
-                borderRadius: "999px",
-                backgroundColor: "rgba(255,255,255,0.6)",
-                animation: "lineGrow 2.2s ease-in-out infinite",
-              }}
-            />
-          )}
+                <div
+                  className="relative h-full flex flex-col p-7 transition-all duration-500"
+                  style={{
+                    alignItems: active ? "flex-start" : "center",
+                    justifyContent: active ? "flex-start" : "center",
+                    textAlign: active ? "left" : "center",
+                  }}
+                >
+                  {/* Heading pill */}
+                  <div
+                    className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white"
+                    style={{
+                      marginBottom: active ? "16px" : "0",
+                      maxWidth: "100%",
+                      transition: "padding 0.4s ease",
+                    }}
+                  >
+                    {active && (
+                      <span className="relative flex items-center justify-center shrink-0" style={{ width: "10px", height: "10px" }}>
+                        <span
+                          className="absolute inline-flex h-full w-full rounded-full"
+                          style={{
+                            backgroundColor: "#22C55E",
+                            animation: "liveWave 1.6s ease-out infinite",
+                          }}
+                        />
+                        <span
+                          className="relative inline-flex rounded-full shrink-0"
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            backgroundColor: "#22C55E",
+                          }}
+                        />
+                      </span>
+                    )}
+                    <h3
+                      className="font-black leading-tight whitespace-nowrap"
+                      style={{
+                        color: "#1A1A1A",
+                        fontSize: active ? "18px" : "13px",
+                        transition: "font-size 0.4s ease",
+                      }}
+                    >
+                      {card.title}
+                    </h3>
+                  </div>
 
-          {active && (
-            <p
-              className="text-[17px] lg:text-[18px] leading-8 font-medium"
-              style={{
-                color: "rgba(255,255,255,0.95)",
-                animation: "fadeInText 0.5s ease 0.15s both",
-              }}
-            >
-              {card.text}
-            </p>
-          )}
+                  {/* Inactive state line */}
+                  {!active && (
+                    <div
+                      style={{
+                        marginTop: "14px",
+                        width: "36px",
+                        height: "3px",
+                        borderRadius: "999px",
+                        backgroundColor: "rgba(255,255,255,0.6)",
+                        animation: "lineGrow 2.2s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+
+                  {active && (
+                    <p
+                      className="text-[17px] lg:text-[18px] leading-8 font-medium"
+                      style={{
+                        color: "rgba(255,255,255,0.95)",
+                        animation: "fadeInText 0.5s ease 0.15s both",
+                      }}
+                    >
+                      {card.text}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
-    );
-  })}
-</div>
-        {/* CTA */}
         
+       
 
         {/* Animated Product Marquee */}
         <div
@@ -314,10 +320,10 @@ export default function About() {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
-          @keyframes lineGrow {
-  0%, 100% { width: 36px; opacity: 0.6; }
-  50% { width: 64px; opacity: 1; }
-}
+        @keyframes lineGrow {
+          0%, 100% { width: 36px; opacity: 0.6; }
+          50% { width: 64px; opacity: 1; }
+        }
         @keyframes cardPulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
           50% { box-shadow: 0 0 0 8px rgba(0,0,0,0); }
