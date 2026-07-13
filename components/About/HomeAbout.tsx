@@ -8,17 +8,6 @@ const videos = [
   "https://res.cloudinary.com/ddwphfegj/video/upload/q_auto/v1783272029/13887533_1920_1080_24fps_kzd1ui.mp4",
 ];
 
-const PRODUCTS = [
-  "Organic Agro Products",
-  "Fresh Fruits & Vegetables",
-  "Food Powders",
-  "Bakery Products",
-  "Ready-to-Eat Foods",
-  "Handicrafts",
-  "Knitted Garments",
-  "Woven Garments",
-];
-
 const CARDS = [
   {
     title: "Where We Started",
@@ -34,12 +23,25 @@ const CARDS = [
   },
 ];
 
+const PRODUCTS = [
+  "Organic Agro Products",
+  "Fresh Fruits & Vegetables",
+  "Food Powders",
+  "Bakery Products",
+  "Ready-to-Eat Foods",
+  "Handicrafts",
+  "Knitted Garments",
+  "Woven Garments",
+];
+
+const STORY_TEXT = "Our Story";
+
 export default function HomeAbout() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const [cardIndex, setCardIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [typed, setTyped] = useState("");
 
   useEffect(() => {
     const video = videoRef.current;
@@ -64,84 +66,95 @@ export default function HomeAbout() {
     video.play().catch(() => {});
   }, [currentIndex]);
 
-  // Auto-slide cards every 4s
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCardIndex((prev) => (prev + 1) % CARDS.length);
-    }, 4000);
-    return () => clearInterval(interval);
+    let i = 0;
+    let deleting = false;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      if (!deleting) {
+        i++;
+        setTyped(STORY_TEXT.slice(0, i));
+        if (i === STORY_TEXT.length) {
+          timeout = setTimeout(() => {
+            deleting = true;
+            tick();
+          }, 1400);
+          return;
+        }
+        timeout = setTimeout(tick, 130);
+      } else {
+        i--;
+        setTyped(STORY_TEXT.slice(0, i));
+        if (i === 0) {
+          timeout = setTimeout(() => {
+            deleting = false;
+            tick();
+          }, 500);
+          return;
+        }
+        timeout = setTimeout(tick, 70);
+      }
+    };
+
+    timeout = setTimeout(tick, 400);
+    return () => clearTimeout(timeout);
   }, []);
 
   const loopProducts = [...PRODUCTS, ...PRODUCTS];
 
   return (
     <section id="about" className="relative overflow-hidden px-6 py-24 lg:px-12">
-      {/* Video Background - same style as Hero */}
-      <div style={{ position: "absolute", inset: 0, zIndex: 0, backgroundColor: "#f7f1e3" }}>
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            opacity: fading ? 0 : 0.85,
-            transition: "opacity 0.8s ease",
-          }}
-        >
-          <source src={videos[currentIndex]} type="video/mp4" />
-        </video>
 
-        {/* Gradient overlay - light, edges only */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `
-              linear-gradient(
-                135deg,
-                rgba(245,237,224,0.35) 0%,
-                rgba(245,237,224,0.15) 30%,
-                rgba(193,98,42,0.08) 65%,
-                rgba(61,35,20,0.15) 100%
-              )
-            `,
-          }}
-        />
+      {/* Video banner */}
+    {/* Video banner */}
+<div className="relative mx-auto max-w-[1320px] mb-16 h-[420px] lg:h-[560px] overflow-hidden rounded-3xl">
+  <video
+    ref={videoRef}
+    autoPlay
+    muted
+    playsInline
+    preload="auto"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      opacity: fading ? 0 : 0.9,
+      transition: "opacity 0.8s ease",
+    }}
+  >
+    <source src={videos[currentIndex]} type="video/mp4" />
+  </video>
 
-        {/* Orange glow */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `radial-gradient(ellipse at 80% 50%, rgba(193,98,42,0.1) 0%, transparent 60%)`,
-          }}
-        />
+  <div
+    style={{
+      position: "absolute",
+      inset: 0,
+      background: "linear-gradient(180deg, rgba(20,12,6,0.05) 0%, rgba(20,12,6,0.15) 45%, rgba(20,12,6,0.75) 100%)",
+    }}
+  />
 
-        {/* Bottom fade */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "260px",
-            background: "linear-gradient(to top, rgba(245,237,224,1) 0%, rgba(245,237,224,0.6) 40%, transparent 100%)",
-          }}
-        />
-
-        {/* Left fade - text readability */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(90deg, rgba(245,237,224,0.55) 0%, rgba(245,237,224,0.15) 35%, transparent 60%)",
-          }}
-        />
-      </div>
+  {/* மாற்றப்பட்ட பகுதி: இப்போ இது Center-Bottom-ல் இருக்கும் */}
+  <div className="absolute bottom-0 left-0 right-0 px-8 pb-10 lg:px-12 lg:pb-14 flex justify-center text-center">
+    <h2
+      className="text-[clamp(2rem,5vw,3.6rem)] font-black tracking-[-0.02em]"
+      style={{ color: "#F45D06" }}
+    >
+      {typed}
+      <span
+        style={{
+          display: "inline-block",
+          width: "3px",
+          height: "0.9em",
+          marginLeft: "4px",
+          backgroundColor: "#F45D06",
+          verticalAlign: "-0.1em",
+          animation: "blinkCaret 0.8s step-end infinite",
+        }}
+      />
+    </h2>
+  </div>
+</div>
 
       <div className="relative z-10 mx-auto max-w-[1100px]">
         {/* Eyebrow */}
@@ -160,80 +173,121 @@ export default function HomeAbout() {
         </h2>
 
         {/* Lead paragraph */}
-           <p className="mt-8 max-w-[720px] text-[19px] leading-8"
-  style={{
-    color: '#000000',
-    fontWeight: 700,
-  }}
->
-  Welcome to
-    Aachari International Exim Pvt. Ltd.
-     
-  an Indian export company with over a decade of domestic market experience,
-  connecting global buyers with quality products through reliable international trade.
-</p>
+        <p
+          className="mt-8 max-w-[720px] text-[19px] leading-8"
+          style={{ color: "#000000", fontWeight: 700 }}
+        >
+          Welcome to Aachari International Exim Pvt. Ltd. — an Indian export
+          company with over a decade of domestic market experience,
+          connecting global buyers with quality products through reliable
+          international trade.
+        </p>
 
-        {/* Carousel - box with 3 sliding cards + left-side dots */}
-        <div className="mt-14 flex items-stretch gap-5 max-w-[600px]">
-          {/* Left side dots */}
-          <div className="flex flex-col items-center justify-center gap-3">
-            {CARDS.map((_, idx) => (
-              <button
+        {/* Responsive Accordion - Mobile: Vertical (Col) | Desktop: Horizontal (Row) */}
+        <div 
+          className="mt-14 flex flex-col lg:flex-row items-stretch gap-4" 
+          style={{ minHeight: "420px" }}
+        >
+          {CARDS.map((card, idx) => {
+            const active = idx === activeIndex;
+            return (
+              <div
                 key={idx}
-                onClick={() => setCardIndex(idx)}
-                aria-label={`Go to card ${idx + 1}`}
+                onMouseEnter={() => setActiveIndex(idx)}
+                onClick={() => setActiveIndex(idx)}
+                className="relative overflow-hidden cursor-pointer rounded-[24px]"
                 style={{
-                  width: idx === cardIndex ? "8px" : "8px",
-                  height: idx === cardIndex ? "24px" : "8px",
-                  borderRadius: "999px",
-                  backgroundColor: idx === cardIndex ? "#C1622A" : "rgba(193,98,42,0.3)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  border: "none",
+                  flex: active ? 2.6 : 1,
+                  transition: "flex 0.6s cubic-bezier(0.65,0,0.35,1)",
+                  backgroundColor: "#ff7322",
                 }}
-              />
-            ))}
-          </div>
+              >
+                {active && (
+                  <div
+                    className="pointer-events-none absolute inset-0 rounded-[24px]"
+                    style={{ animation: "cardPulse 2.4s ease-in-out infinite" }}
+                  />
+                )}
 
-          {/* Carousel box */}
-          <div
-            className="relative flex-1 overflow-hidden rounded-3xl border border-black/5 bg-white/70 backdrop-blur-sm shadow-[0_16px_50px_rgba(0,0,0,0.08)]"
-            style={{ minHeight: "220px" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                width: `${CARDS.length * 100}%`,
-                height: "100%",
-                transform: `translateX(-${(cardIndex * 100) / CARDS.length}%)`,
-                transition: "transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)",
-              }}
-            >
-              {CARDS.map((card, idx) => (
                 <div
-                  key={idx}
-                  className="p-8 flex flex-col justify-center"
-                  style={{ width: `${100 / CARDS.length}%`, flexShrink: 0 }}
+                  className="relative h-full flex flex-col p-7 transition-all duration-500"
+                  style={{
+                    alignItems: active ? "flex-start" : "center",
+                    justifyContent: active ? "flex-start" : "center",
+                    textAlign: active ? "left" : "center",
+                  }}
                 >
-                  <div className="flex items-center gap-2 mb-4">
-                    <span
-                      className="w-2 h-2 rounded-full bg-saffron"
+                  {/* Heading pill */}
+                  <div
+                    className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white"
+                    style={{
+                      marginBottom: active ? "16px" : "0",
+                      maxWidth: "100%",
+                      transition: "padding 0.4s ease",
+                    }}
+                  >
+                    {active && (
+                      <span className="relative flex items-center justify-center shrink-0" style={{ width: "10px", height: "10px" }}>
+                        <span
+                          className="absolute inline-flex h-full w-full rounded-full"
+                          style={{
+                            backgroundColor: "#22C55E",
+                            animation: "liveWave 1.6s ease-out infinite",
+                          }}
+                        />
+                        <span
+                          className="relative inline-flex rounded-full shrink-0"
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            backgroundColor: "#22C55E",
+                          }}
+                        />
+                      </span>
+                    )}
+                    <h3
+                      className="font-black leading-tight whitespace-nowrap"
                       style={{
-                        boxShadow: "0 0 0 4px rgba(193,98,42,0.15)",
-                        animation: "dotPulse 2s ease-in-out infinite",
+                        color: "#1A1A1A",
+                        fontSize: active ? "18px" : "13px",
+                        transition: "font-size 0.4s ease",
                       }}
-                    />
-                    <h3 className="text-[13px] uppercase tracking-[0.2em] text-saffron-deep font-medium">
+                    >
                       {card.title}
                     </h3>
                   </div>
-                  <p className="text-[15.5px] leading-7 text-ink-soft">{card.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
+                  {/* Inactive state line */}
+                  {!active && (
+                    <div
+                      style={{
+                        marginTop: "14px",
+                        width: "36px",
+                        height: "3px",
+                        borderRadius: "999px",
+                        backgroundColor: "rgba(255,255,255,0.6)",
+                        animation: "lineGrow 2.2s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+
+                  {active && (
+                    <p
+                      className="text-[17px] lg:text-[18px] leading-8 font-medium"
+                      style={{
+                        color: "rgba(255,255,255,0.95)",
+                        animation: "fadeInText 0.5s ease 0.15s both",
+                      }}
+                    >
+                      {card.text}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
         {/* CTA */}
         <div className="mt-12">
           <Link
@@ -277,9 +331,25 @@ export default function HomeAbout() {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
-        @keyframes dotPulse {
-          0%, 100% { box-shadow: 0 0 0 4px rgba(193,98,42,0.15); }
-          50% { box-shadow: 0 0 0 7px rgba(193,98,42,0.08); }
+        @keyframes lineGrow {
+          0%, 100% { width: 36px; opacity: 0.6; }
+          50% { width: 64px; opacity: 1; }
+        }
+        @keyframes cardPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+          50% { box-shadow: 0 0 0 8px rgba(0,0,0,0); }
+        }
+        @keyframes fadeInText {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blinkCaret {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        @keyframes liveWave {
+          0% { transform: scale(1); opacity: 0.7; }
+          100% { transform: scale(2.6); opacity: 0; }
         }
       `}</style>
     </section>

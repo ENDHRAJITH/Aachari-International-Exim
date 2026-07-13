@@ -1,6 +1,6 @@
-import { Fraunces, Inter } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 
-export const fraunces = Fraunces({
+export const fraunces = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
 });

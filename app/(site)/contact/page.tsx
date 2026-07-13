@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div style={{ paddingTop: '100px' }}>
+    <div style={{  }}>
       <Contact />
     </div>
   )

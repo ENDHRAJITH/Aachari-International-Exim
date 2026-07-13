@@ -1,245 +1,248 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Marker,
-  Line,
-} from "react-simple-maps";
+import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-type Route = {
-  id: string;
-  from: [number, number];
-  to: [number, number];
-  duration: number;
-  destination: string;
-  country: string;
+// டார்கெட் 5 நாடுகள் + இந்தியா
+const CORE_NETWORK: Record<string, { name: string; tz: string; curr: string; code: string }> = {
+  "840": { name: "United States", tz: "America/New_York", curr: "USD", code: "USD" },
+  "036": { name: "Australia", tz: "Australia/Sydney", curr: "AUD", code: "AUD" },
+  "764": { name: "Thailand", tz: "Asia/Bangkok", curr: "THB", code: "THB" },
+  "826": { name: "United Kingdom", tz: "Europe/London", curr: "GBP", code: "GBP" },
+  "710": { name: "South Africa", tz: "Africa/Johannesburg", curr: "ZAR", code: "ZAR" },
+  "356": { name: "India", tz: "Asia/Kolkata", curr: "INR", code: "INR" }
 };
 
-type Origin = {
-  name: string;
-  coords: [number, number];
-};
+type TravelArc = { id: string; from: [number, number]; to: [number, number]; speed: number; geoId: string };
 
-const ROUTES: Route[] = [
-  { id: "r1", from: [80.27, 13.08], to: [79.86, 6.93], duration: 9, destination: "Colombo", country: "Sri Lanka" },
-  { id: "r2", from: [80.27, 13.08], to: [103.82, 1.35], duration: 15, destination: "Singapore", country: "Singapore" },
-  { id: "r3", from: [72.95, 18.95], to: [55.06, 25.02], duration: 13, destination: "Jebel Ali", country: "UAE" },
-  { id: "r4", from: [80.27, 13.08], to: [121.47, 31.23], duration: 19, destination: "Shanghai", country: "China" },
-  { id: "r5", from: [72.95, 18.95], to: [4.48, 51.92], duration: 24, destination: "Rotterdam", country: "Netherlands" },
-  { id: "r6", from: [78.13, 8.76], to: [9.99, 53.55], duration: 17, destination: "Hamburg", country: "Germany" },
-  { id: "r7", from: [88.36, 22.57], to: [-118.24, 34.05], duration: 21, destination: "Los Angeles", country: "USA" },
-  { id: "r8", from: [72.95, 18.95], to: [46.68, 24.71], duration: 12, destination: "Riyadh", country: "Saudi Arabia" },
-  { id: "r9", from: [80.27, 13.08], to: [151.21, -33.87], duration: 22, destination: "Sydney", country: "Australia" },
-  { id: "r10", from: [72.95, 18.95], to: [-0.13, 51.51], duration: 20, destination: "London", country: "UK" },
+const ROUTES: TravelArc[] = [
+  { id: "a1", from: [78.96, 20.59], to: [-100.0, 40.0], speed: 14, geoId: "840" },
+  { id: "a2", from: [78.96, 20.59], to: [133.77, -25.27], speed: 11, geoId: "036" },
+  { id: "a3", from: [78.96, 20.59], to: [100.99, 15.87], speed: 7, geoId: "764" },
+  { id: "a4", from: [78.96, 20.59], to: [-2.0, 54.0], speed: 15, geoId: "826" },
+  { id: "a5", from: [78.96, 20.59], to: [25.04, -29.04], speed: 16, geoId: "710" }
 ];
 
-const ORIGINS: Origin[] = [
-  { name: "Chennai", coords: [80.27, 13.08] },
-  { name: "Mumbai", coords: [72.95, 18.95] },
-  { name: "Tuticorin", coords: [78.13, 8.76] },
-  { name: "Kolkata", coords: [88.36, 22.57] },
-];
+export default function PremiumNetworkMatrix() {
+  const [dots, setDots] = useState<Record<string, number>>({});
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({});
+  const [liveCard, setLiveCard] = useState<{ name: string; time: string; nightMode: boolean; rateText: string } | null>(null);
 
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t;
-}
+  const animationRef = useRef<Record<string, number>>({});
+  const frameId = useRef<number | undefined>(undefined);
+  const timestampTracker = useRef<number | undefined>(undefined);
 
-function bearingDeg(from: [number, number], to: [number, number]) {
-  const dx = to[0] - from[0];
-  const dy = to[1] - from[1];
-  // screen y is inverted vs lat, atan2 gives angle from x-axis
-  const angle = Math.atan2(dx, dy) * (180 / Math.PI);
-  return angle;
-}
-
-export default function TradeNetwork() {
-  const [progress, setProgress] = useState<Record<string, number>>({});
-  const [hoveredRoute, setHoveredRoute] = useState<Route | null>(null);
-  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-
-  const progressRef = useRef<Record<string, number>>({});
-  const rafRef = useRef<number | undefined>(undefined);
-  const lastTsRef = useRef<number | undefined>(undefined);
-
+  // லைவ் ஃபாரெக்ஸ் டேட்டா
   useEffect(() => {
-    const initial = Object.fromEntries(ROUTES.map((r) => [r.id, Math.random()]));
-    setProgress(initial);
-    progressRef.current = initial;
-
-    const tick = (ts: number) => {
-      if (lastTsRef.current === undefined) lastTsRef.current = ts;
-      const dt = (ts - lastTsRef.current) / 1000;
-      lastTsRef.current = ts;
-
-      const next: Record<string, number> = {};
-      let shouldUpdate = false;
-
-      for (const r of ROUTES) {
-        const current = progressRef.current[r.id] ?? 0;
-        let p = current + dt / r.duration;
-        if (p >= 1) p %= 1;
-        next[r.id] = p;
-        if (Math.abs(p - current) > 0.004) shouldUpdate = true;
-      }
-
-      progressRef.current = next;
-      if (shouldUpdate) setProgress({ ...next });
-
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
+    fetch("https://open.er-api.com/v6/latest/USD")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.rates) {
+          const inrBase = data.rates["INR"] || 1;
+          const matrix: Record<string, number> = {};
+          Object.keys(data.rates).forEach((k) => {
+            matrix[k] = data.rates[k] > 0 ? inrBase / data.rates[k] : 0;
+          });
+          setExchangeRates(matrix);
+        }
+      }).catch(err => console.error("Forex engine down:", err));
   }, []);
 
+  // ஸ்மூத் பார்ட்டிகிள் லூப் எஃபெக்ட் (RAF)
+  useEffect(() => {
+    const startState = Object.fromEntries(ROUTES.map((r) => [r.id, Math.random()]));
+    setDots(startState);
+    animationRef.current = startState;
+
+    const renderLoop = (ts: number) => {
+      if (timestampTracker.current === undefined) timestampTracker.current = ts;
+      const delta = (ts - timestampTracker.current) / 1000;
+      timestampTracker.current = ts;
+
+      const nextState: Record<string, number> = {};
+      let thresholdPassed = false;
+
+      for (const r of ROUTES) {
+        const prev = animationRef.current[r.id] ?? 0;
+        let p = prev + delta / r.speed;
+        if (p >= 1) p %= 1;
+        nextState[r.id] = p;
+        if (Math.abs(p - prev) > 0.005) thresholdPassed = true;
+      }
+
+      animationRef.current = nextState;
+      if (thresholdPassed) setDots({ ...nextState });
+      frameId.current = requestAnimationFrame(renderLoop);
+    };
+
+    frameId.current = requestAnimationFrame(renderLoop);
+    return () => { if (frameId.current) cancelAnimationFrame(frameId.current); };
+  }, []);
+
+  const handleFocus = (geoId: string, e: React.MouseEvent) => {
+    const target = CORE_NETWORK[geoId];
+    if (!target) return;
+
+    setHoveredId(geoId);
+    setMousePos({ x: e.clientX, y: e.clientY });
+
+    const clockOptions: Intl.DateTimeFormatOptions = { timeZone: target.tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true };
+    const localTime = new Intl.DateTimeFormat("en-US", clockOptions).format(new Date());
+
+    const hourCheck = parseInt(new Intl.DateTimeFormat("en-US", { timeZone: target.tz, hour: "numeric", hour12: false }).format(new Date()), 10);
+    const nightMode = hourCheck >= 18 || hourCheck < 6;
+
+    let rateText = "Valuation pending";
+    if (target.curr === "INR") rateText = "Base Hub Node (₹1.00)";
+    else if (exchangeRates[target.code]) rateText = `1 ${target.curr} = ₹${exchangeRates[target.code].toFixed(2)} INR`;
+
+    setLiveCard({ name: target.name, time: localTime, nightMode, rateText });
+  };
+
   return (
-    <div className="relative w-full max-w-5xl mx-auto px-4 py-10" id="map">
-      <div className="text-center mb-8">
-        <h2 className="text-4xl font-bold text-gray-900">Global Trade Network</h2>
-        <p className="text-gray-600 mt-2">Live Shipping Routes Across 10 Countries</p>
+    <div className="relative w-full max-w-5xl mx-auto px-4 py-8 select-none" style={{ fontFamily: "system-ui, sans-serif" }}>
+      <div className="text-center mb-6">
+        <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight">Enterprise Infrastructure Matrix</h2>
+        <p className="text-slate-400 text-sm mt-1">Cross-Border Pipeline Valuations & Dynamic Telemetry</p>
       </div>
 
-      <div className="relative bg-[#f8f7f4] rounded-3xl overflow-hidden shadow-2xl border border-gray-200">
-        <ComposableMap
-          projection="geoEqualEarth"
-          projectionConfig={{ scale: 158, center: [18, 8] }}
-          width={920}
-          height={480}
-          style={{ width: "100%", height: "auto" }}
-        >
+      <div className="relative bg-[#090d16] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+        <ComposableMap projection="geoEqualEarth" projectionConfig={{ scale: 165, center: [20, 15] }} width={900} height={460} style={{ width: "100%", height: "auto" }}>
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="#e8e6df"
-                  stroke="#d1cdc2"
-                  strokeWidth={0.8}
-                />
-              ))
+              geographies.map((geo) => {
+                const currentId = geo.id || geo.properties?.ISO_N3;
+                const node = CORE_NETWORK[currentId];
+                const active = hoveredId === currentId;
+
+                let fill = "#131924"; // டீஃபால்ட் பேக்கிரவுண்ட்
+                if (node) fill = node.name === "India" ? "#38bdf8" : "#9a3412"; // இந்தியா ப்ளூ, மத்த 5 நாடுகள் டார்க் ஆரஞ்சு
+                if (active && node && node.name !== "India") fill = "#ea580c"; // ஹோவர் பண்ணா பிரைட் ஆரஞ்சு
+
+                return (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    onMouseEnter={(e) => handleFocus(currentId, e)}
+                    onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+                    onMouseLeave={() => { setHoveredId(null); setLiveCard(null); }}
+                    style={{
+                      default: { fill, stroke: "#1e293b", strokeWidth: 0.5, outline: "none", transition: "fill 0.2s" },
+                      hover: { fill: node && node.name !== "India" ? "#ea580c" : fill, stroke: "#475569", strokeWidth: 0.6, outline: "none", cursor: node ? "pointer" : "default" }
+                    }}
+                  />
+                );
+              })
             }
           </Geographies>
 
-          {/* Flowing Lines */}
+          {/* ஓடிக்கிட்டே இருக்குற பார்ட்டிக்கிள் க்ளோயிங் லைன்ஸ் */}
           {ROUTES.map((r) => (
             <Line
-              key={`line-${r.id}`}
+              key={`path-${r.id}`}
               from={r.from}
               to={r.to}
-              stroke="#c1622a"
-              strokeWidth={1.1}
-              strokeOpacity={0.4}
-              strokeDasharray="6 5"
-              style={{ animation: `flow 4.5s linear infinite`, animationDelay: `-${r.duration * 0.1}s` }}
+              stroke="#ea580c"
+              strokeWidth={1.2}
+              strokeOpacity={0.3}
+              strokeDasharray="5 4"
+              style={{ animation: "matrixFlow 5s linear infinite" }}
             />
           ))}
 
-          {/* Airplane + Trail per route */}
+          {/* சிம்பிள் அனிமேஷன் சர்க்கிள் வித் வேவ் */}
           {ROUTES.map((r) => {
-            const t = progress[r.id] ?? 0;
-            const x = lerp(r.from[0], r.to[0], t);
-            const y = lerp(r.from[1], r.to[1], t);
-            const angle = bearingDeg(r.from, r.to);
+            const p = dots[r.id] ?? 0;
+            // Linear approximation for standard projection tracking
+            const cx = r.from[0] + (r.to[0] - r.from[0]) * p;
+            const cy = r.from[1] + (r.to[1] - r.from[1]) * p;
 
             return (
-              <g key={`trail-${r.id}`}>
-                {/* Particle Trail */}
-                {Array.from({ length: 6 }).map((_, i) => {
-                  const trailT = Math.max(0, t - i * 0.06);
-                  const tx = lerp(r.from[0], r.to[0], trailT);
-                  const ty = lerp(r.from[1], r.to[1], trailT);
-                  return (
-                    <Marker key={i} coordinates={[tx, ty]}>
-                      <circle
-                        r={1.6 - i * 0.2}
-                        fill="#c1622a"
-                        opacity={0.6 - i * 0.09}
-                      />
-                    </Marker>
-                  );
-                })}
-
-                {/* Airplane Icon - rotated to travel direction */}
-                <Marker
-                  coordinates={[x, y]}
-                  onMouseEnter={(e) => {
-                    setHoveredRoute(r);
-                    setTooltipPos({ x: e.clientX + 15, y: e.clientY - 15 });
-                  }}
-                  onMouseLeave={() => setHoveredRoute(null)}
-                >
-                  <g transform={`rotate(${angle})`} style={{ cursor: "pointer" }}>
-                    <path
-                      d="M0,-6 L2,-1 L6,1 L6,2.5 L2,1.5 L1.2,4.5 L3,6 L3,7.2 L0,6 L-3,7.2 L-3,6 L-1.2,4.5 L-2,1.5 L-6,2.5 L-6,1 L-2,-1 Z"
-                      fill="#c1622a"
-                      stroke="#fff"
-                      strokeWidth={0.4}
-                    />
-                  </g>
+              <g key={`node-dot-${r.id}`}>
+                <Marker coordinates={[cx, cy]}>
+                  <circle r={8} fill="none" stroke="#ffedd5" strokeWidth={1} className="ping-wave" />
+                  <circle r={3.5} fill="#f97316" stroke="#ffffff" strokeWidth={1} />
                 </Marker>
               </g>
             );
           })}
 
-          {/* Origin Ports - blinking live waves */}
-          {ORIGINS.map((port) => (
-            <Marker key={port.name} coordinates={port.coords}>
-              <circle r={9} fill="none" stroke="#ea580c" strokeWidth={1} opacity={0.6} className="live-wave" />
-              <circle r={9} fill="none" stroke="#ea580c" strokeWidth={1} opacity={0.6} className="live-wave live-wave-delay" />
-              <circle r={5.5} fill="#ea580c" stroke="#fff" strokeWidth={2.5} />
-              <text y={-20} textAnchor="middle" fill="#1f2937" fontSize="10.5" fontWeight="700">
-                {port.name}
-              </text>
-            </Marker>
-          ))}
+          <Marker coordinates={[78.96, 20.59]}>
+            <circle r={4.5} fill="#38bdf8" stroke="#fff" strokeWidth={1.5} />
+          </Marker>
         </ComposableMap>
 
-        {/* Tooltip */}
-        {hoveredRoute && (
+        {/* நீங்க கேட்ட பிக் பிரீமியம் லைவ் டூல்டிப் கார்டு */}
+        {hoveredId && liveCard && (
           <div
-            className="absolute pointer-events-none bg-white shadow-2xl rounded-2xl px-5 py-4 text-sm z-50 border border-gray-100"
-            style={{ left: tooltipPos.x, top: tooltipPos.y, transform: "translate(-50%, -105%)" }}
+            style={{
+              position: "fixed",
+              left: mousePos.x + 22,
+              top: mousePos.y - 15,
+              transform: "translateY(-50%)",
+              pointerEvents: "none",
+              background: "linear-gradient(145deg, #111827 0%, #030712 100%)",
+              border: "1px solid rgba(234, 88, 12, 0.45)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05)",
+              borderRadius: "14px",
+              padding: "18px",
+              zIndex: 99999,
+              color: "#f8fafc",
+              minWidth: "270px",
+              backdropFilter: "blur(10px)",
+              animation: "cardFadeIn 0.15s ease-out"
+            }}
           >
-            <div className="font-semibold text-orange-600 text-lg">{hoveredRoute.destination}</div>
-            <div className="text-gray-500 text-xs">{hoveredRoute.country}</div>
-            <div className="text-gray-600 mt-1">
-              Transit: <span className="font-medium">{hoveredRoute.duration} days</span>
+            <div className="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+              <span className="text-base font-bold text-orange-500 tracking-wide">{liveCard.name}</span>
+              <span
+                className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full"
+                style={{
+                  background: liveCard.nightMode ? "rgba(99, 102, 241, 0.15)" : "rgba(234, 179, 8, 0.15)",
+                  color: liveCard.nightMode ? "#a5b4fc" : "#fde047",
+                  border: liveCard.nightMode ? "1px solid rgba(99, 102, 241, 0.25)" : "1px solid rgba(234, 179, 8, 0.25)"
+                }}
+              >
+                {liveCard.nightMode ? "🌙 NIGHT" : "☀️ DAY"}
+              </span>
             </div>
-            <div className="text-xs text-emerald-600 mt-2">● Live Shipment</div>
+
+            <div className="space-y-3">
+              <div>
+                <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Zone Metric Time</div>
+                <div className="text-lg font-bold text-slate-200 font-mono mt-0.5">{liveCard.time}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Converted Forex Index</div>
+                <div className="text-xs font-semibold text-sky-400 mt-1 bg-sky-950/40 px-2.5 py-1.5 rounded-lg border border-sky-900/40 inline-block">
+                  {liveCard.rateText}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
 
       <style jsx>{`
-        @keyframes flow {
-          to { stroke-dashoffset: -35; }
+        @keyframes matrixFlow {
+          to { stroke-dashoffset: -30; }
         }
-        @keyframes liveWave {
-          0% {
-            transform: scale(0.6);
-            opacity: 0.7;
-          }
-          100% {
-            transform: scale(2.4);
-            opacity: 0;
-          }
+        @keyframes wavePulse {
+          0% { transform: scale(0.5); opacity: 0.9; }
+          100% { transform: scale(2.5); opacity: 0; }
         }
-        .live-wave {
+        :global(.ping-wave) {
           transform-origin: center;
           transform-box: fill-box;
-          animation: liveWave 2.2s ease-out infinite;
+          animation: wavePulse 1.6s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
         }
-        .live-wave-delay {
-          animation-delay: 1.1s;
+        @keyframes cardFadeIn {
+          from { opacity: 0; transform: translateY(-48%) scale(0.97); }
+          to { opacity: 1; transform: translateY(-50%) scale(1); }
         }
       `}</style>
     </div>
