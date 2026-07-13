@@ -104,7 +104,7 @@ export default function HomeAbout() {
   const loopProducts = [...PRODUCTS, ...PRODUCTS];
 
   return (
-    <section id="about" className="relative overflow-hidden px-6 py-24 lg:px-12">
+    <section id="about" className="relative overflow-hidden px-6 py-24 mt-25 lg:px-12">
 
       {/* Video banner */}
     {/* Video banner */}
