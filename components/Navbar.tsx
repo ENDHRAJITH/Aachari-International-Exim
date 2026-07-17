@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Menu } from "lucide-react";
 import CurrencyMarquee from "./CurrencyMarquee";
 
@@ -20,6 +20,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  const listRef = useRef<HTMLUListElement>(null);
+  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [pill, setPill] = useState({ left: 0, width: 0, ready: false });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -42,6 +46,25 @@ export default function Navbar() {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(href + "/");
   };
+
+  // Measure the active link's position/width so the pill can glide to it —
+  // purely visual, doesn't touch any layout width/height.
+  const measurePill = () => {
+    const activeIdx = navLinks.findIndex((item) => isActive(item.href));
+    const el = itemRefs.current[activeIdx];
+    const list = listRef.current;
+    if (!el || !list) return;
+    const listRect = list.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    setPill({ left: elRect.left - listRect.left, width: elRect.width, ready: true });
+  };
+
+  useEffect(() => {
+    measurePill();
+    window.addEventListener("resize", measurePill);
+    return () => window.removeEventListener("resize", measurePill);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, scrolled]);
 
   return (
     <>
@@ -96,14 +119,30 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav — dead center of the row */}
-          <ul className="hidden lg:flex items-center justify-self-center rounded-full border border-black/5 bg-white px-3 py-3 backdrop-blur-md">
-            {navLinks.map((item) => (
-              <li key={item.label}>
+          <ul
+            ref={listRef}
+            className="relative hidden lg:flex items-center justify-self-center rounded-full border border-black/5 bg-white px-3 py-3 backdrop-blur-md"
+          >
+            {/* Sliding active pill */}
+            <span
+              aria-hidden
+              className="absolute top-1.5 bottom-1.5 rounded-full bg-ink transition-[left,width] duration-400 ease-[cubic-bezier(0.65,0,0.35,1)]"
+              style={{
+                left: pill.left,
+                width: pill.width,
+                opacity: pill.ready ? 1 : 0,
+              }}
+            />
+            {navLinks.map((item, idx) => (
+              <li key={item.label} className="relative z-10">
                 <Link
+                  ref={(el) => {
+                    itemRefs.current[idx] = el;
+                  }}
                   href={item.href}
-                  className={`cursor-hover px-6 py-2 rounded-full text-[14px] transition-all whitespace-nowrap ${
+                  className={`cursor-hover block px-6 py-2 rounded-full text-[14px] transition-colors duration-300 whitespace-nowrap ${
                     isActive(item.href)
-                      ? "bg-ink text-cream"
+                      ? "text-cream"
                       : "text-ink-soft hover:text-ink"
                   }`}
                 >

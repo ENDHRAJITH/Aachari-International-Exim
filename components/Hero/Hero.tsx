@@ -132,29 +132,26 @@ export default function Hero() {
       <div className="mx-auto max-w-[1320px] grid items-center gap-[60px] mt-15 lg:grid-cols-[1.15fr_1fr] relative z-10">
         <div className="relative z-10 max-w-4xl" style={{ zIndex: 100 }}>
 
-          {/* Main Heading */}
+          {/* Main Heading — locked to exactly 2 lines via explicit break */}
           <h1
             className="max-w-[950px] text-[clamp(2.5rem,4.5vw,4rem)] font-black leading-[0.95] tracking-[-0.04em]"
             style={{ color: '#000000' }}
           >
-            Where{" "}
-            <span className="italic" style={{ color: '#C1622A' }}>
-              Quality
-            </span>{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10">Leads</span>
+            <span className="block">
+              Bringing the{" "}
+              <span className="italic" style={{ color: '#C1622A' }}>
+                Best of India
+              </span>
             </span>
+            <span className="block">to International Markets.</span>
           </h1>
 
-          {/* Description */}
+          {/* Description — justified so every line (except the last) shares the same edge */}
           <p
-            className="mt-8 max-w-[720px] text-[19px] leading-8"
-            style={{ color: '#000000', fontWeight: 700 }}
+            className="mt-8 max-w-[760px] text-[19px] leading-8 text-justify"
+            style={{ color: '#000000', fontWeight: 700, hyphens: 'none', overflowWrap: 'normal', wordBreak: 'normal' }}
           >
-            Aachari International Exim is a trusted partner for premium
-            exports and imports, connecting Indian craftsmanship with
-            world-class hardware, electronics, and spices to buyers
-            across more than forty countries.
+            At Aachari International Exim Pvt. Ltd., we transform India's finest products into global opportunities. With trusted sourcing, uncompromising quality, and reliable export solutions, we provide seamless access to premium Indian products.
           </p>
 
           {/* Buttons */}
