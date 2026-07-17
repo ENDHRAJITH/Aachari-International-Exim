@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, Award, X, Upload, FileText, Eye } from 'lucide-react'
+import { Plus, Pencil, Trash2, Award, X, FileText, Eye, Images } from 'lucide-react'
 import toast from 'react-hot-toast'
+import CertificateImagesModal from  '@/components/certificates/CertificateImagesModal'
 
 interface Certificate {
   id: string
@@ -11,6 +12,7 @@ interface Certificate {
   issued_by: string | null
   certificate_number: string | null
   image_url: string | null
+  pdf_url: string | null
   valid_until: string | null
   is_active: boolean
   sort_order: number
@@ -25,33 +27,25 @@ const emptyForm = {
   sort_order: 0
 }
 
-function isPdf(url: string | null): boolean {
-  if (!url) return false
-  return url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('/raw/')
-}
-
-function FileCell({ cert }: { cert: Certificate }) {
-  if (!cert.image_url) {
-    return <span style={{ fontSize: '12px', color: '#9c7a6a' }}>No file</span>
-  }
+function FileCell({ cert, onManageImages }: { cert: Certificate; onManageImages: () => void }) {
   return (
-    
-     <a href={cert.image_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '5px',
-        fontSize: '12px',
-        color: '#2563EB',
-        textDecoration: 'none',
-        fontWeight: 600
-      }}
-    >
-      {isPdf(cert.image_url) ? <FileText size={13} /> : <Eye size={13} />}
-      {isPdf(cert.image_url) ? 'View PDF' : 'View Image'}
-    </a>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <button
+        onClick={onManageImages}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#2563EB', fontWeight: 600, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+      >
+        {cert.image_url ? <Eye size={11} /> : <Images size={11} />}
+        {cert.image_url ? 'Manage Images' : 'Add Images'}
+      </button>
+      {cert.pdf_url ? (
+        <a href={cert.pdf_url} target="_blank" rel="noopener noreferrer"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#C1622A', textDecoration: 'none', fontWeight: 600 }}>
+          <FileText size={11} /> PDF
+        </a>
+      ) : (
+        <span style={{ fontSize: '11px', color: '#9c7a6a' }}>No PDF</span>
+      )}
+    </div>
   )
 }
 
@@ -65,6 +59,7 @@ export default function CertificatesPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm)
+  const [managingImagesFor, setManagingImagesFor] = useState<Certificate | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
@@ -113,28 +108,20 @@ export default function CertificatesPage() {
   }
 
   const handleSubmit = async () => {
-    if (!form.name) {
-      toast.error('Certificate name is required')
-      return
-    }
+    if (!form.name) { toast.error('Certificate name is required'); return }
     const token = localStorage.getItem('admin_token')
     setSaving(true)
     try {
-      const url = editingId
-        ? `/api/admin/certificates/${editingId}`
-        : '/api/admin/certificates'
+      const url = editingId ? `/api/admin/certificates/${editingId}` : '/api/admin/certificates'
       const method = editingId ? 'PUT' : 'POST'
       const res = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(form)
       })
       const data = await res.json()
       if (data.success) {
-        toast.success(editingId ? 'Certificate updated' : 'Certificate added — now upload the file')
+        toast.success(editingId ? 'Certificate updated' : 'Certificate added — now add images and PDF')
         closeForm()
         fetchCertificates(token!)
       } else {
@@ -158,7 +145,7 @@ export default function CertificatesPage() {
       })
       const data = await res.json()
       if (data.success) {
-        setCertificates(certificates.filter((c) => c.id !== id))
+        setCertificates(certificates.filter(c => c.id !== id))
         toast.success('Certificate deleted')
       } else {
         toast.error(data.error || 'Failed to delete')
@@ -170,7 +157,10 @@ export default function CertificatesPage() {
     }
   }
 
-  const handleFileUpload = async (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfUpload = async (
+    id: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 10 * 1024 * 1024) {
@@ -182,6 +172,7 @@ export default function CertificatesPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('type', 'pdf')
       const res = await fetch(`/api/admin/certificates/${id}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -189,10 +180,10 @@ export default function CertificatesPage() {
       })
       const data = await res.json()
       if (data.success) {
-        setCertificates(certificates.map((c) =>
-          c.id === id ? { ...c, image_url: data.data.image_url } : c
+        setCertificates(certificates.map(c =>
+          c.id === id ? { ...c, pdf_url: data.data.pdf_url } : c
         ))
-        toast.success('File uploaded successfully')
+        toast.success('PDF uploaded successfully')
       } else {
         toast.error(data.error || 'Upload failed')
       }
@@ -204,24 +195,22 @@ export default function CertificatesPage() {
     }
   }
 
+  // Called by CertificateImagesModal whenever the primary image changes
+  const handlePrimaryImageChange = (id: string, imageUrl: string | null) => {
+    setCertificates(prev => prev.map(c => (c.id === id ? { ...c, image_url: imageUrl } : c)))
+  }
+
   const inputStyle = {
-    width: '100%',
-    padding: '10px 14px',
-    borderRadius: '9px',
-    border: '1.5px solid #E8E0D8',
-    fontSize: '14px',
-    outline: 'none',
-    backgroundColor: '#FAFAF8',
-    color: '#1A1A1A',
+    width: '100%', padding: '10px 14px',
+    borderRadius: '9px', border: '1.5px solid #E8E0D8',
+    fontSize: '14px', outline: 'none',
+    backgroundColor: '#FAFAF8', color: '#1A1A1A',
     transition: 'border-color 0.15s'
   }
 
   const labelStyle: React.CSSProperties = {
-    fontSize: '13px',
-    color: '#1A1A1A',
-    fontWeight: 600,
-    display: 'block',
-    marginBottom: '6px'
+    fontSize: '13px', fontWeight: 600,
+    color: '#1A1A1A', display: 'block', marginBottom: '6px'
   }
 
   const focusHandlers = {
@@ -238,56 +227,25 @@ export default function CertificatesPage() {
   return (
     <div>
       {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '24px',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h1 style={{ color: '#1A1A1A', fontSize: '22px', fontWeight: 700, margin: '0 0 4px' }}>
-            Certificates
-          </h1>
-          <p style={{ color: '#6B6B6B', fontSize: '14px', margin: 0 }}>
-            Manage export certifications shown on the website
-          </p>
+          <h1 style={{ color: '#1A1A1A', fontSize: '22px', fontWeight: 700, margin: '0 0 4px' }}>Certificates</h1>
+          <p style={{ color: '#6B6B6B', fontSize: '14px', margin: 0 }}>Manage export certifications shown on the website</p>
         </div>
         {!showForm && (
-          <button
-            onClick={openAddForm}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: '#C1622A',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '11px 20px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
+          <button onClick={openAddForm}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#C1622A', color: '#ffffff', border: 'none', borderRadius: '10px', padding: '11px 20px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A8521F'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C1622A'}
           >
-            <Plus size={16} />
-            Add Certificate
+            <Plus size={16} /> Add Certificate
           </button>
         )}
       </div>
 
       {/* Form */}
       {showForm && (
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          border: '1px solid #E8E0D8',
-          padding: '22px',
-          marginBottom: '20px'
-        }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #E8E0D8', padding: '22px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
             <p style={{ fontSize: '15px', fontWeight: 600, color: '#1A1A1A', margin: 0 }}>
               {editingId ? 'Edit Certificate' : 'Add New Certificate'}
@@ -319,16 +277,8 @@ export default function CertificatesPage() {
             </div>
           </div>
 
-          <div style={{
-            backgroundColor: '#FFF8F3',
-            border: '1px dashed #C1622A',
-            borderRadius: '9px',
-            padding: '12px 16px',
-            fontSize: '12px',
-            color: '#C1622A',
-            marginBottom: '16px'
-          }}>
-            Save the certificate first → then upload PDF or image using the Upload button in the table.
+          <div style={{ backgroundColor: '#FFF8F3', border: '1px dashed #C1622A', borderRadius: '9px', padding: '12px 16px', fontSize: '12px', color: '#C1622A', marginBottom: '16px' }}>
+            Save the certificate first → then add images and PDF using the buttons in the table.
           </div>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '20px' }}>
@@ -340,7 +290,8 @@ export default function CertificatesPage() {
             <button onClick={closeForm} style={{ padding: '10px 20px', borderRadius: '9px', border: '1px solid #E8E0D8', backgroundColor: '#ffffff', color: '#1A1A1A', fontSize: '14px', cursor: 'pointer' }}>
               Cancel
             </button>
-            <button onClick={handleSubmit} disabled={saving} style={{ padding: '10px 24px', borderRadius: '9px', border: 'none', backgroundColor: saving ? '#A8521F80' : '#C1622A', color: '#ffffff', fontSize: '14px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer' }}>
+            <button onClick={handleSubmit} disabled={saving}
+              style={{ padding: '10px 24px', borderRadius: '9px', border: 'none', backgroundColor: saving ? '#A8521F80' : '#C1622A', color: '#ffffff', fontSize: '14px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer' }}>
               {saving ? 'Saving...' : editingId ? 'Update Certificate' : 'Add Certificate'}
             </button>
           </div>
@@ -353,18 +304,8 @@ export default function CertificatesPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: '#FAFAF8' }}>
-                {['Certificate', 'Issued By', 'Number', 'File', 'Valid Until', 'Status', 'Actions'].map((h) => (
-                  <th key={h} style={{
-                    padding: '11px 16px',
-                    textAlign: 'left',
-                    fontSize: '11px',
-                    color: '#6B6B6B',
-                    fontWeight: 600,
-                    borderBottom: '1px solid #F0EBE3',
-                    whiteSpace: 'nowrap',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>
+                {['Certificate', 'Issued By', 'Number', 'Files', 'Valid Until', 'Status', 'Actions'].map(h => (
+                  <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: '11px', color: '#6B6B6B', fontWeight: 600, borderBottom: '1px solid #F0EBE3', whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     {h}
                   </th>
                 ))}
@@ -372,11 +313,8 @@ export default function CertificatesPage() {
             </thead>
             <tbody>
               {loading && (
-                <tr>
-                  <td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: '#6B6B6B' }}>Loading...</td>
-                </tr>
+                <tr><td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: '#6B6B6B' }}>Loading...</td></tr>
               )}
-
               {!loading && certificates.length === 0 && (
                 <tr>
                   <td colSpan={7} style={{ padding: '48px', textAlign: 'center' }}>
@@ -385,10 +323,8 @@ export default function CertificatesPage() {
                   </td>
                 </tr>
               )}
-
               {!loading && certificates.map((cert, idx) => (
-                <tr
-                  key={cert.id}
+                <tr key={cert.id}
                   style={{ borderBottom: idx < certificates.length - 1 ? '1px solid #F0EBE3' : 'none', transition: 'background 0.1s' }}
                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FAFAF8'}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -396,63 +332,51 @@ export default function CertificatesPage() {
                   <td style={{ padding: '13px 16px', fontSize: '14px', fontWeight: 600, color: '#1A1A1A' }}>{cert.name}</td>
                   <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A' }}>{cert.issued_by || '-'}</td>
                   <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A' }}>{cert.certificate_number || '-'}</td>
-                  <td style={{ padding: '13px 16px' }}><FileCell cert={cert} /></td>
+                  <td style={{ padding: '13px 16px' }}>
+                    <FileCell cert={cert} onManageImages={() => setManagingImagesFor(cert)} />
+                  </td>
                   <td style={{ padding: '13px 16px', fontSize: '13px', color: '#1A1A1A' }}>
                     {cert.valid_until ? new Date(cert.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                   </td>
                   <td style={{ padding: '13px 16px' }}>
-                    <span style={{
-                      backgroundColor: cert.is_active ? '#16A34A15' : '#F0EBE3',
-                      color: cert.is_active ? '#16A34A' : '#6B6B6B',
-                      padding: '4px 10px',
-                      borderRadius: '20px',
-                      fontSize: '12px',
-                      fontWeight: 600
-                    }}>
+                    <span style={{ backgroundColor: cert.is_active ? '#16A34A15' : '#F0EBE3', color: cert.is_active ? '#16A34A' : '#6B6B6B', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600 }}>
                       {cert.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td style={{ padding: '13px 16px' }}>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+
+                      {/* PDF Upload */}
                       <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '6px 12px',
-                        borderRadius: '7px',
-                        border: '1px solid #E8E0D8',
-                        backgroundColor: '#ffffff',
-                        color: '#1A1A1A',
-                        fontSize: '12px',
+                        display: 'flex', alignItems: 'center', gap: '4px',
+                        padding: '6px 10px', borderRadius: '7px',
+                        border: '1px solid #C1622A', backgroundColor: '#FFF8F3',
+                        color: '#C1622A', fontSize: '11px',
                         cursor: uploadingId === cert.id ? 'not-allowed' : 'pointer',
                         opacity: uploadingId === cert.id ? 0.6 : 1
                       }}>
-                        <Upload size={13} />
-                        {uploadingId === cert.id ? '...' : cert.image_url ? 'Replace' : 'Upload'}
-                        <input
-                          type="file"
-                          accept="application/pdf,image/jpeg,image/png,image/webp"
-                          onChange={(e) => handleFileUpload(cert.id, e)}
+                        <FileText size={12} />
+                        {uploadingId === cert.id ? '...' : cert.pdf_url ? 'Re-PDF' : 'PDF'}
+                        <input type="file" accept="application/pdf"
+                          onChange={(e) => handlePdfUpload(cert.id, e)}
                           disabled={uploadingId === cert.id}
-                          style={{ display: 'none' }}
-                        />
+                          style={{ display: 'none' }} />
                       </label>
 
-                      <button
-                        onClick={() => openEditForm(cert)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '7px', border: '1px solid #E8E0D8', backgroundColor: '#ffffff', color: '#1A1A1A', fontSize: '12px', cursor: 'pointer' }}
+                      {/* Edit */}
+                      <button onClick={() => openEditForm(cert)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '7px', border: '1px solid #E8E0D8', backgroundColor: '#ffffff', color: '#1A1A1A', fontSize: '11px', cursor: 'pointer' }}
                         onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2563EB'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#2563EB' }}
                         onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.style.color = '#1A1A1A'; e.currentTarget.style.borderColor = '#E8E0D8' }}
                       >
-                        <Pencil size={13} /> Edit
+                        <Pencil size={12} /> Edit
                       </button>
 
-                      <button
-                        onClick={() => handleDelete(cert.id, cert.name)}
-                        disabled={deletingId === cert.id}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '7px', border: '1px solid #FECACA', backgroundColor: '#FEF2F2', color: '#DC2626', fontSize: '12px', cursor: deletingId === cert.id ? 'not-allowed' : 'pointer', opacity: deletingId === cert.id ? 0.6 : 1 }}
+                      {/* Delete */}
+                      <button onClick={() => handleDelete(cert.id, cert.name)} disabled={deletingId === cert.id}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '7px', border: '1px solid #FECACA', backgroundColor: '#FEF2F2', color: '#DC2626', fontSize: '11px', cursor: deletingId === cert.id ? 'not-allowed' : 'pointer', opacity: deletingId === cert.id ? 0.6 : 1 }}
                       >
-                        <Trash2 size={13} /> {deletingId === cert.id ? '...' : 'Delete'}
+                        <Trash2 size={12} /> {deletingId === cert.id ? '...' : 'Delete'}
                       </button>
                     </div>
                   </td>
@@ -462,6 +386,16 @@ export default function CertificatesPage() {
           </table>
         </div>
       </div>
+
+      {/* Image management modal */}
+      <CertificateImagesModal
+        certificateId={managingImagesFor?.id ?? null}
+        certificateName={managingImagesFor?.name ?? ''}
+        onClose={() => setManagingImagesFor(null)}
+        onPrimaryChange={(imageUrl) => {
+          if (managingImagesFor) handlePrimaryImageChange(managingImagesFor.id, imageUrl)
+        }}
+      />
     </div>
   )
 }

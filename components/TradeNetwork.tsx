@@ -1,250 +1,374 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
+import { useEffect, useRef } from "react";
+import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+const HQ: [number, number] = [13.0827, 80.2707];
 
-// டார்கெட் 5 நாடுகள் + இந்தியா
-const CORE_NETWORK: Record<string, { name: string; tz: string; curr: string; code: string }> = {
-  "840": { name: "United States", tz: "America/New_York", curr: "USD", code: "USD" },
-  "036": { name: "Australia", tz: "Australia/Sydney", curr: "AUD", code: "AUD" },
-  "764": { name: "Thailand", tz: "Asia/Bangkok", curr: "THB", code: "THB" },
-  "826": { name: "United Kingdom", tz: "Europe/London", curr: "GBP", code: "GBP" },
-  "710": { name: "South Africa", tz: "Africa/Johannesburg", curr: "ZAR", code: "ZAR" },
-  "356": { name: "India", tz: "Asia/Kolkata", curr: "INR", code: "INR" }
-};
-
-type TravelArc = { id: string; from: [number, number]; to: [number, number]; speed: number; geoId: string };
-
-const ROUTES: TravelArc[] = [
-  { id: "a1", from: [78.96, 20.59], to: [-100.0, 40.0], speed: 14, geoId: "840" },
-  { id: "a2", from: [78.96, 20.59], to: [133.77, -25.27], speed: 11, geoId: "036" },
-  { id: "a3", from: [78.96, 20.59], to: [100.99, 15.87], speed: 7, geoId: "764" },
-  { id: "a4", from: [78.96, 20.59], to: [-2.0, 54.0], speed: 15, geoId: "826" },
-  { id: "a5", from: [78.96, 20.59], to: [25.04, -29.04], speed: 16, geoId: "710" }
+const PORTS = [
+  { name: "Nhava Sheva", coord: [18.95, 72.95] as [number, number] },
+  { name: "Kochi", coord: [9.93, 76.27] as [number, number] },
+  { name: "Tuticorin", coord: [8.79, 78.13] as [number, number] },
 ];
 
-export default function PremiumNetworkMatrix() {
-  const [dots, setDots] = useState<Record<string, number>>({});
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({});
-  const [liveCard, setLiveCard] = useState<{ name: string; time: string; nightMode: boolean; rateText: string } | null>(null);
+// 5 destination countries — flag (ISO2), timezone (IANA) for local day/night, currency code
+const DESTINATIONS = [
+  {
+    name: "Rotterdam",
+    country: "Netherlands",
+    coord: [51.92, 4.48] as [number, number],
+    iso2: "nl",
+    tz: "Europe/Amsterdam",
+    currency: "EUR",
+  },
+  {
+    name: "Dubai",
+    country: "United Arab Emirates",
+    coord: [25.01, 55.06] as [number, number],
+    iso2: "ae",
+    tz: "Asia/Dubai",
+    currency: "AED",
+  },
+  {
+    name: "Singapore",
+    country: "Singapore",
+    coord: [1.27, 103.85] as [number, number],
+    iso2: "sg",
+    tz: "Asia/Singapore",
+    currency: "SGD",
+  },
+  {
+    name: "New York",
+    country: "United States",
+    coord: [40.71, -74.0] as [number, number],
+    iso2: "us",
+    tz: "America/New_York",
+    currency: "USD",
+  },
+  {
+    name: "Durban",
+    country: "South Africa",
+    coord: [-29.86, 31.02] as [number, number],
+    iso2: "za",
+    tz: "Africa/Johannesburg",
+    currency: "ZAR",
+  },
+];
 
-  const animationRef = useRef<Record<string, number>>({});
-  const frameId = useRef<number | undefined>(undefined);
-  const timestampTracker = useRef<number | undefined>(undefined);
+// Aachari International brand tokens
+const COLORS = {
+  saffron: "#C1622A",
+  ink: "#1A1A1A",
+  cream: "#F8F7F4",
+  line: "#E4DFD4",
+};
 
-  // லைவ் ஃபாரெக்ஸ் டேட்டா
+export default function TradeNetworkMap() {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const ratesRef = useRef<Record<string, number>>({}); // 1 unit of currency -> INR
+
   useEffect(() => {
-    fetch("https://open.er-api.com/v6/latest/USD")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.rates) {
-          const inrBase = data.rates["INR"] || 1;
-          const matrix: Record<string, number> = {};
-          Object.keys(data.rates).forEach((k) => {
-            matrix[k] = data.rates[k] > 0 ? inrBase / data.rates[k] : 0;
-          });
-          setExchangeRates(matrix);
-        }
-      }).catch(err => console.error("Forex engine down:", err));
-  }, []);
+    if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-  // ஸ்மூத் பார்ட்டிகிள் லூப் எஃபெக்ட் (RAF)
-  useEffect(() => {
-    const startState = Object.fromEntries(ROUTES.map((r) => [r.id, Math.random()]));
-    setDots(startState);
-    animationRef.current = startState;
+    let destroyed = false;
+    let animationFrame: number;
+    let invalidateTimer: number | undefined;
+    let resizeObserver: ResizeObserver | undefined;
 
-    const renderLoop = (ts: number) => {
-      if (timestampTracker.current === undefined) timestampTracker.current = ts;
-      const delta = (ts - timestampTracker.current) / 1000;
-      timestampTracker.current = ts;
+    // Fetch live currency -> INR rates (open.er-api.com, USD base)
+    const fetchRates = async () => {
+      try {
+        const res = await fetch("https://open.er-api.com/v6/latest/USD");
+        const data = await res.json();
 
-      const nextState: Record<string, number> = {};
-      let thresholdPassed = false;
+        if (!data || !data.rates) throw new Error("Invalid format");
 
-      for (const r of ROUTES) {
-        const prev = animationRef.current[r.id] ?? 0;
-        let p = prev + delta / r.speed;
-        if (p >= 1) p %= 1;
-        nextState[r.id] = p;
-        if (Math.abs(p - prev) > 0.005) thresholdPassed = true;
+        const usdToInr = data.rates["INR"] || 1;
+        const rates: Record<string, number> = {};
+
+        DESTINATIONS.forEach((d) => {
+          if (d.currency === "USD") {
+            rates.USD = usdToInr;
+            return;
+          }
+          const usdToForeign = data.rates[d.currency];
+          if (usdToForeign > 0) {
+            rates[d.currency] = usdToInr / usdToForeign; // 1 unit of currency -> INR
+          }
+        });
+
+        ratesRef.current = rates;
+      } catch {
+        ratesRef.current = {};
       }
-
-      animationRef.current = nextState;
-      if (thresholdPassed) setDots({ ...nextState });
-      frameId.current = requestAnimationFrame(renderLoop);
     };
 
-    frameId.current = requestAnimationFrame(renderLoop);
-    return () => { if (frameId.current) cancelAnimationFrame(frameId.current); };
-  }, []);
+    const buildPopupHTML = (dest: (typeof DESTINATIONS)[number]) => {
+      const now = new Date();
+      const hourStr = new Intl.DateTimeFormat("en-GB", {
+        timeZone: dest.tz,
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).format(now);
+      const hour24 = parseInt(hourStr.split(":")[0], 10);
+      const isDay = hour24 >= 6 && hour24 < 18;
+      const timeLabel = new Intl.DateTimeFormat("en-US", {
+        timeZone: dest.tz,
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      }).format(now);
+      const dateLabel = new Intl.DateTimeFormat("en-US", {
+        timeZone: dest.tz,
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+      }).format(now);
 
-  const handleFocus = (geoId: string, e: React.MouseEvent) => {
-    const target = CORE_NETWORK[geoId];
-    if (!target) return;
+      const rate = ratesRef.current[dest.currency];
+      const currencyLine = rate ? `1 ${dest.currency} ≈ ₹${rate.toFixed(2)}` : `Loading rate…`;
 
-    setHoveredId(geoId);
-    setMousePos({ x: e.clientX, y: e.clientY });
-
-    const clockOptions: Intl.DateTimeFormatOptions = { timeZone: target.tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true };
-    const localTime = new Intl.DateTimeFormat("en-US", clockOptions).format(new Date());
-
-    const hourCheck = parseInt(new Intl.DateTimeFormat("en-US", { timeZone: target.tz, hour: "numeric", hour12: false }).format(new Date()), 10);
-    const nightMode = hourCheck >= 18 || hourCheck < 6;
-
-    let rateText = "Valuation pending";
-    if (target.curr === "INR") rateText = "Base Hub Node (₹1.00)";
-    else if (exchangeRates[target.code]) rateText = `1 ${target.curr} = ₹${exchangeRates[target.code].toFixed(2)} INR`;
-
-    setLiveCard({ name: target.name, time: localTime, nightMode, rateText });
-  };
-
-  return (
-    <div className="relative w-full max-w-5xl mx-auto px-4 py-8 select-none" style={{ fontFamily: "system-ui, sans-serif" }}>
-      <div className="text-center mb-6">
-        <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight">Enterprise Infrastructure Matrix</h2>
-        <p className="text-slate-400 text-sm mt-1">Cross-Border Pipeline Valuations & Dynamic Telemetry</p>
-      </div>
-
-      <div className="relative bg-[#090d16] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
-        <ComposableMap projection="geoEqualEarth" projectionConfig={{ scale: 165, center: [20, 15] }} width={900} height={460} style={{ width: "100%", height: "auto" }}>
-          <Geographies geography={geoUrl}>
-            {({ geographies }) =>
-              geographies.map((geo) => {
-                const currentId = geo.id || geo.properties?.ISO_N3;
-                const node = CORE_NETWORK[currentId];
-                const active = hoveredId === currentId;
-
-                let fill = "#131924"; // டீஃபால்ட் பேக்கிரவுண்ட்
-                if (node) fill = node.name === "India" ? "#38bdf8" : "#9a3412"; // இந்தியா ப்ளூ, மத்த 5 நாடுகள் டார்க் ஆரஞ்சு
-                if (active && node && node.name !== "India") fill = "#ea580c"; // ஹோவர் பண்ணா பிரைட் ஆரஞ்சு
-
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    onMouseEnter={(e) => handleFocus(currentId, e)}
-                    onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                    onMouseLeave={() => { setHoveredId(null); setLiveCard(null); }}
-                    style={{
-                      default: { fill, stroke: "#1e293b", strokeWidth: 0.5, outline: "none", transition: "fill 0.2s" },
-                      hover: { fill: node && node.name !== "India" ? "#ea580c" : fill, stroke: "#475569", strokeWidth: 0.6, outline: "none", cursor: node ? "pointer" : "default" }
-                    }}
-                  />
-                );
-              })
-            }
-          </Geographies>
-
-          {/* ஓடிக்கிட்டே இருக்குற பார்ட்டிக்கிள் க்ளோயிங் லைன்ஸ் */}
-          {ROUTES.map((r) => (
-            <Line
-              key={`path-${r.id}`}
-              from={r.from}
-              to={r.to}
-              stroke="#ea580c"
-              strokeWidth={1.2}
-              strokeOpacity={0.3}
-              strokeDasharray="5 4"
-              style={{ animation: "matrixFlow 5s linear infinite" }}
-            />
-          ))}
-
-          {/* சிம்பிள் அனிமேஷன் சர்க்கிள் வித் வேவ் */}
-          {ROUTES.map((r) => {
-            const p = dots[r.id] ?? 0;
-            // Linear approximation for standard projection tracking
-            const cx = r.from[0] + (r.to[0] - r.from[0]) * p;
-            const cy = r.from[1] + (r.to[1] - r.from[1]) * p;
-
-            return (
-              <g key={`node-dot-${r.id}`}>
-                <Marker coordinates={[cx, cy]}>
-                  <circle r={8} fill="none" stroke="#ffedd5" strokeWidth={1} className="ping-wave" />
-                  <circle r={3.5} fill="#f97316" stroke="#ffffff" strokeWidth={1} />
-                </Marker>
-              </g>
-            );
-          })}
-
-          <Marker coordinates={[78.96, 20.59]}>
-            <circle r={4.5} fill="#38bdf8" stroke="#fff" strokeWidth={1.5} />
-          </Marker>
-        </ComposableMap>
-
-        {/* நீங்க கேட்ட பிக் பிரீமியம் லைவ் டூல்டிப் கார்டு */}
-        {hoveredId && liveCard && (
-          <div
-            style={{
-              position: "fixed",
-              left: mousePos.x + 22,
-              top: mousePos.y - 15,
-              transform: "translateY(-50%)",
-              pointerEvents: "none",
-              background: "linear-gradient(145deg, #111827 0%, #030712 100%)",
-              border: "1px solid rgba(234, 88, 12, 0.45)",
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05)",
-              borderRadius: "14px",
-              padding: "18px",
-              zIndex: 99999,
-              color: "#f8fafc",
-              minWidth: "270px",
-              backdropFilter: "blur(10px)",
-              animation: "cardFadeIn 0.15s ease-out"
-            }}
-          >
-            <div className="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
-              <span className="text-base font-bold text-orange-500 tracking-wide">{liveCard.name}</span>
-              <span
-                className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full"
-                style={{
-                  background: liveCard.nightMode ? "rgba(99, 102, 241, 0.15)" : "rgba(234, 179, 8, 0.15)",
-                  color: liveCard.nightMode ? "#a5b4fc" : "#fde047",
-                  border: liveCard.nightMode ? "1px solid rgba(99, 102, 241, 0.25)" : "1px solid rgba(234, 179, 8, 0.25)"
-                }}
-              >
-                {liveCard.nightMode ? "🌙 NIGHT" : "☀️ DAY"}
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Zone Metric Time</div>
-                <div className="text-lg font-bold text-slate-200 font-mono mt-0.5">{liveCard.time}</div>
-              </div>
-              <div>
-                <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Converted Forex Index</div>
-                <div className="text-xs font-semibold text-sky-400 mt-1 bg-sky-950/40 px-2.5 py-1.5 rounded-lg border border-sky-900/40 inline-block">
-                  {liveCard.rateText}
-                </div>
-              </div>
+      return `
+        <div style="min-width:190px;font-family:system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:8px;padding:2px 0 8px 0;border-bottom:1px solid ${COLORS.line};margin-bottom:8px;">
+            <img src="https://flagcdn.com/w40/${dest.iso2}.png" width="26" style="border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.1);" />
+            <div>
+              <div style="font-weight:600;font-size:13px;color:${COLORS.ink};line-height:1.2;">${dest.name}</div>
+              <div style="font-size:10.5px;color:#8A8577;letter-spacing:.02em;">${dest.country}</div>
             </div>
           </div>
-        )}
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:${COLORS.ink};margin-bottom:5px;">
+            <span>${isDay ? "☀️" : "🌙"}</span>
+            <span style="font-weight:600;">${timeLabel}</span>
+            <span style="color:#8A8577;">· ${dateLabel}</span>
+          </div>
+          <div style="font-size:11.5px;font-weight:600;color:${COLORS.saffron};background:rgba(193,98,42,.08);display:inline-block;padding:3px 8px;border-radius:20px;">
+            ${currencyLine}
+          </div>
+        </div>
+      `;
+    };
+
+    import("leaflet").then(async (L) => {
+      if (destroyed || !mapContainerRef.current) return;
+
+      await fetchRates();
+
+      const map = L.map(mapContainerRef.current, {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        attributionControl: false,
+        dragging: true,
+      }).setView([20, 30], 2);
+      mapInstanceRef.current = map;
+
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        maxZoom: 8,
+        minZoom: 2,
+      }).addTo(map);
+
+      // Container is sized with %/vh, so Leaflet can grab a stale 0/near-0 size
+      // at first paint. Force it to re-measure once layout has actually settled.
+      requestAnimationFrame(() => map.invalidateSize());
+      invalidateTimer = window.setTimeout(() => map.invalidateSize(), 300);
+
+      resizeObserver = new ResizeObserver(() => map.invalidateSize());
+      if (mapContainerRef.current) resizeObserver.observe(mapContainerRef.current);
+
+      const mkStaticMarker = (coord: [number, number], color: string, name: string) => {
+        const icon = L.divIcon({
+          className: "",
+          html: `<div style="position:relative;width:14px;height:14px;border-radius:50%;background:${color};"><div class="tnm-pulse" style="position:absolute;inset:0;border-radius:50%;background:${color};opacity:.4"></div></div>`,
+          iconSize: [14, 14],
+          iconAnchor: [7, 7],
+        });
+        return L.marker(coord, { icon })
+          .bindTooltip(name, { permanent: false, direction: "top", offset: [0, -8] })
+          .addTo(map);
+      };
+
+      mkStaticMarker(HQ, COLORS.saffron, "Chennai HQ");
+      PORTS.forEach((p) => mkStaticMarker(p.coord, COLORS.ink, p.name));
+
+      // Destination markers — bigger + more animated pin, hover/click to reveal flag + local time + currency card
+      const destMarkers: LeafletMarker[] = DESTINATIONS.map((dest) => {
+        const icon = L.divIcon({
+          className: "",
+          html: `
+            <div class="tnm-dest-marker" style="position:relative;width:24px;height:24px;">
+              <div class="tnm-pulse-ring" style="position:absolute;inset:0;border-radius:50%;background:${COLORS.saffron};opacity:.35"></div>
+              <div class="tnm-pulse-ring tnm-pulse-ring-delay" style="position:absolute;inset:0;border-radius:50%;background:${COLORS.saffron};opacity:.35"></div>
+              <div class="tnm-dest-core" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:${COLORS.saffron};box-shadow:0 0 0 3px rgba(193,98,42,.3),0 0 10px rgba(193,98,42,.6);"></div>
+            </div>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker(dest.coord, { icon }).addTo(map);
+        marker.bindPopup(buildPopupHTML(dest), {
+          closeButton: false,
+          className: "tnm-popup",
+          offset: [0, -10],
+        });
+        marker.on("mouseover", () => {
+          marker.setPopupContent(buildPopupHTML(dest));
+          marker.openPopup();
+        });
+        marker.on("mouseout", () => marker.closePopup());
+        marker.on("click", () => {
+          marker.setPopupContent(buildPopupHTML(dest));
+          marker.openPopup();
+        });
+        return marker;
+      });
+
+      const drawRoute = (from: [number, number], to: [number, number]) => {
+        const [lat1, lon1] = from;
+        const [lat2, lon2] = to;
+        const midLat = (lat1 + lat2) / 2 + 15 * (Math.abs(lon1 - lon2) > 120 ? -1 : 1);
+        const midLon = (lon1 + lon2) / 2;
+        const pts: [number, number][] = [];
+        for (let t = 0; t <= 1; t += 0.02) {
+          const x = (1 - t) * (1 - t) * lat1 + 2 * (1 - t) * t * midLat + t * t * lat2;
+          const y = (1 - t) * (1 - t) * lon1 + 2 * (1 - t) * t * midLon + t * t * lon2;
+          pts.push([x, y]);
+        }
+        L.polyline(pts, { color: COLORS.saffron, weight: 1.1, opacity: 0.55, dashArray: "3 5" }).addTo(map);
+        return pts;
+      };
+
+      const routePaths = DESTINATIONS.map((d) => drawRoute(HQ, d.coord));
+
+      const movingIcon = L.divIcon({
+        className: "",
+        html: `<div style="width:9px;height:9px;border-radius:50%;background:${COLORS.ink};box-shadow:0 0 0 4px rgba(26,26,26,.25),0 0 14px rgba(26,26,26,.5)"></div>`,
+        iconSize: [9, 9],
+        iconAnchor: [4.5, 4.5],
+      });
+
+      const movers = routePaths.map((path) => ({
+        marker: L.marker(path[0], { icon: movingIcon }).addTo(map),
+        path,
+        t: Math.random() * path.length,
+        speed: 0.06 + Math.random() * 0.04,
+      }));
+
+      const animateShips = () => {
+        movers.forEach((m) => {
+          m.t += m.speed;
+          if (m.t >= m.path.length - 1) m.t = 0;
+          m.marker.setLatLng(m.path[Math.floor(m.t)]);
+        });
+        animationFrame = requestAnimationFrame(animateShips);
+      };
+      animateShips();
+
+      void destMarkers; // keep reference for cleanup scope
+    });
+
+    return () => {
+      destroyed = true;
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      if (invalidateTimer) window.clearTimeout(invalidateTimer);
+      if (resizeObserver) resizeObserver.disconnect();
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <section className="relative z-0 w-full" style={{ background: COLORS.cream }}>
+      {/* Heading */}
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-12 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
+        
+        <h2
+          className="text-[clamp(2.2rem,6vw,5rem)] leading-[0.98] uppercase"
+          style={{
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 800,
+            letterSpacing: "-0.02em",
+            background: `linear-gradient(135deg, ${COLORS.ink} 0%, ${COLORS.ink} 55%, ${COLORS.saffron} 100%)`,
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+          }}
+        >
+          Global Trade Network
+        </h2>
+        <p className="mt-4 max-w-xl mx-auto text-sm sm:text-base" style={{ color: "#5C5850" }}>
+          From Chennai to the world — hover a destination for local time and live currency value.
+        </p>
       </div>
 
-      <style jsx>{`
-        @keyframes matrixFlow {
-          to { stroke-dashoffset: -30; }
+      {/* Map — 80% width, 60% viewport height, centered */}
+      <div className="w-full flex justify-center pb-16 sm:pb-20">
+        <div
+          ref={mapContainerRef}
+          className="relative z-0 w-[80%] h-[60vh] min-h-[380px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(26,26,26,0.12)]"
+          style={{ background: COLORS.cream, border: `1px solid ${COLORS.line}` }}
+        />
+      </div>
+
+      <style jsx global>{`
+        .tnm-pulse {
+          animation: tnmPulse 1.8s ease-out infinite;
         }
-        @keyframes wavePulse {
-          0% { transform: scale(0.5); opacity: 0.9; }
-          100% { transform: scale(2.5); opacity: 0; }
+        @keyframes tnmPulse {
+          0% { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(4); opacity: 0; }
         }
-        :global(.ping-wave) {
-          transform-origin: center;
-          transform-box: fill-box;
-          animation: wavePulse 1.6s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+        .tnm-pulse-ring {
+          animation: tnmPulseRing 2.2s ease-out infinite;
         }
-        @keyframes cardFadeIn {
-          from { opacity: 0; transform: translateY(-48%) scale(0.97); }
-          to { opacity: 1; transform: translateY(-50%) scale(1); }
+        .tnm-pulse-ring-delay {
+          animation-delay: 1.1s;
+        }
+        @keyframes tnmPulseRing {
+          0% { transform: scale(1); opacity: 0.5; }
+          100% { transform: scale(3.2); opacity: 0; }
+        }
+        .tnm-dest-core {
+          animation: tnmCoreBounce 2.4s ease-in-out infinite;
+        }
+        @keyframes tnmCoreBounce {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); }
+          50% { transform: translate(-50%, -50%) scale(1.18); }
+        }
+        .tnm-dest-marker {
+          transition: transform 0.2s ease;
+          cursor: pointer;
+        }
+        .tnm-dest-marker:hover {
+          transform: scale(1.35);
+        }
+        .leaflet-container {
+          background: ${COLORS.cream};
+          z-index: 0 !important;
+        }
+        .leaflet-pane,
+        .leaflet-top,
+        .leaflet-bottom {
+          z-index: 0 !important;
+        }
+        .tnm-popup .leaflet-popup-content-wrapper {
+          background: #ffffff;
+          border-radius: 10px;
+          box-shadow: 0 8px 28px rgba(26,26,26,.18);
+          border: 1px solid ${COLORS.line};
+        }
+        .tnm-popup .leaflet-popup-content {
+          margin: 10px 12px;
+        }
+        .tnm-popup .leaflet-popup-tip {
+          background: #ffffff;
+          border: 1px solid ${COLORS.line};
         }
       `}</style>
-    </div>
+    </section>
   );
 }

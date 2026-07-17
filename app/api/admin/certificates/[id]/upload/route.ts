@@ -10,6 +10,7 @@ export async function POST(
     const { id } = await params
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const type = formData.get('type') as string
 
     if (!file) {
       return NextResponse.json(
@@ -25,27 +26,14 @@ export async function POST(
       )
     }
 
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { success: false, error: 'Only PDF, JPG, PNG, WEBP files are allowed' },
-        { status: 400 }
-      )
-    }
-
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-
-    // IMPORTANT: PDF-ku 'raw' explicit-a set pannanum
-    // 'auto' use panna Cloudinary sometimes PDF-a image nu treat pannudhu,
-    // adhu than image/upload path-la poidudhu (restricted by default)
-    const isPdf = file.type === 'application/pdf'
 
     const uploadResult = await new Promise<any>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           folder: `aachari/certificates/${id}`,
-          resource_type: isPdf ? 'raw' : 'image'
+          resource_type: type === 'pdf' ? 'raw' : 'image'
         },
         (error, result) => {
           if (error) reject(error)
@@ -54,9 +42,14 @@ export async function POST(
       ).end(buffer)
     })
 
+    // image or pdf — correct column update pannurom
+    const updateData = type === 'pdf'
+      ? { pdf_url: uploadResult.secure_url }
+      : { image_url: uploadResult.secure_url }
+
     const { data, error } = await supabaseAdmin
       .from('certificates')
-      .update({ image_url: uploadResult.secure_url })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single()
@@ -70,12 +63,11 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: 'File uploaded successfully',
+      message: `${type === 'pdf' ? 'PDF' : 'Image'} uploaded successfully`,
       data
     })
 
   } catch (error: unknown) {
-    console.error('Certificate upload error:', error)
     const message = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
       { success: false, error: message },

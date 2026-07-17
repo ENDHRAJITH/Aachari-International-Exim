@@ -11,15 +11,15 @@ const videos = [
 const CARDS = [
   {
     title: "Where We Started",
-    text: "Our journey began in the domestic market, where years of working closely with customers, suppliers, manufacturers, and producers gave us valuable expertise in product sourcing, quality assurance, and supply chain management.",
+    text: "Our journey began in the domestic market, where years of working closely with customers, suppliers, manufacturers, and producers provided us with valuable expertise in product sourcing, quality assurance, supply chain management, and market expectations. This strong foundation enables us to consistently deliver products that meet customer specifications while fostering long-term business relationships built on trust and reliability.",
   },
   {
     title: "Where We Are Today",
-    text: "Today, we extend this expertise to international markets as a trusted exporter from India — serving buyers with organic agro products, fresh produce, food powders, bakery products, ready-to-eat foods, handicrafts, and garments.",
+    text: "Today, our diverse product portfolio spans organic agro products, fresh fruits and vegetables, food powders, bakery products, ready-to-eat foods, handicrafts, and knitted and woven garments. We continuously expand our sourcing network to meet evolving global demands, and confidence begins with product evaluation — sample orders, customized packaging, and private labeling are available for most of our products.",
   },
   {
     title: "Where We Are Headed",
-    text: "As we continue to expand our global presence, our focus remains simple — to understand our customers' requirements, source products with care, and build business relationships founded on trust, consistency, and shared growth.",
+    text: "As we continue to expand our global presence, our focus remains simple: to understand our customers' requirements, source products with care, maintain uncompromising quality, and build lasting business relationships founded on trust, consistency, and shared growth.",
   },
 ];
 
@@ -42,6 +42,26 @@ export default function HomeAbout() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [typed, setTyped] = useState("");
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Scroll-spy: highlight whichever timeline step is nearest the vertical
+  // center of the viewport as the user scrolls past this section.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = sectionRefs.current.findIndex((el) => el === entry.target);
+            if (idx !== -1) setActiveIndex(idx);
+          }
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+
+    sectionRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -107,7 +127,6 @@ export default function HomeAbout() {
     <section id="about" className="relative overflow-hidden px-6 py-24 lg:px-12">
 
       {/* Video banner */}
-    {/* Video banner */}
 <div className="relative mx-auto max-w-[1320px] mb-16 h-[420px] lg:h-[560px] overflow-hidden rounded-3xl">
   <video
     ref={videoRef}
@@ -134,7 +153,6 @@ export default function HomeAbout() {
     }}
   />
 
-  {/* மாற்றப்பட்ட பகுதி: இப்போ இது Center-Bottom-ல் இருக்கும் */}
   <div className="absolute bottom-0 left-0 right-0 px-8 pb-10 lg:px-12 lg:pb-14 flex justify-center text-center">
     <h2
       className="text-[clamp(2rem,5vw,3.6rem)] font-black tracking-[-0.02em]"
@@ -165,127 +183,111 @@ export default function HomeAbout() {
           </span>
         </div>
 
-        {/* Heading */}
+        {/* Heading — locked to 2 lines */}
         <h2 className="max-w-[820px] text-[clamp(2.2rem,4.2vw,3.6rem)] leading-[1.08] tracking-[-0.02em] text-ink">
-          A decade of trust,{" "}
-          <span className="italic font-light text-saffron">now exported</span>{" "}
-          to the world.
+          <span className="block">The Finest of India,</span>
+          <span className="block">
+            <span className="italic font-light text-saffron">delivered</span>{" "}
+            to the world.
+          </span>
         </h2>
 
-        {/* Lead paragraph */}
+        {/* Lead paragraph — justified, no mid-word breaks */}
         <p
-          className="mt-8 max-w-[720px] text-[19px] leading-8"
-          style={{ color: "#000000", fontWeight: 700 }}
+          className="mt-8 max-w-[720px] text-[19px] leading-8 text-justify"
+          style={{
+            color: "#000000",
+            fontWeight: 700,
+            hyphens: "none",
+            overflowWrap: "normal",
+            wordBreak: "normal",
+          }}
         >
-          Welcome to Aachari International Exim Pvt. Ltd. — an Indian export
-          company with over a decade of domestic market experience,
-          connecting global buyers with quality products through reliable
-          international trade.
+          Welcome to Aachari International Exim Pvt. Ltd., an Indian export
+          company committed to connecting global buyers with premium-quality
+          products through reliable, transparent, and efficient international
+          trade. Backed by over a decade of domestic market experience and
+          industry expertise, we specialize in sourcing high-quality products
+          from trusted manufacturers and producers across India while
+          delivering dependable export solutions to customers worldwide.
         </p>
 
-        {/* Responsive Accordion - Mobile: Vertical (Col) | Desktop: Horizontal (Row) */}
-        <div 
-          className="mt-14 flex flex-col lg:flex-row items-stretch gap-4" 
-          style={{ minHeight: "420px" }}
-        >
-          {CARDS.map((card, idx) => {
-            const active = idx === activeIndex;
-            return (
-              <div
-                key={idx}
-                onMouseEnter={() => setActiveIndex(idx)}
-                onClick={() => setActiveIndex(idx)}
-                className="relative overflow-hidden cursor-pointer rounded-[24px]"
-                style={{
-                  flex: active ? 2.6 : 1,
-                  transition: "flex 0.6s cubic-bezier(0.65,0,0.35,1)",
-                  backgroundColor: "#ff7322",
-                }}
-              >
-                {active && (
-                  <div
-                    className="pointer-events-none absolute inset-0 rounded-[24px]"
-                    style={{ animation: "cardPulse 2.4s ease-in-out infinite" }}
-                  />
-                )}
+        {/* Vertical Timeline — spine + dots, scroll-spy highlights the active step */}
+        <div className="relative mt-16">
+          {/* base line */}
+          <div className="absolute left-[19px] top-2 bottom-2 w-[2px] bg-[#EEDFC8]" />
+          {/* filled progress line — grows as the active step advances */}
+          <div
+            className="absolute left-[19px] top-2 w-[2px] bg-[#F45D06] transition-all duration-700 ease-out"
+            style={{ height: `${(activeIndex / (CARDS.length - 1)) * 100}%` }}
+          />
 
+          <div className="flex flex-col">
+            {CARDS.map((card, idx) => {
+              const active = idx === activeIndex;
+              return (
                 <div
-                  className="relative h-full flex flex-col p-7 transition-all duration-500"
-                  style={{
-                    alignItems: active ? "flex-start" : "center",
-                    justifyContent: active ? "flex-start" : "center",
-                    textAlign: active ? "left" : "center",
+                  key={idx}
+                  ref={(el) => {
+                    sectionRefs.current[idx] = el;
                   }}
+                  onMouseEnter={() => setActiveIndex(idx)}
+                  onClick={() => setActiveIndex(idx)}
+                  className="relative cursor-pointer pb-14 pl-16 last:pb-0"
                 >
-                  {/* Heading pill */}
+                  {/* dot */}
                   <div
-                    className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white"
+                    className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full text-[13px] font-black transition-all duration-300"
                     style={{
-                      marginBottom: active ? "16px" : "0",
-                      maxWidth: "100%",
-                      transition: "padding 0.4s ease",
+                      backgroundColor: active ? "#F45D06" : "#ffffff",
+                      color: active ? "#ffffff" : "#9a8a76",
+                      border: active ? "none" : "2px solid #E7D9C4",
+                      boxShadow: active ? "0 6px 18px rgba(244,93,6,0.35)" : "none",
+                      transform: active ? "scale(1.08)" : "scale(1)",
                     }}
                   >
                     {active && (
-                      <span className="relative flex items-center justify-center shrink-0" style={{ width: "10px", height: "10px" }}>
-                        <span
-                          className="absolute inline-flex h-full w-full rounded-full"
-                          style={{
-                            backgroundColor: "#22C55E",
-                            animation: "liveWave 1.6s ease-out infinite",
-                          }}
-                        />
-                        <span
-                          className="relative inline-flex rounded-full shrink-0"
-                          style={{
-                            width: "8px",
-                            height: "8px",
-                            backgroundColor: "#22C55E",
-                          }}
-                        />
-                      </span>
+                      <span
+                        className="pointer-events-none absolute inline-flex h-full w-full rounded-full"
+                        style={{
+                          backgroundColor: "#F45D06",
+                          animation: "liveWave 1.8s ease-out infinite",
+                        }}
+                      />
                     )}
-                    <h3
-                      className="font-black leading-tight whitespace-nowrap"
-                      style={{
-                        color: "#1A1A1A",
-                        fontSize: active ? "18px" : "13px",
-                        transition: "font-size 0.4s ease",
-                      }}
-                    >
-                      {card.title}
-                    </h3>
+                    <span className="relative z-10">{String(idx + 1).padStart(2, "0")}</span>
                   </div>
 
-                  {/* Inactive state line */}
-                  {!active && (
-                    <div
-                      style={{
-                        marginTop: "14px",
-                        width: "36px",
-                        height: "3px",
-                        borderRadius: "999px",
-                        backgroundColor: "rgba(255,255,255,0.6)",
-                        animation: "lineGrow 2.2s ease-in-out infinite",
-                      }}
-                    />
-                  )}
+                  {/* title */}
+                  <h3
+                    className="font-black leading-tight transition-all duration-300"
+                    style={{
+                      fontSize: active ? "20px" : "15px",
+                      color: active ? "#1A1A1A" : "#8a7a68",
+                    }}
+                  >
+                    {card.title}
+                  </h3>
 
+                  {/* body — only the active step's text is shown, animated in */}
                   {active && (
                     <p
-                      className="text-[17px] lg:text-[18px] leading-8 font-medium"
+                      className="mt-3 max-w-[640px] text-[16px] font-medium leading-8 text-justify"
                       style={{
-                        color: "rgba(255,255,255,0.95)",
-                        animation: "fadeInText 0.5s ease 0.15s both",
+                        color: "#4a4038",
+                        hyphens: "none",
+                        overflowWrap: "normal",
+                        wordBreak: "normal",
+                        animation: "fadeInText 0.5s ease 0.1s both",
                       }}
                     >
                       {card.text}
                     </p>
                   )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
         
         {/* CTA */}
@@ -330,14 +332,6 @@ export default function HomeAbout() {
         @keyframes productScroll {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
-        }
-        @keyframes lineGrow {
-          0%, 100% { width: 36px; opacity: 0.6; }
-          50% { width: 64px; opacity: 1; }
-        }
-        @keyframes cardPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
-          50% { box-shadow: 0 0 0 8px rgba(0,0,0,0); }
         }
         @keyframes fadeInText {
           from { opacity: 0; transform: translateY(6px); }
