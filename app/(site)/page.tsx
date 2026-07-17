@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero/Hero";
 import About from "@/components/About/About";
 import Contact from "@/components/Contact/Contact";
-import Certificates from "@/components/certificates/Certificates";
 import FeaturedProducts from "@/components/products/FeaturedProducts";
 import CertificatesSection from "@/components/certificates/CertificatesSection";
 import HomeAbout from "@/components/About/HomeAbout";
