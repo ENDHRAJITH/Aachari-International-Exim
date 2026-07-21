@@ -12,7 +12,7 @@ export default function VisionMission() {
     {
       icon: Rocket,
       title: 'Our Mission',
-      content: 'In the place to satisfy your requirements, we choose quality over convenience, trust over uncertainty, and long-term relationships over temporary gains.'
+      content: 'In the place to satisfy customer Dynamic Needs, we choose quality over convenience, trust over uncertainty, and long-term relationships over temporary gains.'
     }
   ]
 

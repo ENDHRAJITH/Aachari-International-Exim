@@ -282,7 +282,7 @@ export default function TradeNetworkMap() {
   }, []);
 
   return (
-    <section className="relative z-0 w-full" style={{ background: COLORS.cream }}>
+    <section id="mapnetwork" className="relative z-0 w-full" style={{ background: COLORS.cream }}>
       {/* Heading */}
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-12 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
         

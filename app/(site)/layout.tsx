@@ -1,21 +1,26 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import ScrollPlane from "@/components/ScrollPlane";
 
 export default function SiteLayout({
   children
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname();
+  const isCataloguePage = pathname === '/catalogue' || pathname.startsWith('/catalogue/');
+
   return (
     <>
-      <Navbar />
+      {!isCataloguePage && <Navbar />}
+      
       <main>{children}</main>
-        
-      <Footer />
+      
+      {!isCataloguePage && <Footer />}
       <WhatsAppButton />
-      {/* <ScrollPlane /> */}
     </>
   )
 }
