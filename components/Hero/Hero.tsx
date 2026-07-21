@@ -169,7 +169,7 @@ export default function Hero() {
             </Link>
 
             <Link
-              href="/contact"
+              href="/catalogue"
               className="flex items-center gap-2 rounded-full px-8 py-4 text-[13px] font-bold uppercase tracking-[0.1em] transition-all duration-300 hover:-translate-y-1"
               style={{
                 border: '2.5px solid #1A1A1A',
@@ -179,7 +179,7 @@ export default function Hero() {
                 boxShadow: '0 4px 16px rgba(0,0,0,0.1)'
               }}
             >
-              Get Quote →
+              Get Catalogue →
             </Link>
           </div>
 

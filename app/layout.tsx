@@ -5,7 +5,7 @@ import ScrollPlane from "@/components/ScrollPlane";
 
 export const metadata: Metadata = {
   title: {
-    default: 'Aachari International Exim | Premium Spices & Powders Export',
+    default: 'Aachari International Exim ',
     template: '%s | Aachari International Exim'
   },
   description: 'Premium quality spices and powders exported from India. Moringa powder, turmeric, chilli and more. Trusted B2B export partner worldwide.',
