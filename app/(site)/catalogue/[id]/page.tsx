@@ -18,12 +18,6 @@ interface Product {
   specs?: Record<string, string>;
 }
 
-// Helper: inject Cloudinary transformation params for a lighter mobile version
-function getMobileVideoUrl(url: string) {
-  if (!url.includes('res.cloudinary.com')) return url;
-  return url.replace('/upload/', '/upload/w_720,q_auto:low,f_auto/');
-}
-
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
@@ -32,14 +26,6 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -71,13 +57,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
           trigger: containerRef.current,
           start: "top top",
           end: "+=200%",
-          scrub: isMobile ? 0.6 : 1.2, // lighter smoothing lag on mobile
+          scrub: 0.6,
           pin: true,
           anticipatePin: 1,
           onUpdate: (self) => {
             gsap.to(proxy, {
               time: self.progress * video.duration,
-              duration: isMobile ? 0.25 : 0.5, // faster catch-up, less visible lag
+              duration: 0.3,
               ease: "power2.out",
               overwrite: true,
               onUpdate: () => {
@@ -100,7 +86,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
       ScrollTrigger.getAll().forEach(t => t.kill());
       tl?.kill();
     };
-  }, [product, isMobile]);
+  }, [product]);
 
   if (loading) {
     return (
@@ -114,10 +100,6 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     return <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center px-6 text-center">Product not found</div>;
   }
 
-  const videoSrc = product.video_url
-    ? (isMobile ? getMobileVideoUrl(product.video_url) : product.video_url)
-    : '';
-
   return (
     <div className="bg-[#F5F0E8] min-h-screen">
       <div className="fixed top-4 left-4 md:top-6 md:left-6 z-50">
@@ -129,20 +111,60 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
         </Link>
       </div>
 
-      <div ref={containerRef} className="relative h-screen overflow-hidden">
+      <div ref={containerRef} className="relative h-screen overflow-hidden" style={{ transform: 'translateZ(0)' }}>
         <video
           ref={videoRef}
-          src={videoSrc}
+          src={product.video_url}
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: 'center 30%' }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
       </div>
 
-      {/* rest of the page unchanged */}
+      <div className="relative bg-[#F5F0E8] -mt-12 md:-mt-20 rounded-t-[2rem] md:rounded-t-[3rem] pt-12 md:pt-20 pb-20 md:pb-32">
+        <div className="max-w-4xl mx-auto px-5 md:px-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-4 md:mb-6 leading-tight">
+            {product.name}
+          </h1>
+
+          {product.hsn_code && (
+            <div className="inline-flex items-center gap-2 md:gap-3 bg-[#C1622A] text-white px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-xl font-semibold mb-6 md:mb-8">
+              HSN : {product.hsn_code}
+            </div>
+          )}
+
+          <div className="prose prose-base md:prose-xl text-neutral-700 leading-relaxed mb-8 md:mb-10 max-w-none">
+            {product.description}
+          </div>
+
+          {product.slug && (
+            <Link
+              href={`/products/${product.slug}`}
+              className="flex sm:inline-flex items-center justify-center gap-2 bg-[#C1622A] hover:bg-[#A8521F] text-white px-6 py-3.5 md:px-8 md:py-4 rounded-full text-base md:text-lg font-semibold transition-all active:scale-95 w-full sm:w-auto text-center"
+              style={{ boxShadow: "0 6px 18px rgba(193,98,42,0.35)" }}
+            >
+              View full details & enquire →
+            </Link>
+          )}
+
+          {product.specs && Object.keys(product.specs).length > 0 && (
+            <div className="mt-12 md:mt-20">
+              <h3 className="text-2xl md:text-3xl font-semibold mb-5 md:mb-8">Specifications</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+                {Object.entries(product.specs).map(([key, value]) => (
+                  <div key={key} className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl">
+                    <p className="uppercase text-xs md:text-sm tracking-widest text-neutral-500 mb-1.5 md:mb-2">{key}</p>
+                    <p className="text-lg md:text-2xl font-medium text-neutral-900">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
