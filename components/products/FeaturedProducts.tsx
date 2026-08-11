@@ -68,7 +68,7 @@ export default function FeaturedProducts() {
     <section
       id="products"
       aria-labelledby="products-heading"
-      style={{ padding: '64px 24px', backgroundColor: '#F8F7F4' }}
+      style={{ padding: '64px 0', backgroundColor: '#F8F7F4' }}
     >
       {products.length > 0 && (
         <script
@@ -77,7 +77,7 @@ export default function FeaturedProducts() {
         />
       )}
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -100,44 +100,51 @@ export default function FeaturedProducts() {
             Premium quality agricultural products exported from Tamil Nadu, India
           </p>
         </div>
+      </div>
 
-        {/* Grid — centered, card max-width capped */}
-        {loading ? (
-          <div style={{
+      {/* Horizontal scroll row — full-bleed, cards in a single line */}
+      {loading ? (
+        <div
+          style={{
             display: 'flex',
-            justifyContent: 'center',
             gap: '24px',
-            flexWrap: 'wrap'
-          }}>
-            {[1, 2, 3].map((i) => (
-              <div key={i} style={{
-                width: '300px',
-                aspectRatio: '4/3',
-                backgroundColor: '#F0EBE3',
-                borderRadius: '14px',
-                animation: 'pulse 1.5s infinite'
-              }} />
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#6B6B6B' }}>
-            No products available right now.
-          </p>
-        ) : (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '24px',
-            flexWrap: 'wrap'
-          }}>
-            {products.map((product) => {
+            overflowX: 'auto',
+            padding: '4px 24px 12px',
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}
+        >
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} style={{
+              width: '280px',
+              flex: '0 0 auto',
+              aspectRatio: '4/3',
+              backgroundColor: '#F0EBE3',
+              borderRadius: '14px',
+              animation: 'pulse 1.5s infinite'
+            }} />
+          ))}
+        </div>
+      ) : products.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#6B6B6B' }}>
+          No products available right now.
+        </p>
+      ) : (
+        <div className="products-marquee-viewport">
+          <div className="products-marquee-track">
+            {/* Render products twice back-to-back for a seamless infinite loop */}
+            {[...products, ...products].map((product, idx) => {
               const image = getImage(product)
               return (
                 <Link
-                  key={product.id}
+                  key={`${product.id}-${idx}`}
                   href={`/products/${product.slug}`}
                   title={`View ${product.name} export details`}
-                  style={{ textDecoration: 'none', width: '300px', flexGrow: 0, flexShrink: 0 }}
+                  style={{
+                    textDecoration: 'none',
+                    width: '280px',
+                    flex: '0 0 auto'
+                  }}
                 >
                   <article style={{
                     backgroundColor: '#ffffff',
@@ -170,7 +177,7 @@ export default function FeaturedProducts() {
                           alt={`${product.name} export from India${product.category ? ' - ' + product.category.name : ''}${product.hsn_code ? ' - HSN ' + product.hsn_code : ''}`}
                           fill
                           style={{ objectFit: 'cover' }}
-                          sizes="300px"
+                          sizes="280px"
                           loading="lazy"
                         />
                       ) : (
@@ -225,35 +232,55 @@ export default function FeaturedProducts() {
               )
             })}
           </div>
-        )}
-
-        {/* View All button */}
-        <div style={{ textAlign: 'center', marginTop: '36px' }}>
-          <Link
-            href="/products"
-            title="View all export products from Aachari International Exim"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: '#C1622A',
-              color: '#ffffff',
-              padding: '12px 28px',
-              borderRadius: '10px',
-              fontSize: '14px',
-              fontWeight: 600,
-              textDecoration: 'none'
-            }}
-          >
-            View All Products →
-          </Link>
         </div>
+      )}
+
+      {/* View All button */}
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Link
+          href="/products"
+          title="View all export products from Aachari International Exim"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: '#C1622A',
+            color: '#ffffff',
+            padding: '12px 28px',
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: 600,
+            textDecoration: 'none'
+          }}
+        >
+          View All Products →
+        </Link>
       </div>
 
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @keyframes marqueeScroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .products-marquee-viewport {
+          overflow: hidden;
+          width: 100%;
+          padding: 4px 0 16px;
+          -webkit-mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+        }
+        .products-marquee-track {
+          display: flex;
+          gap: 24px;
+          width: max-content;
+          animation: marqueeScroll ${Math.max(products.length * 6, 20)}s linear infinite;
+        }
+        .products-marquee-viewport:hover .products-marquee-track {
+          animation-play-state: paused;
         }
       `}</style>
     </section>

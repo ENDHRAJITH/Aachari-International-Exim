@@ -2,7 +2,13 @@ import { Metadata } from 'next'
 
 async function getProduct(slug: string) {
   try {
-    const res = await fetch(`https://aachariexim.com/api/products/${slug}`, { cache: 'no-store' })
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/products/${slug}`, {
+      cache: 'no-store',
+      headers: {
+        'x-internal-secret': process.env.INTERNAL_API_SECRET || ''
+      }
+    })
     const data = await res.json()
     return data.success ? data.data : null
   } catch {

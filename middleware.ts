@@ -14,20 +14,29 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/api')) {
     const origin = request.headers.get('origin')
     const referer = request.headers.get('referer')
+    const internalSecret = request.headers.get('x-internal-secret')
 
-    const isDirectAccess = !origin && !referer
-    if (isDirectAccess) {
-      return NextResponse.json(
-        { error: 'Direct API access not allowed' },
-        { status: 403 }
-      )
-    }
+    // Allow trusted server-to-server calls (e.g. generateMetadata fetching
+    // our own API route). These have no origin/referer since they're not
+    // browser requests, so they'd otherwise be blocked as "direct access".
+    const isInternalRequest =
+      internalSecret && internalSecret === process.env.INTERNAL_API_SECRET
 
-    if (origin && !ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
-      )
+    if (!isInternalRequest) {
+      const isDirectAccess = !origin && !referer
+      if (isDirectAccess) {
+        return NextResponse.json(
+          { error: 'Direct API access not allowed' },
+          { status: 403 }
+        )
+      }
+
+      if (origin && !ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
+        return NextResponse.json(
+          { error: 'Forbidden' },
+          { status: 403 }
+        )
+      }
     }
   }
 

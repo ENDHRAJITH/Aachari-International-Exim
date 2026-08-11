@@ -126,7 +126,9 @@ export default function ContactInfo() {
               <br />
               Arakkonam, Ranipet District,
               <br />
-              Tamil Nadu - 631002
+              Tamil Nadu - 631002,
+              <br/>
+              India
             </div>
           </div>
         </li>
