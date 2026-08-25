@@ -314,7 +314,7 @@ export default function ContactInfo() {
                 text-ink
               "
             >
-              Mon - Sat : 09.00 am - 06.00 pm
+              24/7 Customer Support
             </div>
           </div>
         </li>
