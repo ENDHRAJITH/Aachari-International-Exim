@@ -64,6 +64,10 @@ const COLORS = {
   line: "#E4DFD4",
 };
 
+// CARTO now requires a (free) API key for raster basemap tiles.
+// Ideally move this into an env var: process.env.NEXT_PUBLIC_CARTO_KEY
+const CARTO_API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJhIjoiYWNfcG4xZGM3cmgiLCJqdGkiOiIzNWFmYWUyMiJ9.kr2zEX3msMwqISB74hg6lkFEyz3FEhyROf0Y8sokoJw";
+
 export default function TradeNetworkMap() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
@@ -165,10 +169,14 @@ export default function TradeNetworkMap() {
       }).setView([20, 30], 2);
       mapInstanceRef.current = map;
 
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        maxZoom: 8,
-        minZoom: 2,
-      }).addTo(map);
+      L.tileLayer(
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    maxZoom: 19,
+    minZoom: 2,
+    attribution: "&copy; OpenStreetMap contributors",
+  }
+).addTo(map);
 
       // Container is sized with %/vh, so Leaflet can grab a stale 0/near-0 size
       // at first paint. Force it to re-measure once layout has actually settled.
@@ -285,7 +293,7 @@ export default function TradeNetworkMap() {
     <section id="mapnetwork" className="relative z-0 w-full" style={{ background: COLORS.cream }}>
       {/* Heading */}
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-12 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
-        
+
         <h2
           className="text-[clamp(2.2rem,6vw,5rem)] leading-[0.98] uppercase"
           style={{
@@ -371,4 +379,4 @@ export default function TradeNetworkMap() {
       `}</style>
     </section>
   );
-}
+} 
