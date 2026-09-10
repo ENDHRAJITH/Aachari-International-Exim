@@ -112,24 +112,22 @@ export default function ContactInfo() {
 </div>
             </div>
 
-            <div
-              className="
-                font-[var(--font-display)]
-                text-[1.1rem]
-                font-medium
-                text-ink
-              "
-            >
-              No. 15, 5th Street,
-              <br />
-              A N Kandigai, Palanipet,
-              <br />
-              Arakkonam, Ranipet District,
-              <br />
-              Tamil Nadu - 631002,
-              <br/>
-              India
-            </div>
+           <div
+  className="
+    font-[var(--font-display)]
+    text-[1.1rem]
+    font-medium
+    text-ink
+  "
+>
+  No. 15, 5th Street, A.N. Kandigai,
+  <br />
+  Palanipet Post, Arakkonam,
+  <br />
+  Ranipet Dist. - 631 002,
+  <br />
+  Tamil Nadu, India.
+</div>
           </div>
         </li>
 
