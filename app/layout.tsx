@@ -46,6 +46,50 @@ export const metadata: Metadata = {
   }
 }
 
+const jsonLdOrganization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': 'https://aachariexim.com/#organization',
+  name: 'Aachari International Exim Pvt. Ltd.',
+  alternateName: 'Aachari Exim',
+  url: 'https://aachariexim.com',
+  logo: 'https://aachariexim.com/logo.png',
+  image: 'https://aachariexim.com/og-image.jpg',
+  description: 'Leading B2B exporter of premium Indian spices, Moringa powder, turmeric, onions, and agricultural products worldwide.',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Chennai',
+    addressRegion: 'Tamil Nadu',
+    addressCountry: 'IN'
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    email: 'aachariexim@gmail.com',
+    availableLanguage: ['English', 'Tamil']
+  },
+  sameAs: [
+    'https://aachariexim.com'
+  ]
+}
+
+const jsonLdWebSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://aachariexim.com/#website',
+  url: 'https://aachariexim.com',
+  name: 'Aachari International Exim',
+  description: 'Premium Quality Spices & Agricultural Export Partner from India',
+  publisher: {
+    '@id': 'https://aachariexim.com/#organization'
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://aachariexim.com/products?search={search_term_string}',
+    'query-input': 'required name=search_term_string'
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,9 +97,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
+      </head>
       <body className={`${fraunces.className} ${interTight.variable}`}>
         {children}
-         
       </body>
     </html>
   );

@@ -1,168 +1,226 @@
 'use client';
 
-import { use, useEffect, useRef, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
+const fraunces = { className: '', variable: '--font-fraunces' };
+const plexMono = { className: '', variable: '--font-plex-mono' };
+
+interface ProductImage {
+  image_url: string;
+  is_primary: boolean | null;
+  sort_order: number | null;
+}
+
+interface ProductSpec {
+  spec_key: string;
+  spec_value: string;
+  sort_order: number | null;
+}
 
 interface Product {
   id: string;
-  name?: string;
-  slug?: string;
-  description?: string;
-  hsn_code?: string | null;
-  video_url?: string;
-  specs?: Record<string, string>;
+  name: string;
+  slug: string;
+  description: string | null;
+  hsn_code: string | null;
+  product_images: ProductImage[];
+  product_specs: ProductSpec[];
 }
 
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const [product, setProduct] = useState<Product | null>(null);
+  const [activeImage, setActiveImage] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProduct() {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select(`
+          id, name, slug, description, hsn_code,
+          product_images ( image_url, is_primary, sort_order ),
+          product_specs ( spec_key, spec_value, sort_order )
+        `)
         .eq('id', id)
         .single();
 
-      if (error) console.error('Error fetching product:', error);
-      setProduct(data);
+      if (error) {
+        console.error('Error fetching product:', error);
+        setLoading(false);
+        return;
+      }
+
+      const images = [...(data.product_images ?? [])].sort(
+        (a: ProductImage, b: ProductImage) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+      );
+      const primary = images.find((img) => img.is_primary) ?? images[0];
+
+      setProduct(data as Product);
+      setActiveImage(primary?.image_url ?? '');
       setLoading(false);
     }
 
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    if (!videoRef.current || !product?.video_url) return;
-
-    const video = videoRef.current;
-    let tl: gsap.core.Timeline | null = null;
-
-    function setupScrub() {
-      const proxy = { time: 0 };
-
-      tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=200%",
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            gsap.to(proxy, {
-              time: self.progress * video.duration,
-              duration: 0.3,
-              ease: "power2.out",
-              overwrite: true,
-              onUpdate: () => {
-                video.currentTime = proxy.time;
-              }
-            });
-          }
-        }
-      });
-    }
-
-    if (video.readyState >= 1) {
-      setupScrub();
-    } else {
-      video.addEventListener('loadedmetadata', setupScrub);
-    }
-
-    return () => {
-      video.removeEventListener('loadedmetadata', setupScrub);
-      ScrollTrigger.getAll().forEach(t => t.kill());
-      tl?.kill();
-    };
-  }, [product]);
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center">
-        <p className="text-xl md:text-2xl">Loading product...</p>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: '#EDE4CC', color: '#3A2E1E', fontFamily: 'var(--font-plex-mono)' }}
+      >
+        <p className="text-sm tracking-widest uppercase">Loading manifest...</p>
       </div>
     );
   }
 
   if (!product) {
-    return <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center px-6 text-center">Product not found</div>;
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center px-6 text-center"
+        style={{ background: '#EDE4CC', color: '#3A2E1E' }}
+      >
+        Product not found
+      </div>
+    );
   }
 
+  const specs = [...(product.product_specs ?? [])].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+  );
+  const gallery = [...(product.product_images ?? [])].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+  );
+
   return (
-    <div className="bg-[#F5F0E8] min-h-screen">
+    <div
+      className={`${fraunces.variable} ${plexMono.variable} min-h-screen`}
+      style={{ background: '#EDE4CC' }}
+    >
       <div className="fixed top-4 left-4 md:top-6 md:left-6 z-50">
         <Link
           href="/catalogue"
-          className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-black/80 hover:bg-black text-white rounded-full text-xs md:text-sm font-medium transition-all"
+          className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 text-[10px] md:text-xs tracking-widest uppercase transition-all"
+          style={{ background: '#3A2E1E', color: '#EDE4CC', fontFamily: 'var(--font-plex-mono)' }}
         >
           ← Back
         </Link>
       </div>
 
-      <div ref={containerRef} className="relative h-screen overflow-hidden" style={{ transform: 'translateZ(0)' }}>
-        <video
-          ref={videoRef}
-          src={product.video_url}
-          muted
-          playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectPosition: 'center 30%' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
-      </div>
+      <div className="max-w-4xl mx-auto px-5 md:px-6 pt-24 pb-20 md:pb-32">
 
-      <div className="relative bg-[#F5F0E8] -mt-12 md:-mt-20 rounded-t-[2rem] md:rounded-t-[3rem] pt-12 md:pt-20 pb-20 md:pb-32">
-        <div className="max-w-4xl mx-auto px-5 md:px-6">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-4 md:mb-6 leading-tight">
-            {product.name}
-          </h1>
-
+        {/* Image + HSN stamp */}
+        <div className="relative mb-4 md:mb-6">
+          <div
+            className="overflow-hidden"
+            style={{ background: '#3A2E1E', border: '1px solid #C7BB98' }}
+          >
+            <img
+              src={activeImage}
+              alt={product.name}
+              className="w-full h-[280px] md:h-[420px] object-cover"
+            />
+          </div>
           {product.hsn_code && (
-            <div className="inline-flex items-center gap-2 md:gap-3 bg-[#C1622A] text-white px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-xl font-semibold mb-6 md:mb-8">
-              HSN : {product.hsn_code}
+            <div
+              className="absolute -bottom-6 right-4 md:right-8 rounded-full flex flex-col items-center justify-center"
+              style={{
+                width: 64,
+                height: 64,
+                border: '1.5px solid #B5502F',
+                color: '#B5502F',
+                background: '#EDE4CC',
+                transform: 'rotate(-8deg)',
+                fontFamily: 'var(--font-plex-mono)',
+              }}
+            >
+              <div className="text-[8px] tracking-widest">HSN</div>
+              <div className="text-xs font-medium">{product.hsn_code}</div>
             </div>
           )}
+        </div>
 
-          <div className="prose prose-base md:prose-xl text-neutral-700 leading-relaxed mb-8 md:mb-10 max-w-none">
+        {/* Thumbnail strip */}
+        {gallery.length > 1 && (
+          <div className="flex gap-2 mb-10 md:mb-12 mt-8 overflow-x-auto">
+            {gallery.map((img) => (
+              <button
+                key={img.image_url}
+                onClick={() => setActiveImage(img.image_url)}
+                className="w-14 h-14 md:w-16 md:h-16 flex-shrink-0"
+                style={{
+                  border: activeImage === img.image_url ? '2px solid #B5502F' : '1px solid #C7BB98',
+                }}
+              >
+                <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Title */}
+        <div
+          className="text-[10px] tracking-[2px] uppercase mb-2"
+          style={{ color: '#6B7346', fontFamily: 'var(--font-plex-mono)' }}
+        >
+          Aachari International Exim — Product manifest
+        </div>
+        <h1
+          className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 md:mb-8 leading-tight"
+          style={{ color: '#3A2E1E', fontFamily: 'var(--font-fraunces)' }}
+        >
+          {product.name}
+        </h1>
+
+        {/* Description */}
+        {product.description && (
+          <div
+            className="text-sm md:text-lg leading-relaxed mb-10 md:mb-14"
+            style={{ color: '#4A3F2A', fontFamily: 'var(--font-fraunces)' }}
+          >
             {product.description}
           </div>
+        )}
 
-          {product.slug && (
-            <Link
-              href={`/products/${product.slug}`}
-              className="flex sm:inline-flex items-center justify-center gap-2 bg-[#C1622A] hover:bg-[#A8521F] text-white px-6 py-3.5 md:px-8 md:py-4 rounded-full text-base md:text-lg font-semibold transition-all active:scale-95 w-full sm:w-auto text-center"
-              style={{ boxShadow: "0 6px 18px rgba(193,98,42,0.35)" }}
+        {/* Specs — manifest table */}
+        {specs.length > 0 && (
+          <div style={{ borderTop: '1px dashed #A99B6E' }} className="pt-6 md:pt-8">
+            <div
+              className="text-[10px] tracking-[2px] uppercase mb-4 md:mb-6"
+              style={{ color: '#6B7346', fontFamily: 'var(--font-plex-mono)' }}
             >
-              View full details & enquire →
-            </Link>
-          )}
-
-          {product.specs && Object.keys(product.specs).length > 0 && (
-            <div className="mt-12 md:mt-20">
-              <h3 className="text-2xl md:text-3xl font-semibold mb-5 md:mb-8">Specifications</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
-                {Object.entries(product.specs).map(([key, value]) => (
-                  <div key={key} className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl">
-                    <p className="uppercase text-xs md:text-sm tracking-widest text-neutral-500 mb-1.5 md:mb-2">{key}</p>
-                    <p className="text-lg md:text-2xl font-medium text-neutral-900">{value}</p>
-                  </div>
-                ))}
-              </div>
+              Manifest — specifications
             </div>
-          )}
+            <table className="w-full text-xs md:text-sm" style={{ color: '#3A2E1E', fontFamily: 'var(--font-plex-mono)' }}>
+              <tbody>
+                {specs.map((s, i) => (
+                  <tr key={s.spec_key} style={i > 0 ? { borderTop: '1px dotted #C7BB98' } : undefined}>
+                    <td className="py-2 md:py-3 pr-4" style={{ color: '#8A7B55' }}>
+                      {s.spec_key}
+                    </td>
+                    <td className="py-2 md:py-3 text-right">{s.spec_value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Footer badge */}
+        <div className="flex justify-between items-center mt-10 md:mt-14 pt-4" style={{ borderTop: '2px solid #3A2E1E' }}>
+          <div className="text-[9px]" style={{ color: '#8A7B55', fontFamily: 'var(--font-plex-mono)' }}>
+            aachariexim.com
+          </div>
+          <div
+            className="text-[9px] tracking-widest uppercase px-3 py-1.5"
+            style={{ border: '1px solid #6B7346', color: '#6B7346', fontFamily: 'var(--font-plex-mono)' }}
+          >
+            Export ready
+          </div>
         </div>
       </div>
     </div>

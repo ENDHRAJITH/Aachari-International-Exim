@@ -250,7 +250,7 @@ export default function ContactInfo() {
                 break-all
               "
             >
-              aachariinternationaleximpvtltd@gmail.com
+              aachariexim@gmail.com
             </div>
           </div>
         </li>

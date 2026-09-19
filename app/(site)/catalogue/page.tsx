@@ -1,26 +1,75 @@
-import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
+import { Metadata } from 'next';
+import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
 
-interface RawProduct {
-  id: string
-  name: string
-  hsn_code: string | null
-  product_images: Array<{ image_url: string; is_primary: boolean }>
+export const metadata: Metadata = {
+  title: 'Export Product Catalogue | Aachari International Exim',
+  description: 'Explore our comprehensive digital product catalogue featuring export-quality Moringa powder, turmeric, onions, spices, and agricultural goods from India.',
+  keywords: [
+    'export product catalogue',
+    'spices catalog India',
+    'moringa powder catalog',
+    'B2B export catalog',
+    'aachari exim brochure'
+  ],
+  alternates: {
+    canonical: 'https://aachariexim.com/catalogue'
+  },
+  openGraph: {
+    title: 'Export Product Catalogue | Aachari International Exim',
+    description: 'Explore our digital product catalogue featuring export-quality spices and agricultural goods from India.',
+    url: 'https://aachariexim.com/catalogue',
+    siteName: 'Aachari International Exim',
+    type: 'website'
+  }
 }
 
-export default async function CataloguePage() {
-  const { data, error } = await supabase
+const fraunces = { className: '', variable: '--font-fraunces' };
+const plexMono = { className: '', variable: '--font-plex-mono' };
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface RawProduct {
+  id: string;
+  name: string;
+  hsn_code: string | null;
+  category_id: string | null;
+  product_images: Array<{ image_url: string; is_primary: boolean | null }>;
+}
+
+export default async function CataloguePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('id, name, slug')
+    .eq('is_active', true)
+    .order('sort_order');
+
+  let query = supabase
     .from('products')
     .select(`
-      id,
-      name,
-      hsn_code,
+      id, name, hsn_code, category_id,
       product_images ( image_url, is_primary )
     `)
     .eq('is_active', true)
-    .order('sort_order')
+    .order('sort_order');
 
-  if (error) console.error('Failed to fetch products:', error)
+  if (category) {
+    const activeCategory = categories?.find((c: Category) => c.slug === category);
+    if (activeCategory) query = query.eq('category_id', activeCategory.id);
+  }
+
+  const { data, error } = await query;
+  if (error) console.error('Failed to fetch products:', error);
 
   const products = ((data as RawProduct[]) ?? []).map((p) => ({
     id: p.id,
@@ -30,57 +79,123 @@ export default async function CataloguePage() {
       p.product_images.find((img) => img.is_primary)?.image_url ??
       p.product_images[0]?.image_url ??
       '',
-  }))
+  }));
 
   return (
-    <div className="relative min-h-screen bg-[#F5F0E8]">
-      {/* Home Button */}
-      <div className="fixed top-6 left-6 z-[100]">
-        <Link
-          href="/"
-          className="flex items-center gap-2 px-6 py-3 bg-black/80 hover:bg-black text-white rounded-full border border-white/20 text-sm font-medium transition-all active:scale-95"
+    <div className={`${fraunces.variable} ${plexMono.variable} min-h-screen`} style={{ background: '#EDE4CC' }}>
+      <div className="max-w-6xl mx-auto px-6 pt-16 pb-24">
+
+        {/* Header */}
+        <div
+          className="flex justify-between items-end pb-3 mb-2"
+          style={{ borderBottom: '2px solid #3A2E1E' }}
         >
-          ← Home
-        </Link>
-      </div>
+          <div>
+            <div
+              className="text-[10px] tracking-[2px] uppercase"
+              style={{ color: '#6B7346', fontFamily: 'var(--font-plex-mono)' }}
+            >
+              Aachari International Exim
+            </div>
+            <h1
+              className="text-2xl md:text-3xl font-semibold mt-1"
+              style={{ color: '#3A2E1E', fontFamily: 'var(--font-fraunces)' }}
+            >
+              Product catalog
+            </h1>
+          </div>
+          <div
+            className="text-[10px]"
+            style={{ color: '#8A7B55', fontFamily: 'var(--font-plex-mono)' }}
+          >
+            {products.length} items listed
+          </div>
+        </div>
 
-      <div className="max-w-6xl mx-auto px-6 pt-28 pb-20">
-        <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">
-          Our products
-        </h1>
-        <p className="text-neutral-500 mb-10">
-          Premium quality agricultural products exported from Tamil Nadu, India
-        </p>
+        {/* Category filter tabs */}
+        <div className="flex gap-2 my-4 flex-wrap" style={{ fontFamily: 'var(--font-plex-mono)' }}>
+          <Link
+            href="/catalogue"
+            className="text-[9px] tracking-wide uppercase px-3 py-1.5"
+            style={
+              !category
+                ? { background: '#3A2E1E', color: '#EDE4CC' }
+                : { border: '1px solid #A99B6E', color: '#6B7346' }
+            }
+          >
+            All
+          </Link>
+          {categories?.map((c: Category) => (
+            <Link
+              key={c.id}
+              href={`/catalogue?category=${c.slug}`}
+              className="text-[9px] tracking-wide uppercase px-3 py-1.5"
+              style={
+                category === c.slug
+                  ? { background: '#3A2E1E', color: '#EDE4CC' }
+                  : { border: '1px solid #A99B6E', color: '#6B7346' }
+              }
+            >
+              {c.name}
+            </Link>
+          ))}
+        </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {/* Product grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {products.map((product) => (
             <Link
               key={product.id}
               href={`/catalogue/${product.id}`}
-              className="group block bg-white border border-black/5 rounded-2xl overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-lg"
+              className="block p-2.5 transition-transform hover:-translate-y-1"
+              style={{ background: '#F1E9D2', border: '1px solid #C7BB98' }}
             >
               <div
-                className="h-44 bg-neutral-200 bg-cover bg-center"
-                style={{ backgroundImage: product.imageUrl ? `url(${product.imageUrl})` : undefined }}
+                className="h-24 md:h-28 mb-2 bg-cover bg-center"
+                style={{
+                  background: product.imageUrl ? undefined : '#3A2E1E',
+                  backgroundImage: product.imageUrl ? `url(${product.imageUrl})` : undefined,
+                }}
               />
-              <div className="p-4">
-                <p className="text-sm font-medium text-neutral-900 mb-2 truncate">
-                  {product.name}
-                </p>
+              <div
+                className="text-xs md:text-sm truncate"
+                style={{ color: '#3A2E1E', fontFamily: 'var(--font-fraunces)' }}
+              >
+                {product.name}
+              </div>
+              <div className="flex justify-between items-center mt-1.5">
                 {product.hsn_code && (
-                  <span className="inline-block bg-[#C1622A] text-white text-xs font-medium px-3 py-1 rounded-full">
+                  <span
+                    className="text-[7px]"
+                    style={{ color: '#8A7B55', fontFamily: 'var(--font-plex-mono)' }}
+                  >
                     HSN {product.hsn_code}
                   </span>
                 )}
+                <div
+                  className="rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{
+                    width: 18,
+                    height: 18,
+                    border: '1px solid #B5502F',
+                    color: '#B5502F',
+                    fontSize: 6,
+                    fontFamily: 'var(--font-plex-mono)',
+                  }}
+                >
+                  EX
+                </div>
               </div>
             </Link>
           ))}
         </div>
 
         {products.length === 0 && (
-          <p className="text-center text-neutral-500 py-20">No products found.</p>
+          <p className="text-center py-20" style={{ color: '#8A7B55' }}>
+            No products found.
+          </p>
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -365,13 +365,13 @@ export default function Footer() {
 
                 <li>
                   <p className="text-[0.9rem] text-cream/70 leading-6">
-                    Hariharan Palani
+                    Mr. Hariharan Palani
                   </p>
                 </li>
 
                 <li>
                   <p className="text-[0.9rem] text-cream/70 leading-6">
-                    Harathi B
+                    Miss. Harathi B
                   </p>
                 </li>
 
@@ -402,6 +402,21 @@ export default function Footer() {
                   >
                     Privacy Policy
                   </button>
+                </li>
+
+                <li>
+                  <Link
+                    href="/catalogue"
+                    className="
+                      block
+                      text-[0.9rem]
+                      text-cream/70
+                      hover:text-saffron
+                      transition-colors
+                    "
+                  >
+                    Catalogue
+                  </Link>
                 </li>
 
               </ul>
@@ -462,7 +477,7 @@ export default function Footer() {
                   </p>
 
                   <a
-                    href="mailto:aachariinternationaleximpvtltd@gmail.com"
+                    href="mailto:aachariexim@gmail.com"
                     className="
                       mt-1
                       block
@@ -473,7 +488,7 @@ export default function Footer() {
                       transition-colors
                     "
                   >
-                    aachariinternationaleximpvtltd@gmail.com
+                    aachariexim@gmail.com
                   </a>
                 </div>
 
