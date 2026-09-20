@@ -5,18 +5,18 @@ import ScrollPlane from "@/components/ScrollPlane";
 
 export const metadata: Metadata = {
   title: {
-    default: 'Aachari International Exim ',
+    default: 'Aachari International Exim | Agro Organic | Textile | Rice | Handicrafts',
     template: '%s | Aachari International Exim'
   },
-  description: 'Premium quality spices and powders exported from India. Moringa powder, turmeric, chilli and more. Trusted B2B export partner worldwide.',
-  keywords: ['moringa powder export', 'turmeric powder India', 'spices export India', 'B2B spices supplier', 'aachari international exim'],
+  description: 'Premium quality Agro Organic products, Textiles, Rice, and Handicrafts exported from India. Trusted B2B export partner worldwide.',
+  keywords: ['agro organic export', 'textile export India', 'rice export India', 'handicrafts export India', 'aachari international exim'],
   metadataBase: new URL('https://aachariexim.com'),
   alternates: {
     canonical: '/'
   },
   openGraph: {
-    title: 'Aachari International Exim | Premium Spices & Powders Export',
-    description: 'Premium quality spices and powders exported from India.',
+    title: 'Aachari International Exim | Agro Organic | Textile | Rice | Handicrafts',
+    description: 'Premium quality Agro Organic products, Textiles, Rice, and Handicrafts exported from India.',
     url: 'https://aachariexim.com',
     siteName: 'Aachari International Exim',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aachari International Exim',
-    description: 'Premium quality spices and powders exported from India.',
+    title: 'Aachari International Exim | Agro Organic | Textile | Rice | Handicrafts',
+    description: 'Premium quality Agro Organic products, Textiles, Rice, and Handicrafts exported from India.',
     images: ['/og-image.jpg'],
   },
   robots: {
@@ -55,7 +55,7 @@ const jsonLdOrganization = {
   url: 'https://aachariexim.com',
   logo: 'https://aachariexim.com/logo.png',
   image: 'https://aachariexim.com/og-image.jpg',
-  description: 'Leading B2B exporter of premium Indian spices, Moringa powder, turmeric, onions, and agricultural products worldwide.',
+  description: 'Leading B2B exporter of premium Agro Organic products, Textiles, Rice, Handicrafts, and agricultural products worldwide.',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Chennai',
@@ -79,7 +79,7 @@ const jsonLdWebSite = {
   '@id': 'https://aachariexim.com/#website',
   url: 'https://aachariexim.com',
   name: 'Aachari International Exim',
-  description: 'Premium Quality Spices & Agricultural Export Partner from India',
+  description: 'Premium Quality Agro Organic, Textile, Rice & Handicrafts Export Partner from India',
   publisher: {
     '@id': 'https://aachariexim.com/#organization'
   },

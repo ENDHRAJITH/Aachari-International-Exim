@@ -371,7 +371,7 @@ export default function Footer() {
 
                 <li>
                   <p className="text-[0.9rem] text-cream/70 leading-6">
-                    Miss. Harathi B
+                    Mrs. Harathi B
                   </p>
                 </li>
 
