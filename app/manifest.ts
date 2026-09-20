@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Aachari International Exim',
     short_name: 'Aachari Exim',
-    description: 'Premium quality spices and powders exported from India. Moringa powder, turmeric, chilli and agricultural products.',
+    description: 'Premium quality Agro Organic products, Textiles, Rice, and Handicrafts exported from India.',
     start_url: '/',
     display: 'standalone',
     background_color: '#F8F7F4',
