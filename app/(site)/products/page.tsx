@@ -16,24 +16,46 @@ interface Product {
   specs: any[]
 }
 
+// Module-level persistent client cache to eliminate back-navigation flickering / layout shifts
+let globalProductsCache: Product[] | null = null
+let globalCategoriesCache: any[] | null = null
+
 function ProductsContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   const categoryParam = searchParams.get('category') || 'all'
 
-  const [allProducts, setAllProducts] = useState<Product[]>([])
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState([])
+  // Initialize state directly from in-memory cache for 0ms instant Back-navigation
+  const [allProducts, setAllProducts] = useState<Product[]>(() => globalProductsCache || [])
+  const [categories, setCategories] = useState(() => globalCategoriesCache || [])
   const [activeCategory, setActiveCategory] = useState(categoryParam)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => !globalProductsCache)
 
-  // Fetch categories and all products ONCE on mount
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(() => {
+    if (!globalProductsCache) return []
+    if (categoryParam === 'all') return globalProductsCache
+    return globalProductsCache.filter(p => p.category?.slug === categoryParam)
+  })
+
+  // Sync active category & filter when categoryParam URL changes
+  useEffect(() => {
+    setActiveCategory(categoryParam)
+    if (allProducts.length > 0) {
+      if (categoryParam === 'all') {
+        setFilteredProducts(allProducts)
+      } else {
+        setFilteredProducts(allProducts.filter(p => p.category?.slug === categoryParam))
+      }
+    }
+  }, [categoryParam, allProducts])
+
+  // Fetch or refresh initial data (runs silently in background if cache exists)
   useEffect(() => {
     let isMounted = true
 
-    const fetchInitialData = async () => {
+    const fetchData = async () => {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
           fetch('/api/products'),
@@ -45,14 +67,16 @@ function ProductsContent() {
 
         if (isMounted) {
           const fetchedProducts: Product[] = productsData.data || []
-          setAllProducts(fetchedProducts)
-          setCategories(categoriesData.data || [])
+          const fetchedCategories = categoriesData.data || []
 
-          // Apply initial category filter from URL instantly in-memory
+          globalProductsCache = fetchedProducts
+          globalCategoriesCache = fetchedCategories
+
+          setAllProducts(fetchedProducts)
+          setCategories(fetchedCategories)
+
           if (categoryParam !== 'all') {
-            setFilteredProducts(
-              fetchedProducts.filter(p => p.category?.slug === categoryParam)
-            )
+            setFilteredProducts(fetchedProducts.filter(p => p.category?.slug === categoryParam))
           } else {
             setFilteredProducts(fetchedProducts)
           }
@@ -64,39 +88,23 @@ function ProductsContent() {
       }
     }
 
-    fetchInitialData()
+    fetchData()
 
     return () => {
       isMounted = false
     }
   }, [])
 
-  // Sync category filter instantly when URL categoryParam changes
-  useEffect(() => {
-    setActiveCategory(categoryParam)
-    if (allProducts.length > 0) {
-      if (categoryParam === 'all') {
-        setFilteredProducts(allProducts)
-      } else {
-        setFilteredProducts(
-          allProducts.filter(p => p.category?.slug === categoryParam)
-        )
-      }
-    }
-  }, [categoryParam, allProducts])
-
   // Instant 0ms client-side filter switching
   const handleFilter = (slug: string) => {
     setActiveCategory(slug)
 
-    // Instant memory filtering
     if (slug === 'all') {
       setFilteredProducts(allProducts)
     } else {
       setFilteredProducts(allProducts.filter(p => p.category?.slug === slug))
     }
 
-    // Non-blocking background URL update
     startTransition(() => {
       if (slug === 'all') {
         router.push('/products', { scroll: false })
@@ -127,7 +135,7 @@ export default function ProductsPage() {
         Our Products
       </h1>
       <p style={{ color: '#6B6B6B', marginBottom: '28px' }}>
-        Premium quality agricultural products exported from Tamil Nadu, India
+        A diverse range of Indian products exported to global market
       </p>
 
       <Suspense fallback={
