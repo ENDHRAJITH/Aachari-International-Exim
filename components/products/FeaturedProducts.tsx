@@ -97,7 +97,7 @@ export default function FeaturedProducts() {
             Our Products
           </h2>
           <p style={{ color: '#6B6B6B', fontSize: '15px', margin: '8px 0 0' }}>
-            Premium quality agricultural products exported from Tamil Nadu, India
+            A diverse range of Indian products exported to global market
           </p>
         </div>
       </div>

@@ -1,8 +1,10 @@
 import { Metadata } from 'next'
 import { supabase } from '@/lib/supabase'
 
-async function getProduct(slug: string) {
+async function getProduct(rawSlug: string) {
   try {
+    if (!rawSlug) return null
+    const slug = decodeURIComponent(rawSlug).trim()
     const { data } = await supabase
       .from('products')
       .select(`
@@ -16,9 +18,9 @@ async function getProduct(slug: string) {
         images:product_images(image_url, is_primary, alt_text),
         specs:product_specs(spec_key, spec_value)
       `)
-      .eq('slug', slug)
+      .ilike('slug', slug)
       .eq('is_active', true)
-      .single()
+      .maybeSingle()
 
     return data || null
   } catch {
@@ -29,10 +31,11 @@ async function getProduct(slug: string) {
 export async function generateMetadata({
   params
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }> | { slug: string }
 }): Promise<Metadata> {
-  const { slug } = await params
-  const product = await getProduct(slug)
+  const resolvedParams = await params
+  const rawSlug = resolvedParams?.slug || ''
+  const product = await getProduct(rawSlug)
 
   if (!product) {
     return { title: 'Product Not Found | Aachari International Exim' }
