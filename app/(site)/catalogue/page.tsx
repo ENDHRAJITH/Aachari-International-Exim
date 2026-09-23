@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import { Download } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Export Product Catalogue | Aachari International Exim',
@@ -87,7 +88,7 @@ export default async function CataloguePage({
 
         {/* Header */}
         <div
-          className="flex justify-between items-end pb-3 mb-2"
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 mb-3"
           style={{ borderBottom: '2px solid #3A2E1E' }}
         >
           <div>
@@ -104,11 +105,27 @@ export default async function CataloguePage({
               Product catalog
             </h1>
           </div>
-          <div
-            className="text-[10px]"
-            style={{ color: '#8A7B55', fontFamily: 'var(--font-plex-mono)' }}
-          >
-            {products.length} items listed
+
+          <div className="flex items-center gap-4">
+            <div
+              className="text-[10px] hidden sm:block"
+              style={{ color: '#8A7B55', fontFamily: 'var(--font-plex-mono)' }}
+            >
+              {products.length} items listed
+            </div>
+            <a
+              href="/catalogue.pdf"
+              download="Aachari_Export_Product_Catalogue.pdf"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 cursor-pointer"
+              style={{
+                background: '#C1622A',
+                color: '#FFFFFF',
+                fontFamily: 'var(--font-plex-mono)',
+              }}
+            >
+              <Download size={15} />
+              Download Catalogue (PDF)
+            </a>
           </div>
         </div>
 

@@ -11,14 +11,42 @@ interface ProductFilterProps {
   activeCategory: string
   onFilter: (slug: string) => void
   totalCount: number
+  loading?: boolean
 }
 
 export default function ProductFilter({
   categories,
   activeCategory,
   onFilter,
-  totalCount
+  totalCount,
+  loading = false
 }: ProductFilterProps) {
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        flexWrap: 'wrap',
+        marginBottom: '28px'
+      }}>
+        {[84, 120, 110, 95, 130].map((width, i) => (
+          <div
+            key={i}
+            style={{
+              width: `${width}px`,
+              height: '35px',
+              borderRadius: '20px',
+              backgroundColor: '#F0EBE3',
+              animation: 'pulse 1.5s infinite'
+            }}
+          />
+        ))}
+        <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }`}</style>
+      </div>
+    )
+  }
+
   return (
     <div style={{
       display: 'flex',
@@ -43,7 +71,7 @@ export default function ProductFilter({
           transition: 'all 0.15s'
         }}
       >
-        All ({totalCount})
+        {totalCount > 0 ? `All (${totalCount})` : 'All'}
       </button>
 
       {/* Category buttons */}

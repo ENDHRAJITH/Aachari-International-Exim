@@ -51,9 +51,16 @@ export default function Navbar() {
   // purely visual, doesn't touch any layout width/height.
   const measurePill = () => {
     const activeIdx = navLinks.findIndex((item) => isActive(item.href));
+    if (activeIdx === -1) {
+      setPill((prev) => ({ ...prev, ready: false }));
+      return;
+    }
     const el = itemRefs.current[activeIdx];
     const list = listRef.current;
-    if (!el || !list) return;
+    if (!el || !list) {
+      setPill((prev) => ({ ...prev, ready: false }));
+      return;
+    }
     const listRect = list.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
     setPill({ left: elRect.left - listRect.left, width: elRect.width, ready: true });
@@ -155,7 +162,11 @@ export default function Navbar() {
           {/* Desktop CTA — flush to the right edge */}
           <Link
             href="/contact"
-            className="cursor-hover hidden lg:flex items-center gap-2 justify-self-end rounded-full bg-ink px-8 py-4 text-[12px] uppercase tracking-[0.08em] text-cream"
+            className={`cursor-hover hidden lg:flex items-center gap-2 justify-self-end rounded-full px-8 py-4 text-[12px] uppercase tracking-[0.08em] transition-all duration-300 ${
+              isActive("/contact")
+                ? "bg-saffron text-white shadow-md"
+                : "bg-ink text-cream hover:bg-saffron"
+            }`}
           >
             Contact
           </Link>
