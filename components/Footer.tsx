@@ -364,14 +364,11 @@ export default function Footer() {
               <ul className="space-y-4">
 
                 <li>
-                  <p className="text-[0.9rem] text-cream/70 leading-6">
-                    Mr. Hariharan Palani
+                  <p className="text-[0.9rem] text-cream/70 leading-6 font-medium">
+                    Hariharan P
                   </p>
-                </li>
-
-                <li>
-                  <p className="text-[0.9rem] text-cream/70 leading-6">
-                    Mrs. Harathi B
+                  <p className="text-[0.78rem] text-cream/50">
+                    Managing Director
                   </p>
                 </li>
 

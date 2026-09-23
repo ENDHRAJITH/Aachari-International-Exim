@@ -309,7 +309,7 @@ export default function TradeNetworkMap() {
           Global Trade Network
         </h2>
         <p className="mt-4 max-w-xl mx-auto text-sm sm:text-base" style={{ color: "#5C5850" }}>
-          From Chennai to the world — hover a destination for local time and live currency value.
+          Bridging India’s Commercial Heritage with Emerging Global Frontiers
         </p>
       </div>
 
