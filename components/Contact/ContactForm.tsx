@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import CountrySelect from "@/components/ui/CountrySelect";
 
 interface Product {
   id: string;
@@ -548,13 +549,10 @@ export default function ContactForm() {
           <label className="mb-2 block text-[0.72rem] font-medium uppercase tracking-[0.16em] text-ink-soft">
             Country
           </label>
-          <input
-            type="text"
-            name="country"
+          <CountrySelect
             value={formData.country}
-            onChange={handleChange}
-            placeholder="Country of import"
-            className="w-full rounded-[8px] border border-black/[0.12] bg-cream-soft px-4 py-[14px] text-[0.95rem] text-ink transition-all duration-200 focus:border-saffron focus:bg-cream focus:outline-none"
+            onChange={(countryName) => setFormData((prev) => ({ ...prev, country: countryName }))}
+            placeholder="Select Country of import"
           />
         </div>
       </div>

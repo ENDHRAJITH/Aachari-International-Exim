@@ -292,7 +292,7 @@ export default function TradeNetworkMap() {
   return (
     <section id="mapnetwork" className="relative z-0 w-full" style={{ background: COLORS.cream }}>
       {/* Heading */}
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-12 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
+      <div className="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-12 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
 
         <h2
           className="text-[clamp(2.2rem,6vw,5rem)] leading-[0.98] uppercase"
@@ -317,7 +317,7 @@ export default function TradeNetworkMap() {
       <div className="w-full flex justify-center pb-16 sm:pb-20">
         <div
           ref={mapContainerRef}
-          className="relative z-0 w-[80%] h-[60vh] min-h-[380px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(26,26,26,0.12)]"
+          className="relative z-0 w-[90%] 2xl:w-[85%] max-w-[1800px] h-[60vh] min-h-[420px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(26,26,26,0.12)]"
           style={{ background: COLORS.cream, border: `1px solid ${COLORS.line}` }}
         />
       </div>

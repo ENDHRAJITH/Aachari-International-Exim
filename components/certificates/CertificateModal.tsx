@@ -341,17 +341,7 @@ export default function CertificateModal({ cert, onClose }: Props) {
               </div>
             )}
 
-            {cert.valid_until && (
-              <div className="cm-detail-row">
-                <div className="cm-detail-icon"><Calendar size={16} color="#C1622A" /></div>
-                <div>
-                  <p className="cm-detail-label">Valid Until</p>
-                  <p className="cm-detail-value">
-                    {new Date(cert.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </p>
-                </div>
-              </div>
-            )}
+
           </div>
 
           <div className="cm-actions">

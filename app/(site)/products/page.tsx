@@ -38,7 +38,7 @@ export default async function ProductsPage() {
   const { products, categories } = await getProductsData()
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '120px 24px 40px' }}>
+    <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '120px 24px 40px' }}>
       <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#1A1A1A', marginBottom: '8px', marginTop: '70px' }}>
         Our Products
       </h1>
