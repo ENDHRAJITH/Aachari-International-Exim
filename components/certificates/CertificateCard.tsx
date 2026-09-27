@@ -165,13 +165,7 @@ export default function CertificateCard({ cert, onClick }: Props) {
           </p>
         )}
 
-        {cert.valid_until && (
-          <p style={{ fontSize: '11px', color: '#9c7a6a', margin: 0 }}>
-            Valid until: {new Date(cert.valid_until).toLocaleDateString('en-IN', {
-              day: 'numeric', month: 'short', year: 'numeric'
-            })}
-          </p>
-        )}
+
 
         {/* Download PDF */}
         <div style={{ marginTop: 'auto', paddingTop: '12px' }}>

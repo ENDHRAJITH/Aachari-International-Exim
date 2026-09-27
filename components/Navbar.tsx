@@ -87,7 +87,7 @@ export default function Navbar() {
 
         {/* Nav - 3-column grid, edge-to-edge padding so logo/CTA sit close to the borders */}
         <nav
-          className={`mx-auto grid w-full max-w-[1600px] grid-cols-[auto_1fr_auto] items-center px-3 lg:px-6 transition-all duration-500 ${
+          className={`mx-auto grid w-full max-w-[1800px] grid-cols-[auto_1fr_auto] items-center px-3 lg:px-8 transition-all duration-500 ${
             scrolled ? "py-3" : "py-5"
           }`}
         >

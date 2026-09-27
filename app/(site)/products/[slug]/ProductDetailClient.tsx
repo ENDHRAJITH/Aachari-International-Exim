@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronRight, Package, Tag, FileText, ArrowRight, Share2, CheckCircle2, Phone, ChevronDown, ChevronUp } from 'lucide-react'
+import CountrySelect from '@/components/ui/CountrySelect'
 
 interface ProductImage {
   id: string
@@ -668,12 +669,10 @@ export default function ProductDetailClient({
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <div>
                   <label style={labelStyle}>Country</label>
-                  <input
-                    type="text"
+                  <CountrySelect
                     value={form.country}
-                    onChange={(e) => setForm({ ...form, country: e.target.value })}
-                    placeholder="e.g. United Arab Emirates, USA"
-                    style={inputStyle}
+                    onChange={(countryName) => setForm({ ...form, country: countryName })}
+                    placeholder="Select Country of Import"
                   />
                 </div>
                 <div>

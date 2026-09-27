@@ -129,7 +129,7 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="mx-auto max-w-[1320px] grid items-center gap-[60px] mt-15 lg:grid-cols-[1.15fr_1fr] relative z-10">
+      <div className="mx-auto max-w-[1800px] grid items-center gap-[60px] mt-15 lg:grid-cols-[1.15fr_1fr] relative z-10">
         <div className="relative z-10 max-w-4xl" style={{ zIndex: 100 }}>
 
           {/* Main Heading — locked to exactly 2 lines via explicit break */}

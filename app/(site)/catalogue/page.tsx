@@ -84,7 +84,7 @@ export default async function CataloguePage({
 
   return (
     <div className={`${fraunces.variable} ${plexMono.variable} min-h-screen`} style={{ background: '#EDE4CC' }}>
-      <div className="max-w-6xl mx-auto px-6 pt-16 pb-24">
+      <div className="max-w-[1800px] mx-auto px-6 pt-16 pb-24">
 
         {/* Header */}
         <div
@@ -159,7 +159,7 @@ export default async function CataloguePage({
         </div>
 
         {/* Product grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4">
           {products.map((product) => (
             <Link
               key={product.id}

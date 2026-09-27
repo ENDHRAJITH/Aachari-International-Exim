@@ -121,7 +121,7 @@ export default function Footer() {
           </h4>
         </div>
 
-        <div className="relative z-10 max-w-[1320px] mx-auto">
+        <div className="relative z-10 max-w-[1800px] mx-auto px-4 lg:px-8">
 
           {/* =====================================================
               TOP SECTION
