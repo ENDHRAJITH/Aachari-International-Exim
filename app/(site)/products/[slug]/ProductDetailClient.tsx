@@ -672,7 +672,7 @@ export default function ProductDetailClient({
                   <CountrySelect
                     value={form.country}
                     onChange={(countryName) => setForm({ ...form, country: countryName })}
-                    placeholder="Select country for import"
+                    placeholder="Select country"
                   />
                 </div>
                 <div>
