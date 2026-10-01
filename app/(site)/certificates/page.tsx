@@ -3,10 +3,10 @@ import CertificatesSection from '@/components/certificates/CertificatesSection'
 
 export const metadata: Metadata = {
   title: 'Certificates | Aachari International Exim',
-  description: 'APEDA, FSSAI, ISO certified export company from Tamil Nadu, India.',
+  description: 'APEDA, FSSAI, ISO certified India based export company.',
   openGraph: {
     title: 'Certificates | Aachari International Exim',
-    description: 'APEDA, FSSAI, ISO certified export company from Tamil Nadu, India.',
+    description: 'APEDA, FSSAI, ISO certified India based export company.',
     url: 'https://aachariexim.com/certificates',
   },
   alternates: {

@@ -78,7 +78,7 @@ export default function HeroLeft() {
       >
         Aachari International Exim is a trusted partner for premium
         exports and imports, connecting Indian craftsmanship with
-        world-class hardware, electronics, and spices to buyers
+        world-class agro products, textiles, and rice to buyers
         across more than forty countries.
       </p> */}
 
@@ -90,7 +90,7 @@ export default function HeroLeft() {
 >
   Aachari International Exim is a trusted partner for premium
         exports and imports, connecting Indian craftsmanship with
-        world-class hardware, electronics, and spices to buyers
+        world-class agro products, textiles, and rice to buyers
         across more than forty countries.</p>
 
       {/* Buttons */}

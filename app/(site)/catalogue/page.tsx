@@ -5,10 +5,10 @@ import { Download } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Export Product Catalogue | Aachari International Exim',
-  description: 'Explore our comprehensive digital product catalogue featuring export-quality Moringa powder, turmeric, onions, spices, and agricultural goods from India.',
+  description: 'Explore our comprehensive digital product catalogue featuring export-quality Moringa powder, rice, onions, textiles, and agricultural goods from India.',
   keywords: [
     'export product catalogue',
-    'spices catalog India',
+    'rice catalog India',
     'moringa powder catalog',
     'B2B export catalog',
     'aachari exim brochure'
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Export Product Catalogue | Aachari International Exim',
-    description: 'Explore our digital product catalogue featuring export-quality spices and agricultural goods from India.',
+    description: 'Explore our digital product catalogue featuring export-quality agricultural goods and rice from India.',
     url: 'https://aachariexim.com/catalogue',
     siteName: 'Aachari International Exim',
     type: 'website'

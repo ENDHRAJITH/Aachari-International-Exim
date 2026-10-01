@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Our Products | Aachari International Exim',
-  description: 'Browse our full range of export products — onions, moringa powder, spices, grains, and handicrafts. A diverse range of Indian products exported to global market.',
-  keywords: 'export products India, agricultural export catalog, onion exporter, moringa powder export, spice exporter Tamil Nadu',
+  description: 'Browse our full range of export products — onions, moringa powder, rice, grains, and handicrafts. A diverse range of Indian products exported to global market.',
+  keywords: 'export products India, agricultural export catalog, onion exporter, moringa powder export, rice exporter India',
   openGraph: {
     title: 'Our Products | Aachari International Exim',
     description: 'A diverse range of Indian products exported to global market.',

@@ -9,7 +9,18 @@ export const metadata: Metadata = {
     template: '%s | Aachari International Exim'
   },
   description: 'Premium quality Agro Organic products, Textiles, Rice, and Handicrafts exported from India. Trusted B2B export partner worldwide.',
-  keywords: ['agro organic export', 'textile export India', 'rice export India', 'handicrafts export India', 'aachari international exim'],
+  keywords: [
+    'agro organic export India',
+    'textile exporter India',
+    'rice exporter India',
+    'handicrafts exporter India',
+    'India based export company',
+    'merchant exporter Chennai Tamil Nadu',
+    'APEDA certified exporter',
+    'FSSAI registered exporter',
+    'FOB CIF pricing bulk export',
+    'aachari international exim'
+  ],
   metadataBase: new URL('https://aachariexim.com'),
   alternates: {
     canonical: '/'

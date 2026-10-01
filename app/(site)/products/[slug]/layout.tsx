@@ -53,7 +53,12 @@ export async function generateMetadata({
       `${product.name} export`,
       `${product.name} supplier India`,
       `${product.name} B2B bulk export`,
-      'spices export India',
+      `${product.name} wholesale exporter`,
+      `${product.name} FOB CIF price`,
+      product.hsn_code ? `${product.name} HSN ${product.hsn_code}` : 'agro product export',
+      'APEDA FSSAI certified exporter',
+      'India based export company',
+      'merchant exporter Chennai Tamil Nadu',
       'aachari international exim'
     ],
     alternates: {

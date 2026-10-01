@@ -123,7 +123,7 @@ export default function CataloguePageClient() {
               marginBottom: '40px',
             }}
           >
-            Browse our complete range of premium Indian spices with full specs,
+            Browse our complete range of premium Indian products with full specs,
             HSN codes, and certifications — built for international buyers.
           </p>
 

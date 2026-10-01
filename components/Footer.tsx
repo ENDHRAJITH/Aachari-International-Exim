@@ -354,11 +354,11 @@ export default function Footer() {
             </div>
 
 
-            {/* ================= DIRECTORS ================= */}
+            {/* ================= FOUNDER ================= */}
 
             <div>
               <h5 className="mb-5 text-[0.74rem] uppercase tracking-[0.22em] text-gold-light">
-                Directors
+                Founder
               </h5>
 
               <ul className="space-y-4">
@@ -368,7 +368,7 @@ export default function Footer() {
                     Hariharan P
                   </p>
                   <p className="text-[0.78rem] text-cream/50">
-                    Managing Director
+                    Founder & Managing Director
                   </p>
                 </li>
 

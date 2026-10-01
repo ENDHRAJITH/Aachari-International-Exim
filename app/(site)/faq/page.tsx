@@ -4,9 +4,9 @@ import { supabase } from '@/lib/supabase'
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions (FAQ) | Aachari International Exim',
-  description: 'Find answers to common questions regarding Indian spice exports, B2B minimum order quantities (MOQ), APEDA & FSSAI certificates, shipping terms (FOB/CIF), and payment methods.',
+  description: 'Find answers to common questions regarding Indian agricultural exports, B2B minimum order quantities (MOQ), APEDA & FSSAI certificates, shipping terms (FOB/CIF), and payment methods.',
   keywords: [
-    'spice export FAQ',
+    'agro export FAQ',
     'moringa powder MOQ',
     'export payment terms',
     'APEDA certificate India',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Frequently Asked Questions (FAQ) | Aachari International Exim',
-    description: 'Find answers to common questions regarding Indian spice exports, B2B order MOQ, shipping terms, and certificates.',
+    description: 'Find answers to common questions regarding Indian agro exports, B2B order MOQ, shipping terms, and certificates.',
     url: 'https://aachariexim.com/faq',
     siteName: 'Aachari International Exim',
     type: 'website'

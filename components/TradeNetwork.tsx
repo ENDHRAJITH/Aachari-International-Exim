@@ -12,7 +12,7 @@ const PORTS = [
   { name: "Tuticorin", coord: [8.79, 78.13] as [number, number] },
 ];
 
-// 5 destination countries — flag (ISO2), timezone (IANA) for local day/night, currency code
+// 10 destination countries — flag (ISO2), timezone (IANA) for local day/night, currency code
 const DESTINATIONS = [
   {
     name: "Rotterdam",
@@ -31,6 +31,14 @@ const DESTINATIONS = [
     currency: "AED",
   },
   {
+    name: "Jeddah",
+    country: "Saudi Arabia",
+    coord: [21.49, 39.19] as [number, number],
+    iso2: "sa",
+    tz: "Asia/Riyadh",
+    currency: "SAR",
+  },
+  {
     name: "Singapore",
     country: "Singapore",
     coord: [1.27, 103.85] as [number, number],
@@ -45,6 +53,38 @@ const DESTINATIONS = [
     iso2: "us",
     tz: "America/New_York",
     currency: "USD",
+  },
+  {
+    name: "London",
+    country: "United Kingdom",
+    coord: [51.51, -0.13] as [number, number],
+    iso2: "gb",
+    tz: "Europe/London",
+    currency: "GBP",
+  },
+  {
+    name: "Sydney",
+    country: "Australia",
+    coord: [-33.87, 151.21] as [number, number],
+    iso2: "au",
+    tz: "Australia/Sydney",
+    currency: "AUD",
+  },
+  {
+    name: "Port Klang",
+    country: "Malaysia",
+    coord: [3.0, 101.4] as [number, number],
+    iso2: "my",
+    tz: "Asia/Kuala_Lumpur",
+    currency: "MYR",
+  },
+  {
+    name: "Hamburg",
+    country: "Germany",
+    coord: [53.55, 9.99] as [number, number],
+    iso2: "de",
+    tz: "Europe/Berlin",
+    currency: "EUR",
   },
   {
     name: "Durban",

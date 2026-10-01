@@ -32,6 +32,32 @@ export default function CertificatesSection({ mode = 'full' }: Props) {
       .finally(() => setLoading(false))
   }, [])
 
+  const openModal = (cert: Certificate) => {
+    setSelected(cert)
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ certModal: true }, '')
+    }
+  }
+
+  const closeModal = () => {
+    if (selected) {
+      setSelected(null)
+      if (typeof window !== 'undefined' && window.history.state?.certModal) {
+        window.history.back()
+      }
+    }
+  }
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (selected) {
+        setSelected(null)
+      }
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [selected])
+
   const displayed = mode === 'home' ? certificates.slice(0, 3) : certificates
 
   return (
@@ -96,7 +122,7 @@ export default function CertificatesSection({ mode = 'full' }: Props) {
               <CertificateCard
                 key={cert.id}
                 cert={cert}
-                onClick={() => setSelected(cert)}
+                onClick={() => openModal(cert)}
               />
             ))}
           </div>
@@ -121,7 +147,7 @@ export default function CertificatesSection({ mode = 'full' }: Props) {
       </div>
 
       {/* Modal */}
-      <CertificateModal cert={selected} onClose={() => setSelected(null)} />
+      <CertificateModal cert={selected} onClose={closeModal} />
 
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}`}</style>
     </section>

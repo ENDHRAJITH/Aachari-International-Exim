@@ -81,7 +81,7 @@ export default function AboutContent() {
       >
         Aachari International Exim bridges trusted Indian
         manufacturers with buyers across global markets.
-        From premium spices sourced from renowned growing
+        From premium agricultural produce sourced from renowned growing
         regions to industrial hardware and electronics,
         every shipment reflects quality, compliance and
         reliability.

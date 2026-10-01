@@ -54,7 +54,7 @@ export default function HeroRight() {
         >
           <Image
             src="/a1.jpg"
-            alt="Premium Spices"
+            alt="Agro Organic"
             fill
             className="object-cover"
           />
@@ -76,7 +76,7 @@ export default function HeroRight() {
               backdrop-blur-md
             "
           >
-            Premium Spices
+            Agro Organic
           </div>
         </div>
 
