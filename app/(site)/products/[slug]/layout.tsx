@@ -113,6 +113,10 @@ export default async function ProductLayout({
   const rawMaxPrice = parseFloat((product as any).max_price)
   const hasRealPriceRange = !isNaN(rawMinPrice) && !isNaN(rawMaxPrice) && rawMinPrice > 0 && rawMaxPrice >= rawMinPrice
 
+  const categoryName = Array.isArray(product.category) 
+    ? product.category[0]?.name 
+    : (product.category as any)?.name
+
   // Build base Product JSON-LD schema with authentic product metadata
   const jsonLdProduct: any = {
     '@context': 'https://schema.org',
@@ -122,7 +126,7 @@ export default async function ProductLayout({
     description: product.short_description || product.description || `${product.name} exported from India by Aachari International Exim.`,
     sku: product.hsn_code ? `HSN-${product.hsn_code}` : product.slug,
     mpn: product.hsn_code || product.slug,
-    category: product.category?.name || 'Agro & B2B Products',
+    category: categoryName || 'Agro & B2B Products',
     brand: {
       '@type': 'Brand',
       name: 'Aachari International Exim'
