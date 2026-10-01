@@ -97,7 +97,7 @@ interface CountrySelectProps {
 export default function CountrySelect({
   value,
   onChange,
-  placeholder = "Select Country of Import",
+  placeholder = "Select country for import",
   style,
   className = ""
 }: CountrySelectProps) {

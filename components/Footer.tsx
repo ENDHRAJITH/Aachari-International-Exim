@@ -368,7 +368,7 @@ export default function Footer() {
                     Hariharan P
                   </p>
                   <p className="text-[0.78rem] text-cream/50">
-                    Founder & Managing Director
+                    Managing Director
                   </p>
                 </li>
 

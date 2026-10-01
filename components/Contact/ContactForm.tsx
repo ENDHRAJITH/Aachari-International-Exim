@@ -552,7 +552,7 @@ export default function ContactForm() {
           <CountrySelect
             value={formData.country}
             onChange={(countryName) => setFormData((prev) => ({ ...prev, country: countryName }))}
-            placeholder="Select Country of import"
+            placeholder="Select country for import"
           />
         </div>
       </div>

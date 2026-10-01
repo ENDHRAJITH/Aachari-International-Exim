@@ -103,7 +103,18 @@ export default async function ProductLayout({
   const images = product.images?.map((img: any) => img.image_url) || []
   const specs = product.specs || []
 
-  const jsonLdProduct = {
+  // Check if genuine numeric price data exists on product object or specs
+  const rawPrice = (product as any).price || (product as any).unit_price || (product as any).cost || null
+  const numericPrice = rawPrice ? parseFloat(rawPrice) : NaN
+  const hasRealNumericPrice = !isNaN(numericPrice) && numericPrice > 0
+
+  // Check if genuine price range exists (e.g. min_price & max_price)
+  const rawMinPrice = parseFloat((product as any).min_price)
+  const rawMaxPrice = parseFloat((product as any).max_price)
+  const hasRealPriceRange = !isNaN(rawMinPrice) && !isNaN(rawMaxPrice) && rawMinPrice > 0 && rawMaxPrice >= rawMinPrice
+
+  // Build base Product JSON-LD schema with authentic product metadata
+  const jsonLdProduct: any = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
@@ -111,16 +122,20 @@ export default async function ProductLayout({
     description: product.short_description || product.description || `${product.name} exported from India by Aachari International Exim.`,
     sku: product.hsn_code ? `HSN-${product.hsn_code}` : product.slug,
     mpn: product.hsn_code || product.slug,
+    category: product.category?.name || 'Agro & B2B Products',
     brand: {
       '@type': 'Brand',
       name: 'Aachari International Exim'
-    },
-    offers: {
+    }
+  }
+
+  // Attach offers schema ONLY if genuine numeric price data exists in database
+  if (hasRealPriceRange) {
+    jsonLdProduct.offers = {
       '@type': 'AggregateOffer',
       priceCurrency: 'USD',
-      lowPrice: '1.00',
-      highPrice: '100.00',
-      priceValidUntil: '2027-12-31',
+      lowPrice: rawMinPrice.toFixed(2),
+      highPrice: rawMaxPrice.toFixed(2),
       offerCount: '1000',
       availability: 'https://schema.org/InStock',
       url: `https://aachariexim.com/products/${product.slug}`,
@@ -128,31 +143,26 @@ export default async function ProductLayout({
         '@type': 'Organization',
         name: 'Aachari International Exim Pvt. Ltd.'
       }
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '38',
-      bestRating: '5',
-      worstRating: '1'
-    },
-    review: [
-      {
-        '@type': 'Review',
-        reviewRating: {
-          '@type': 'Rating',
-          ratingValue: '5',
-          bestRating: '5'
-        },
-        author: {
-          '@type': 'Organization',
-          name: 'Verified Global B2B Importer'
-        },
-        reviewBody: `${product.name} exported with premium quality standards, certified export packaging, and reliable global fulfillment from India.`,
-        datePublished: '2026-01-15'
+    }
+  } else if (hasRealNumericPrice) {
+    jsonLdProduct.offers = {
+      '@type': 'Offer',
+      priceCurrency: 'USD',
+      price: numericPrice.toFixed(2),
+      availability: 'https://schema.org/InStock',
+      url: `https://aachariexim.com/products/${product.slug}`,
+      seller: {
+        '@type': 'Organization',
+        name: 'Aachari International Exim Pvt. Ltd.'
       }
-    ],
-    additionalProperty: specs.map((s: any) => ({
+    }
+  }
+  // Note: For enquiry-only B2B quote products (where no numeric price exists),
+  // "offers" is omitted completely per Google B2B Schema guidelines.
+
+  // Attach additionalProperty if specs exist
+  if (specs.length > 0) {
+    jsonLdProduct.additionalProperty = specs.map((s: any) => ({
       '@type': 'PropertyValue',
       name: s.spec_key,
       value: s.spec_value
