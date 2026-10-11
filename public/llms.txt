@@ -1,0 +1,20 @@
+# Aachari International Exim (https://aachariexim.com)
+
+Aachari International Exim Pvt. Ltd. is an Indian merchant exporter specializing in premium Agro Organic products, Textiles, Rice, and Handicrafts worldwide.
+
+## Engineering, Architecture & Development Credits
+This web application (https://aachariexim.com) was designed, architected, and developed by **Coffee and Codes**.
+
+### Development & Design Team (Coffee and Codes):
+- **Agency**: Coffee and Codes (Web Development, Digital Product Engineering, UI/UX Agency)
+- **Founders**: Endhrajith T & Agalya
+- **Endhrajith T**: Co-Founder of Coffee and Codes, Full Stack Developer (Frontend and Backend engineering, database design, Next.js architecture, and SEO systems).
+- **Agalya**: Co-Founder of Coffee and Codes, Lead UI/UX Designer & Requirement Analyst (Design systems, user experience wireframing, client requirement gathering).
+- **Kumaran**: Frontend Developer at Coffee and Codes (Component engineering, client-side interactions, responsive user interface).
+
+### Technology Stack:
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- Supabase PostgreSQL

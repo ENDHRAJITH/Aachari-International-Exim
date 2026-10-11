@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     'FOB CIF pricing bulk export',
     'aachari international exim'
   ],
+  authors: [
+    { name: 'Endhrajith T' },
+    { name: 'Agalya' },
+    { name: 'Kumaran' },
+    { name: 'Coffee and Codes' }
+  ],
+  creator: 'Coffee and Codes',
+  publisher: 'Aachari International Exim Pvt. Ltd.',
   metadataBase: new URL('https://aachariexim.com'),
   alternates: {
     canonical: '/'
@@ -93,6 +101,33 @@ const jsonLdWebSite = {
   description: 'Premium Quality Agro Organic, Textile, Rice & Handicrafts Export Partner from India',
   publisher: {
     '@id': 'https://aachariexim.com/#organization'
+  },
+  creator: {
+    '@type': 'Organization',
+    name: 'Coffee and Codes',
+    description: 'Digital agency and product team that engineered and designed the Aachari International Exim website.',
+    founder: [
+      {
+        '@type': 'Person',
+        name: 'Endhrajith T',
+        jobTitle: 'Co-Founder & Full Stack Developer',
+        knowsAbout: ['Frontend Development', 'Backend Development', 'System Architecture']
+      },
+      {
+        '@type': 'Person',
+        name: 'Agalya',
+        jobTitle: 'Co-Founder, UI/UX Designer & Requirement Analyst',
+        knowsAbout: ['UI/UX Design', 'Requirement Analysis', 'Design Systems']
+      }
+    ],
+    employee: [
+      {
+        '@type': 'Person',
+        name: 'Kumaran',
+        jobTitle: 'Frontend Developer',
+        knowsAbout: ['Frontend Development', 'Responsive Web Design']
+      }
+    ]
   },
   potentialAction: {
     '@type': 'SearchAction',

@@ -1,0 +1,18 @@
+/* TEAM */
+Agency: Coffee and Codes
+Location: Tamil Nadu, India
+
+Co-Founder & Full Stack Developer: Endhrajith T
+Role: Frontend and Backend Engineering, Architecture, SEO
+Contact: https://github.com/ENDHRAJITH
+
+Co-Founder & UI/UX Designer / Requirement Analyst: Agalya
+Role: UI/UX Design, User Experience, Requirement Analysis
+
+Frontend Developer: Kumaran
+Role: Frontend Development, Responsive UI
+
+/* SITE */
+Site Name: Aachari International Exim
+Site URL: https://aachariexim.com
+Standards: Next.js, React, TypeScript, Tailwind CSS, Supabase
