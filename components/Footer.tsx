@@ -899,7 +899,7 @@ export default function Footer() {
               <ul className="space-y-4">
                 <li>
                   <p className="text-[0.9rem] text-cream/70 leading-6 font-medium">
-                    Hariharan P
+                    Hariharan Palani
                   </p>
                   <p className="text-[0.78rem] text-cream/50">
                     Managing Director
